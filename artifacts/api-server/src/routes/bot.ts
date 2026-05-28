@@ -14,6 +14,9 @@ const router = Router();
 function readConfig() {
   return JSON.parse(readFileSync(CONFIG_PATH, "utf-8"));
 }
+function readData() {
+  return JSON.parse(readFileSync(DATA_PATH, "utf-8"));
+}
 
 router.get("/bot/status", async (_req, res) => {
   try {
@@ -88,17 +91,42 @@ router.put("/bot/config", (req, res) => {
   }
 });
 
-router.get("/bot/filters", (_req, res) => {
-  const data = JSON.parse(readFileSync(DATA_PATH, "utf-8"));
+router.get("/bot/filters-detail", (_req, res) => {
+  const data = readData();
   const filters = data.data.filters as Record<
     string,
-    Record<string, { name: string; type: string }>
+    Record<string, { name: string; type: string; text: string; data_id: string }>
   >;
-  const result: Record<string, string[]> = {};
+  const result: Record<
+    string,
+    Array<{ key: string; name: string; type: string; text: string }>
+  > = {};
   for (const [cat, items] of Object.entries(filters)) {
-    result[cat] = Object.values(items).map((v) => v.name);
+    result[cat] = Object.entries(items).map(([key, v]) => ({
+      key,
+      name: v.name,
+      type: v.type,
+      text: v.text ?? "",
+    }));
   }
   res.json(result);
+});
+
+router.put("/bot/filters/:category/:key", (req, res) => {
+  try {
+    const { category, key } = req.params;
+    const { text } = req.body as { text: string };
+    const data = readData();
+    if (!data.data.filters[category]?.[key]) {
+      res.status(404).json({ ok: false, error: "Filter not found" });
+      return;
+    }
+    data.data.filters[category][key].text = text;
+    writeFileSync(DATA_PATH, JSON.stringify(data, null, 4), "utf-8");
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: String(e) });
+  }
 });
 
 export default router;
