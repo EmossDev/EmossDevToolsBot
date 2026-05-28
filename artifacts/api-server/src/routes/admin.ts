@@ -12,7 +12,7 @@ const html = String.raw`<!DOCTYPE html>
 <meta name="theme-color" content="#0a0000"/>
 <link rel="manifest" href="/admin/manifest.json"/>
 <link rel="apple-touch-icon" href="/admin/app-icon.jpg"/>
-<title>EmossDevToolsBot</title>
+<title>EmossDev Panel</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -186,6 +186,10 @@ header{background:linear-gradient(135deg,#150000,#200404);padding:14px 16px 12px
   <symbol id="ic-terminal" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></symbol>
   <symbol id="ic-telegram" viewBox="0 0 24 24"><path d="M21.19 3.25L2.05 10.55c-1.3.52-1.29 1.26-.24 1.59l4.85 1.51 1.89 5.75c.23.65.12.9.83.9.54 0 .78-.25 1.08-.54l2.6-2.52 5.41 3.99c1 .55 1.71.27 1.96-.93l3.55-16.7c.36-1.47-.56-2.13-1.89-1.45z"/></symbol>
   <symbol id="ic-webhook" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 000-6 3 3 0 00-3 3c0 .24.04.47.09.7L8.04 9.81A3 3 0 005 9a3 3 0 000 6 3 3 0 003.04-.91l7.12 4.16c-.05.21-.08.43-.08.65a2.92 2.92 0 002.92 2.92 2.92 2.92 0 002.92-2.92A2.92 2.92 0 0018 16.08z"/></symbol>
+  <symbol id="ic-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="ic-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6m4-6v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></symbol>
+  <symbol id="ic-eye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="ic-eye-off" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></symbol>
 </svg>
 
 <header>
@@ -193,8 +197,8 @@ header{background:linear-gradient(135deg,#150000,#200404);padding:14px 16px 12px
     <img src="/admin/app-icon.jpg" alt="EmossDevToolsBot"/>
   </div>
   <div class="hdr-info">
-    <h1>EmossDevToolsBot</h1>
-    <p>Kontrol Paneli</p>
+    <h1>EmossDev Panel</h1>
+    <p>Bot Yönetim Paneli</p>
   </div>
   <div class="hdr-badge">
     <div class="hdr-dot checking" id="hdrDot"></div>
@@ -304,6 +308,36 @@ header{background:linear-gradient(135deg,#150000,#200404);padding:14px 16px 12px
         </button>
       </div>
     </div>
+    <div class="card">
+      <div class="card-head">
+        <div class="ci red"><svg><use href="#ic-telegram"/></svg></div>
+        <span class="card-label">Bot Token</span>
+      </div>
+      <div class="card-body">
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:10px 13px;margin-bottom:10px;font-size:12px;color:var(--muted);line-height:1.5">
+          Mevcut token gizli gösterilir. Değiştirmek için yeni token gir ve kaydet.
+        </div>
+        <div class="field" style="margin-bottom:6px">
+          <label>Mevcut Token (Gizli)</label>
+          <div style="position:relative">
+            <input id="cfg_token_masked" type="text" readonly style="color:var(--muted);padding-right:44px;letter-spacing:.05em" placeholder="Yükleniyor…"/>
+          </div>
+        </div>
+        <div class="field">
+          <label>Yeni Token (değiştirmek için gir)</label>
+          <div style="position:relative">
+            <input id="cfg_token_new" type="password" placeholder="1234567890:ABCDEFGHijklmnop…" style="padding-right:44px"/>
+            <button type="button" onclick="toggleTokenVis()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:4px;color:var(--muted)">
+              <svg id="tokenEyeIcon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-eye"/></svg>
+            </button>
+          </div>
+        </div>
+        <button class="btn btn-outline-red" onclick="saveToken()">
+          <svg><use href="#ic-save"/></svg>
+          Token Güncelle
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- FİLTRELER -->
@@ -317,9 +351,15 @@ header{background:linear-gradient(135deg,#150000,#200404);padding:14px 16px 12px
       <div class="cat-grid" id="catGrid"></div>
     </div>
     <div id="filterListView" style="display:none">
-      <div class="back-btn" onclick="showCatView()">
-        <svg><use href="#ic-chevron-left"/></svg>
-        Kategoriler
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div class="back-btn" onclick="showCatView()" style="margin-bottom:0">
+          <svg><use href="#ic-chevron-left"/></svg>
+          Kategoriler
+        </div>
+        <button class="btn btn-red btn-sm" style="margin-left:auto;width:auto;padding:8px 14px" onclick="openNewFilter()">
+          <svg><use href="#ic-plus"/></svg>
+          Yeni Komut
+        </button>
       </div>
       <div class="card">
         <div class="card-head">
@@ -365,14 +405,52 @@ header{background:linear-gradient(135deg,#150000,#200404);padding:14px 16px 12px
       <div class="modal-sub" id="editSub"></div>
       <div class="field">
         <label>Gönderilecek Metin</label>
-        <textarea id="editText" rows="8"></textarea>
+        <textarea id="editText" rows="6"></textarea>
       </div>
       <div class="modal-actions">
         <button class="btn btn-ghost" style="flex:1" onclick="closeModal()">
           <svg><use href="#ic-x"/></svg>İptal
         </button>
+        <button class="btn btn-outline-red" style="flex:1" onclick="deleteFilter()">
+          <svg><use href="#ic-trash"/></svg>Sil
+        </button>
         <button class="btn btn-red" style="flex:2" onclick="saveFilter()">
           <svg><use href="#ic-save"/></svg>Kaydet
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NEW FILTER MODAL -->
+<div class="modal-bg" id="newFilterModal" onclick="maybeCloseNewModal(event)">
+  <div class="modal">
+    <div class="modal-pill"></div>
+    <div class="modal-inner">
+      <div class="modal-title">Yeni Komut Ekle</div>
+      <div class="modal-sub"><span class="modal-tag" id="newFilterCatLabel">—</span></div>
+      <div class="field">
+        <label>Komut Adı (örn: /merhaba)</label>
+        <input id="newFilterName" type="text" placeholder="/komutadi"/>
+      </div>
+      <div class="field">
+        <label>Tip</label>
+        <select id="newFilterType" style="width:100%;background:var(--card2);border:1.5px solid var(--border2);border-radius:12px;padding:11px 13px;color:var(--text);font-size:14px;outline:none;appearance:none;-webkit-appearance:none">
+          <option value="1">1 — Metin</option>
+          <option value="2">2 — Dosya</option>
+          <option value="3">3 — Video</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Gönderilecek Metin</label>
+        <textarea id="newFilterText" rows="5" placeholder="İsteğe bağlı…"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" style="flex:1" onclick="closeNewModal()">
+          <svg><use href="#ic-x"/></svg>İptal
+        </button>
+        <button class="btn btn-red" style="flex:2" onclick="addFilter()">
+          <svg><use href="#ic-plus"/></svg>Ekle
         </button>
       </div>
     </div>
@@ -463,6 +541,7 @@ async function loadConfig() {
   document.getElementById('cfg_private_chat_id').value = d.private_chat_id??'';
   document.getElementById('cfg_creator_id').value = d.creator_id??'';
   document.getElementById('cfg_webhookUrl').value = d.webhookUrl??'';
+  document.getElementById('cfg_token_masked').value = d.token??'';
 }
 
 async function saveConfig() {
@@ -474,6 +553,25 @@ async function saveConfig() {
   };
   const d = await fetch(BASE+'/bot/config',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(r=>r.json());
   toast(d.ok?'✓ Ayarlar kaydedildi':'✗ Kaydetme hatası', d.ok);
+}
+
+async function saveToken() {
+  const newTok = document.getElementById('cfg_token_new').value.trim();
+  if (!newTok) { toast('✗ Token boş olamaz', false); return; }
+  const d = await fetch(BASE+'/bot/config',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:newTok})}).then(r=>r.json());
+  if (d.ok) {
+    toast('✓ Token güncellendi');
+    document.getElementById('cfg_token_new').value='';
+    await loadConfig();
+  } else { toast('✗ Token kaydedilemedi', false); }
+}
+
+function toggleTokenVis() {
+  const inp = document.getElementById('cfg_token_new');
+  const icon = document.getElementById('tokenEyeIcon');
+  const show = inp.type==='password';
+  inp.type = show?'text':'password';
+  icon.querySelector('use').setAttribute('href', show?'#ic-eye-off':'#ic-eye');
 }
 
 const typeInfo = {'1':['Metin','t1'],'2':['Dosya','t2'],'3':['Video','t3']};
@@ -562,6 +660,64 @@ async function saveFilter() {
   } else { toast('✗ Kaydetme hatası',false); }
 }
 
+async function deleteFilter() {
+  if (!editingFilter) return;
+  const {item,cat} = editingFilter;
+  if (!confirm('"'+item.name+'" komutunu silmek istediğinize emin misiniz?')) return;
+  const d = await fetch(BASE+'/bot/filters/'+cat+'/'+item.key,{method:'DELETE'}).then(r=>r.json());
+  if (d.ok) {
+    toast('✓ '+item.name+' silindi');
+    filtersData[cat] = filtersData[cat].filter(x=>x.key!==item.key);
+    closeModal();
+    showFilterList(cat);
+    document.getElementById('totalCount').textContent =
+      Object.values(filtersData).reduce((a,b)=>a+b.length,0)+' komut';
+    document.getElementById('listCatCount').textContent = filtersData[cat].length+' komut';
+  } else { toast('✗ Silme hatası',false); }
+}
+
+let currentNewCat = null;
+
+function openNewFilter() {
+  const cat = document.getElementById('listCatName').textContent;
+  currentNewCat = cat;
+  document.getElementById('newFilterCatLabel').textContent = cat;
+  document.getElementById('newFilterName').value='';
+  document.getElementById('newFilterType').value='1';
+  document.getElementById('newFilterText').value='';
+  document.getElementById('newFilterModal').classList.add('open');
+}
+
+function closeNewModal() {
+  document.getElementById('newFilterModal').classList.remove('open');
+  currentNewCat = null;
+}
+
+function maybeCloseNewModal(e) {
+  if (e.target===document.getElementById('newFilterModal')) closeNewModal();
+}
+
+async function addFilter() {
+  const cat = currentNewCat;
+  const name = document.getElementById('newFilterName').value.trim();
+  const type = document.getElementById('newFilterType').value;
+  const text = document.getElementById('newFilterText').value;
+  if (!name) { toast('✗ Komut adı boş olamaz',false); return; }
+  const d = await fetch(BASE+'/bot/filters/'+cat,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name,type,text})
+  }).then(r=>r.json());
+  if (d.ok) {
+    toast('✓ '+name+' eklendi');
+    if (!filtersData[cat]) filtersData[cat]=[];
+    filtersData[cat].push({key:d.key,name,type,text});
+    closeNewModal();
+    showFilterList(cat);
+    document.getElementById('totalCount').textContent =
+      Object.values(filtersData).reduce((a,b)=>a+b.length,0)+' komut';
+  } else { toast('✗ Ekleme hatası',false); }
+}
+
 loadStatus(); loadConfig(); loadFilters();
 </script>
 </body>
@@ -580,9 +736,9 @@ router.get("/app-icon.jpg", (_req, res) => {
 
 router.get("/manifest.json", (_req, res) => {
   res.json({
-    name: "EmossDevToolsBot",
-    short_name: "EmossBot",
-    description: "EmossDevToolsBot Kontrol Paneli",
+    name: "EmossDev Panel",
+    short_name: "EmossDev",
+    description: "EmossDev Bot Yönetim Paneli",
     start_url: "/admin/",
     display: "standalone",
     background_color: "#0a0000",

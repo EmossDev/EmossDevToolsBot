@@ -84,6 +84,9 @@ router.put("/bot/config", (req, res) => {
         config.bot[key] = req.body[key];
       }
     }
+    if (req.body.token && String(req.body.token).trim()) {
+      config.bot.token = String(req.body.token).trim();
+    }
     writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 4), "utf-8");
     res.json({ ok: true });
   } catch (e) {
@@ -122,6 +125,55 @@ router.put("/bot/filters/:category/:key", (req, res) => {
       return;
     }
     data.data.filters[category][key].text = text;
+    writeFileSync(DATA_PATH, JSON.stringify(data, null, 4), "utf-8");
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: String(e) });
+  }
+});
+
+router.post("/bot/filters/:category", (req, res) => {
+  try {
+    const { category } = req.params;
+    const { name, type, text } = req.body as {
+      name: string;
+      type: string;
+      text: string;
+    };
+    if (!name || !type) {
+      res.status(400).json({ ok: false, error: "name and type required" });
+      return;
+    }
+    const data = readData();
+    if (!data.data.filters[category]) {
+      data.data.filters[category] = {};
+    }
+    const existingKeys = Object.keys(data.data.filters[category]).map(Number);
+    const newKey = String(
+      existingKeys.length ? Math.max(...existingKeys) + 1 : 1,
+    );
+    data.data.filters[category][newKey] = {
+      name: String(name).trim(),
+      type: String(type),
+      text: String(text ?? ""),
+      data_id: "",
+    };
+    writeFileSync(DATA_PATH, JSON.stringify(data, null, 4), "utf-8");
+    res.json({ ok: true, key: newKey });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: String(e) });
+  }
+});
+
+router.delete("/bot/filters/:category/:key", (req, res) => {
+  try {
+    const { category, key } = req.params;
+    const data = readData();
+    if (!data.data.filters[category]?.[key]) {
+      res.status(404).json({ ok: false, error: "Filter not found" });
+      return;
+    }
+    delete data.data.filters[category][key];
     writeFileSync(DATA_PATH, JSON.stringify(data, null, 4), "utf-8");
     res.json({ ok: true });
   } catch (e) {
