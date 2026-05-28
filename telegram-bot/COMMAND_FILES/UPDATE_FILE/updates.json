@@ -1,4 +1,97 @@
 {"update_id":85497275,
 "message":{"message_id":125,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":7578325376,"first_name":"By Emoss\u00ae","username":"EmossDev","type":"private"},"date":1780003418,"text":"/start","entities":[{"offset":0,"length":6,"type":"bot_command"}]}}{"update_id":85497276,
 "message":{"message_id":126,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":7578325376,"first_name":"By Emoss\u00ae","username":"EmossDev","type":"private"},"date":1780003432,"text":"/commands","entities":[{"offset":0,"length":9,"type":"bot_command"}]}}{"update_id":85497277,
-"message":{"message_id":193,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780003583,"message_auto_delete_timer_changed":{"message_auto_delete_time":86400}}}
+"message":{"message_id":193,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780003583,"message_auto_delete_timer_changed":{"message_auto_delete_time":86400}}}{"update_id":85497278,
+"message":{"message_id":194,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780003742,"text":"/adminCommands","entities":[{"offset":0,"length":14,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{"update_id":85497279,
+"message":{"message_id":128,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":7578325376,"first_name":"By Emoss\u00ae","username":"EmossDev","type":"private"},"date":1780003770,"text":"/tools","entities":[{"offset":0,"length":6,"type":"bot_command"}]}}{"update_id":85497280,
+"message":{"message_id":130,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":7578325376,"first_name":"By Emoss\u00ae","username":"EmossDev","type":"private"},"date":1780003775,"text":"metasploit-kurulum"}}{"update_id":85497281,
+"message":{"message_id":131,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":7578325376,"first_name":"By Emoss\u00ae","username":"EmossDev","type":"private"},"date":1780003800,"text":"phishing-attack"}}{"update_id":85497282,
+"message":{"message_id":132,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":7578325376,"first_name":"By Emoss\u00ae","username":"EmossDev","type":"private"},"date":1780003848,"text":"/mix","entities":[{"offset":0,"length":4,"type":"bot_command"}]}}{"update_id":85497283,
+"message":{"message_id":134,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":7578325376,"first_name":"By Emoss\u00ae","username":"EmossDev","type":"private"},"date":1780003886,"text":"/instagramProfile","entities":[{"offset":0,"length":17,"type":"bot_command"}]}}{"update_id":85497284,
+"message":{"message_id":136,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":7578325376,"first_name":"By Emoss\u00ae","username":"EmossDev","type":"private"},"date":1780003896,"text":"/onlinePh4sh4ng","entities":[{"offset":0,"length":15,"type":"bot_command"}]}}{"update_id":85497285,
+"message":{"message_id":138,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":7578325376,"first_name":"By Emoss\u00ae","username":"EmossDev","type":"private"},"date":1780003966,"text":"/ipScan","entities":[{"offset":0,"length":7,"type":"bot_command"}]}}{"update_id":85497286,
+"message":{"message_id":140,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":7578325376,"first_name":"By Emoss\u00ae","username":"EmossDev","type":"private"},"date":1780003976,"text":"/blog","entities":[{"offset":0,"length":5,"type":"bot_command"}]}}{"update_id":85497287,
+"message":{"message_id":142,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":7578325376,"first_name":"By Emoss\u00ae","username":"EmossDev","type":"private"},"date":1780003982,"text":"chatBlog"}}{"update_id":85497288,
+"message":{"message_id":143,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":7578325376,"first_name":"By Emoss\u00ae","username":"EmossDev","type":"private"},"date":1780003988,"text":"filters"}}{"update_id":85497289,
+"message":{"message_id":144,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":7578325376,"first_name":"By Emoss\u00ae","username":"EmossDev","type":"private"},"date":1780003993,"text":"/filters","entities":[{"offset":0,"length":8,"type":"bot_command"}]}}{"update_id":85497290,
+"message":{"message_id":146,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":7578325376,"first_name":"By Emoss\u00ae","username":"EmossDev","type":"private"},"date":1780003999,"text":"/bashScript","entities":[{"offset":0,"length":11,"type":"bot_command"}]}}{"update_id":85497291,
+"message":{"message_id":148,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":7578325376,"first_name":"By Emoss\u00ae","username":"EmossDev","type":"private"},"date":1780004026,"text":"/tools","entities":[{"offset":0,"length":6,"type":"bot_command"}]}}{"update_id":85497292,
+"message":{"message_id":150,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":7578325376,"first_name":"By Emoss\u00ae","username":"EmossDev","type":"private"},"date":1780004120,"text":"phishing-attack"}}{"update_id":85497293,
+"message":{"message_id":196,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004171,"text":"/database","entities":[{"offset":0,"length":9,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{"update_id":85497294,
+"message":{"message_id":198,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004221,"text":"sms-attack","sender_tag":"EmossDev@Root"}}{"update_id":85497295,
+"message":{"message_id":199,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004252,"text":"/follow","entities":[{"offset":0,"length":7,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{
+  "update_id": 999001,
+  "message": {
+    "message_id": 12345,
+    "from": {
+      "id": 7578325376,
+      "first_name": "Test",
+      "last_name": "",
+      "username": "testuser"
+    },
+    "chat": {
+      "id": -1003888012031,
+      "type": "supergroup",
+      "title": "Test"
+    },
+    "date": 1780004258,
+    "text": "apk_tool"
+  }
+}{"update_id":85497296,
+"message":{"message_id":201,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004329,"text":"/enable","entities":[{"offset":0,"length":7,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{"update_id":85497297,
+"my_chat_member":{"chat":{"id":-1003989392417,"title":"EmossDev Tools Log","type":"supergroup"},"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"date":1780004356,"old_chat_member":{"user":{"id":8866647465,"is_bot":true,"first_name":"EmossDev Tools Bot","username":"EmossDevToolsBot"},"status":"left"},"new_chat_member":{"user":{"id":8866647465,"is_bot":true,"first_name":"EmossDev Tools Bot","username":"EmossDevToolsBot"},"status":"administrator","can_be_edited":false,"can_manage_chat":true,"can_change_info":true,"can_delete_messages":true,"can_invite_users":true,"can_restrict_members":true,"can_pin_messages":true,"can_manage_topics":true,"can_promote_members":true,"can_manage_video_chats":true,"can_post_stories":true,"can_edit_stories":true,"can_delete_stories":true,"can_manage_tags":false,"is_anonymous":true,"can_manage_voice_chats":true,"custom_title":"EmossDev@Admin"}}}{"update_id":85497298,
+"message":{"message_id":7,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003989392417,"title":"EmossDev Tools Log","type":"supergroup"},"date":1780004356,"new_chat_participant":{"id":8866647465,"is_bot":true,"first_name":"EmossDev Tools Bot","username":"EmossDevToolsBot"},"new_chat_member":{"id":8866647465,"is_bot":true,"first_name":"EmossDev Tools Bot","username":"EmossDevToolsBot"},"new_chat_members":[{"id":8866647465,"is_bot":true,"first_name":"EmossDev Tools Bot","username":"EmossDevToolsBot"}]}}{"update_id":85497299,
+"message":{"message_id":9,"from":{"id":8866647465,"is_bot":true,"first_name":"EmossDev Tools Bot","username":"EmossDevToolsBot"},"chat":{"id":-1003989392417,"title":"EmossDev Tools Log","type":"supergroup"},"date":1780004361,"left_chat_participant":{"id":8866647465,"is_bot":true,"first_name":"EmossDev Tools Bot","username":"EmossDevToolsBot"},"left_chat_member":{"id":8866647465,"is_bot":true,"first_name":"EmossDev Tools Bot","username":"EmossDevToolsBot"}}}{"update_id":85497300,
+"my_chat_member":{"chat":{"id":-1003989392417,"title":"EmossDev Tools Log","type":"supergroup"},"from":{"id":8866647465,"is_bot":true,"first_name":"EmossDev Tools Bot","username":"EmossDevToolsBot"},"date":1780004361,"old_chat_member":{"user":{"id":8866647465,"is_bot":true,"first_name":"EmossDev Tools Bot","username":"EmossDevToolsBot"},"status":"administrator","can_be_edited":false,"can_manage_chat":true,"can_change_info":true,"can_delete_messages":true,"can_invite_users":true,"can_restrict_members":true,"can_pin_messages":true,"can_manage_topics":true,"can_promote_members":true,"can_manage_video_chats":true,"can_post_stories":true,"can_edit_stories":true,"can_delete_stories":true,"can_manage_tags":false,"is_anonymous":true,"can_manage_voice_chats":true,"custom_title":"EmossDev@Admin"},"new_chat_member":{"user":{"id":8866647465,"is_bot":true,"first_name":"EmossDev Tools Bot","username":"EmossDevToolsBot"},"status":"left"}}}{"update_id":85497301,
+"message":{"message_id":203,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004391,"text":"/enable all","entities":[{"offset":0,"length":7,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{
+  "update_id": 999002,
+  "message": {
+    "message_id": 12346,
+    "from": {
+      "id": 111111111,
+      "first_name": "TestUser",
+      "last_name": "",
+      "username": "testuser123"
+    },
+    "chat": {
+      "id": 111111111,
+      "type": "private"
+    },
+    "date": 1780004402,
+    "text": "apk_tool"
+  }
+}{"update_id":85497302,
+"message":{"message_id":205,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004410,"text":"/enable phishing-attack","entities":[{"offset":0,"length":7,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{"update_id":85497303,
+"message":{"message_id":207,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004422,"text":"/enable filters","entities":[{"offset":0,"length":7,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{"update_id":85497304,
+"message":{"message_id":209,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004437,"text":"/disabled","entities":[{"offset":0,"length":9,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{"update_id":85497305,
+"message":{"message_id":211,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004447,"text":"/newFont","entities":[{"offset":0,"length":8,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{"update_id":85497306,
+"message":{"message_id":213,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004461,"text":"/newfont selam","entities":[{"offset":0,"length":8,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{"update_id":85497307,
+"message":{"message_id":214,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004469,"text":"/newFont","entities":[{"offset":0,"length":8,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{"update_id":85497308,
+"message":{"message_id":216,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004476,"text":"test","sender_tag":"EmossDev@Root"}}{
+  "update_id": 999003,
+  "message": {
+    "message_id": 12347,
+    "from": {
+      "id": 7578325376,
+      "first_name": "By Emoss",
+      "username": "EmossDev"
+    },
+    "chat": {
+      "id": -1003888012031,
+      "title": "Emoss Dev Tools",
+      "username": "emossdevtools",
+      "type": "supergroup"
+    },
+    "date": 1780004483,
+    "text": "apk_tool"
+  }
+}{"update_id":85497309,
+"message":{"message_id":217,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004486,"text":"/newFont test","entities":[{"offset":0,"length":8,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{"update_id":85497310,
+"message":{"message_id":219,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004499,"text":"/icons","entities":[{"offset":0,"length":6,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{"update_id":85497311,
+"message":{"message_id":221,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004514,"text":"/delMessage","entities":[{"offset":0,"length":11,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{"update_id":85497312,
+"message":{"message_id":223,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004526,"text":"/delMessage 30","entities":[{"offset":0,"length":11,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{"update_id":85497313,
+"message":{"message_id":225,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004604,"text":"apk-tool","sender_tag":"EmossDev@Root"}}{"update_id":85497314,
+"message":{"message_id":226,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004612,"text":"/filters","entities":[{"offset":0,"length":8,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{"update_id":85497315,
+"message":{"message_id":228,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004617,"text":"/tools","entities":[{"offset":0,"length":6,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{"update_id":85497316,
+"message":{"message_id":230,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004623,"text":"/mix","entities":[{"offset":0,"length":4,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}{"update_id":85497317,
+"message":{"message_id":232,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780004633,"text":"phishing-attack","sender_tag":"EmossDev@Root"}}
