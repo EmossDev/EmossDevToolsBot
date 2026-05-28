@@ -1,6 +1,6 @@
-# [Project name]
+# EmossDev Tools Bot
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+Bu proje, EmossDevToolsBot adlı PHP tabanlı Telegram botunu Replit üzerinde çalıştırır.
 
 ## Run & Operate
 

@@ -1,0 +1,20 @@
+{
+    "bot": {
+        "token": "8866647465:AAF3vy0T-O6FDlU-0OVa4FIBYV54NAgWyio",
+        "token2": "8662597202:AAEdgE5dukwnTcwophRRv2IiPMJu_fd8QLU",
+        "id": "8866647465",
+        "id2": "8662597202",
+        "name": "EmossDev Tools Bot",
+        "username": "@EmossDevToolsBot",
+        "chat_id": "-1003888012031",
+        "private_chat_id": "-5289129879",
+        "test_chat_id": "-5289129879",
+        "log_chat_id": "-5289129879",
+        "creator_id": "7578325376",
+        "webhookUrl": "https://e99cb58b-8e88-4cde-8b79-d20cf4f89c19-00-1otar4dcuvz71.pike.replit.dev/bot/",
+        "databaseUrl": "mongodb+srv://ferxtyreall:jTbZGcPDNDYVsbYi@fersred98.vrqtl.mongodb.net/",
+        "admin": [
+            "7578325376"
+        ]
+    }
+}

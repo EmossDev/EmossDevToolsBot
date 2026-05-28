@@ -30,3 +30,11 @@ NODE_ENV = "production"
 
 [services.production.health.startup]
 path = "/api/healthz"
+
+[[services]]
+localPort = 8000
+name = "Telegram Bot"
+paths = ["/bot"]
+
+[services.development]
+run = "bash /home/runner/workspace/telegram-bot/start.sh"
