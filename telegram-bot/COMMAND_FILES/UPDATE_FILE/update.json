@@ -1,10 +1,2 @@
-{
-  "update_id": 999020,
-  "message": {
-    "message_id": 999,
-    "from": {"id": 7578325376, "first_name": "By Emoss", "username": "EmossDev"},
-    "chat": {"id": -1003888012031, "title": "Emoss Dev Tools", "username": "emossdevtools", "type": "supergroup"},
-    "date": 1780005147,
-    "text": "tgbot-arayuz"
-  }
-}
+{"update_id":85497356,
+"message":{"message_id":279,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":-1003888012031,"title":"Emoss Dev Tools","username":"emossdevtools","type":"supergroup"},"date":1780007304,"text":"/info","entities":[{"offset":0,"length":5,"type":"bot_command"}],"sender_tag":"EmossDev@Root"}}

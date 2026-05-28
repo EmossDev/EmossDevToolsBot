@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "po97I-kL1WTMaalA53L6j"
+uri = "file://EmossDevToolsBot-Termux.zip"
+type = "unspecified"
+title = "EmossDevToolsBot - Termux"
