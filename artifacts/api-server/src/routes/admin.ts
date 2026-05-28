@@ -423,19 +423,22 @@ header{background:linear-gradient(135deg,#150000,#200404);padding:14px 16px 12px
 </div>
 
 <!-- NEW FILTER MODAL -->
-<div class="modal-bg" id="newFilterModal" onclick="maybeCloseNewModal(event)">
-  <div class="modal">
-    <div class="modal-pill"></div>
+<div class="modal-bg" id="newFilterModal">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-pill" onclick="closeNewModal()" style="cursor:pointer;padding:8px 0"></div>
     <div class="modal-inner">
-      <div class="modal-title">Yeni Komut Ekle</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="modal-title" style="margin-bottom:0">Yeni Komut Ekle</div>
+        <button onclick="closeNewModal()" style="background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:5px 10px;color:var(--muted);font-size:12px;cursor:pointer">Kapat</button>
+      </div>
       <div class="modal-sub"><span class="modal-tag" id="newFilterCatLabel">—</span></div>
       <div class="field">
         <label>Komut Adı (örn: /merhaba)</label>
-        <input id="newFilterName" type="text" placeholder="/komutadi"/>
+        <input id="newFilterName" type="text" placeholder="/komutadi" autocomplete="off"/>
       </div>
       <div class="field">
         <label>Tip</label>
-        <select id="newFilterType" style="width:100%;background:var(--card2);border:1.5px solid var(--border2);border-radius:12px;padding:11px 13px;color:var(--text);font-size:14px;outline:none;appearance:none;-webkit-appearance:none">
+        <select id="newFilterType" style="width:100%;background:var(--card2);border:1.5px solid var(--border2);border-radius:12px;padding:11px 13px;color:var(--text);font-size:14px;outline:none;font-family:inherit">
           <option value="1">1 — Metin</option>
           <option value="2">2 — Dosya</option>
           <option value="3">3 — Video</option>
@@ -443,7 +446,7 @@ header{background:linear-gradient(135deg,#150000,#200404);padding:14px 16px 12px
       </div>
       <div class="field">
         <label>Gönderilecek Metin</label>
-        <textarea id="newFilterText" rows="5" placeholder="İsteğe bağlı…"></textarea>
+        <textarea id="newFilterText" rows="4" placeholder="İsteğe bağlı…"></textarea>
       </div>
       <div class="modal-actions">
         <button class="btn btn-ghost" style="flex:1" onclick="closeNewModal()">
@@ -455,6 +458,7 @@ header{background:linear-gradient(135deg,#150000,#200404);padding:14px 16px 12px
       </div>
     </div>
   </div>
+  <div onclick="closeNewModal()" style="flex:1;min-height:20px"></div>
 </div>
 
 <div class="toast" id="toast"></div>
