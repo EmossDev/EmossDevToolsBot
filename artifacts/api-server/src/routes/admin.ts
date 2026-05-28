@@ -10,6 +10,8 @@ const html = String.raw`<!DOCTYPE html>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="theme-color" content="#0a0000"/>
+<link rel="manifest" href="/admin/manifest.json"/>
+<link rel="apple-touch-icon" href="/admin/app-icon.jpg"/>
 <title>EmossDevToolsBot</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -27,8 +29,8 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 
 /* HEADER */
 header{background:linear-gradient(135deg,#150000,#200404);padding:14px 16px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border2);box-shadow:0 2px 20px #dc262618;flex-shrink:0}
-.logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#dc2626,#7f1d1d);display:grid;place-items:center;flex-shrink:0;box-shadow:0 0 14px var(--glow)}
-.logo svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.logo{width:42px;height:42px;border-radius:12px;flex-shrink:0;box-shadow:0 0 14px var(--glow),0 0 0 2px #dc262660;overflow:hidden}
+.logo img{width:100%;height:100%;object-fit:cover;display:block}
 .hdr-info h1{font-size:16px;font-weight:700}
 .hdr-info p{font-size:11px;color:var(--muted);margin-top:1px}
 .hdr-badge{margin-left:auto;display:flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:5px 10px}
@@ -188,7 +190,7 @@ header{background:linear-gradient(135deg,#150000,#200404);padding:14px 16px 12px
 
 <header>
   <div class="logo">
-    <svg><use href="#ic-telegram"/></svg>
+    <img src="/admin/app-icon.jpg" alt="EmossDevToolsBot"/>
   </div>
   <div class="hdr-info">
     <h1>EmossDevToolsBot</h1>
@@ -568,6 +570,35 @@ loadStatus(); loadConfig(); loadFilters();
 router.get("/", (_req, res) => {
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.send(html);
+});
+
+router.get("/app-icon.jpg", (_req, res) => {
+  res.sendFile(
+    "/home/runner/workspace/artifacts/api-server/public/app-icon.jpg",
+  );
+});
+
+router.get("/manifest.json", (_req, res) => {
+  res.json({
+    name: "EmossDevToolsBot",
+    short_name: "EmossBot",
+    description: "EmossDevToolsBot Kontrol Paneli",
+    start_url: "/admin/",
+    display: "standalone",
+    background_color: "#0a0000",
+    theme_color: "#dc2626",
+    orientation: "portrait",
+    icons: [
+      { src: "/admin/app-icon.jpg", sizes: "192x192", type: "image/jpeg" },
+      { src: "/admin/app-icon.jpg", sizes: "512x512", type: "image/jpeg" },
+      {
+        src: "/admin/app-icon.jpg",
+        sizes: "1024x1024",
+        type: "image/jpeg",
+        purpose: "any maskable",
+      },
+    ],
+  });
 });
 
 export default router;
