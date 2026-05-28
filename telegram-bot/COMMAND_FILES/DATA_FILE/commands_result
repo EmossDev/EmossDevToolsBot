@@ -1,1 +1,1 @@
-{"ok":false,"error_code":400,"description":"Bad Request: wrong file identifier/HTTP URL specified"}
+{"ok":true,"result":{"user":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"status":"creator","custom_title":"EmossDev@Root","is_anonymous":false}}
