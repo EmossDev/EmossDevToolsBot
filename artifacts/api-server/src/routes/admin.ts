@@ -741,14 +741,46 @@ router.get("/app-icon.jpg", (_req, res) => {
 
 router.get("/manifest.json", (_req, res) => {
   res.json({
+    id: "/admin/",
     name: "EmossDev Panel",
     short_name: "EmossDev",
     description: "EmossDev Bot Yönetim Paneli",
     start_url: "/admin/",
+    scope: "/admin/",
     display: "standalone",
+    display_override: ["standalone", "minimal-ui", "browser"],
     background_color: "#0a0000",
     theme_color: "#dc2626",
     orientation: "portrait",
+    lang: "tr",
+    dir: "ltr",
+    categories: ["utilities", "productivity"],
+    prefer_related_applications: false,
+    screenshots: [
+      {
+        src: "/admin/app-icon.jpg",
+        sizes: "512x512",
+        type: "image/jpeg",
+        form_factor: "narrow",
+        label: "EmossDev Panel Ana Ekran",
+      },
+    ],
+    shortcuts: [
+      {
+        name: "Bot Durumu",
+        short_name: "Durum",
+        description: "Bot durumunu görüntüle",
+        url: "/admin/?tab=status",
+        icons: [{ src: "/admin/app-icon.jpg", sizes: "192x192" }],
+      },
+      {
+        name: "Filtreler",
+        short_name: "Filtreler",
+        description: "Filtreleri yönet",
+        url: "/admin/?tab=filters",
+        icons: [{ src: "/admin/app-icon.jpg", sizes: "192x192" }],
+      },
+    ],
     icons: [
       { src: "/admin/app-icon.jpg", sizes: "192x192", type: "image/jpeg" },
       { src: "/admin/app-icon.jpg", sizes: "512x512", type: "image/jpeg" },
