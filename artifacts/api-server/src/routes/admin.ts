@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { resolve } from "node:path";
 
 const router = Router();
 
@@ -734,7 +735,7 @@ router.get("/", (_req, res) => {
 
 router.get("/app-icon.jpg", (_req, res) => {
   res.sendFile(
-    "/home/runner/workspace/artifacts/api-server/public/app-icon.jpg",
+    resolve(process.cwd(), "artifacts/api-server/public/app-icon.jpg"),
   );
 });
 
