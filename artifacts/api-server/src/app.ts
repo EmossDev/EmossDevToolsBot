@@ -2,6 +2,7 @@ import express, { type Express } from "express";
 import cors from "cors";
 import pinoHttp from "pino-http";
 import { resolve } from "node:path";
+import { createProxyMiddleware } from "http-proxy-middleware";
 import router from "./routes";
 import adminRouter from "./routes/admin";
 import { logger } from "./lib/logger";
@@ -34,5 +35,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/static", express.static(resolve(process.cwd(), "public")));
 app.use("/admin", adminRouter);
 app.use("/api", router);
+
+// Railway'de PHP botu aynı container'da port 8000'de çalışır
+// Replit'te ayrı servis olarak çalışır, bu proxy sadece Railway için gerekli
+if (process.env.RAILWAY_ENVIRONMENT) {
+  app.use(
+    "/bot",
+    createProxyMiddleware({
+      target: "http://localhost:8000",
+      changeOrigin: false,
+    }),
+  );
+}
 
 export default app;
