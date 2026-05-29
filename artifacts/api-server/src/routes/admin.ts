@@ -1,5 +1,40 @@
 import { Router } from "express";
 import { resolve } from "node:path";
+import { deflateSync } from "node:zlib";
+
+function uint32BE(n: number): Buffer {
+  const b = Buffer.alloc(4);
+  b.writeUInt32BE(n, 0);
+  return b;
+}
+function crc32(data: Buffer): number {
+  let c = 0xffffffff;
+  for (const byte of data) {
+    c ^= byte;
+    for (let i = 0; i < 8; i++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+  }
+  return (c ^ 0xffffffff) >>> 0;
+}
+function pngChunk(type: string, data: Buffer): Buffer {
+  const t = Buffer.from(type, "ascii");
+  return Buffer.concat([uint32BE(data.length), t, data, uint32BE(crc32(Buffer.concat([t, data])))]);
+}
+function solidColorPNG(size: number, r: number, g: number, b: number): Buffer {
+  const sig = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+  const ihdr = pngChunk("IHDR", Buffer.concat([uint32BE(size), uint32BE(size), Buffer.from([8, 2, 0, 0, 0])]));
+  const rowSize = 1 + size * 3;
+  const raw = Buffer.alloc(size * rowSize);
+  for (let y = 0; y < size; y++) {
+    raw[y * rowSize] = 0;
+    for (let x = 0; x < size; x++) {
+      const i = y * rowSize + 1 + x * 3;
+      raw[i] = r; raw[i + 1] = g; raw[i + 2] = b;
+    }
+  }
+  return Buffer.concat([sig, ihdr, pngChunk("IDAT", deflateSync(raw)), pngChunk("IEND", Buffer.alloc(0))]);
+}
+const ICON_192 = solidColorPNG(192, 220, 38, 38);
+const ICON_512 = solidColorPNG(512, 220, 38, 38);
 
 const router = Router();
 
@@ -724,6 +759,9 @@ async function addFilter() {
 }
 
 loadStatus(); loadConfig(); loadFilters();
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/admin/sw.js',{scope:'/admin/'}).catch(()=>{});
+}
 </script>
 </body>
 </html>`;
@@ -739,6 +777,28 @@ router.get("/app-icon.jpg", (_req, res) => {
   );
 });
 
+router.get("/icon-192.png", (_req, res) => {
+  res.setHeader("Content-Type", "image/png");
+  res.setHeader("Cache-Control", "public, max-age=86400");
+  res.send(ICON_192);
+});
+
+router.get("/icon-512.png", (_req, res) => {
+  res.setHeader("Content-Type", "image/png");
+  res.setHeader("Cache-Control", "public, max-age=86400");
+  res.send(ICON_512);
+});
+
+router.get("/sw.js", (_req, res) => {
+  res.setHeader("Content-Type", "application/javascript");
+  res.setHeader("Service-Worker-Allowed", "/admin/");
+  res.send(`const CACHE='emossdev-v2';
+const PRE=['/admin/','/admin/manifest.json','/admin/icon-192.png'];
+self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(PRE)));self.skipWaiting();});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{if(res.ok){const c=res.clone();caches.open(CACHE).then(cache=>cache.put(e.request,c));}return res;})));});`);
+});
+
 router.get("/manifest.json", (_req, res) => {
   res.json({
     id: "/admin/",
@@ -748,7 +808,7 @@ router.get("/manifest.json", (_req, res) => {
     start_url: "/admin/",
     scope: "/admin/",
     display: "standalone",
-    display_override: ["standalone", "minimal-ui", "browser"],
+    display_override: ["window-controls-overlay", "tabbed", "standalone", "minimal-ui", "browser"],
     background_color: "#0a0000",
     theme_color: "#dc2626",
     orientation: "portrait",
@@ -756,7 +816,9 @@ router.get("/manifest.json", (_req, res) => {
     dir: "ltr",
     categories: ["utilities", "productivity"],
     prefer_related_applications: false,
-    related_applications: [],
+    related_applications: [
+      { platform: "webapp", url: "https://emossdevtoolsbot.onrender.com/admin/manifest.json" },
+    ],
     launch_handler: {
       client_mode: ["navigate-existing", "auto"],
     },
@@ -769,11 +831,19 @@ router.get("/manifest.json", (_req, res) => {
         url: "url",
       },
     },
-    protocol_handlers: [],
-    file_handlers: [],
-    scope_extensions: [],
+    protocol_handlers: [
+      { protocol: "web+emossdev", url: "/admin/?q=%s" },
+    ],
+    file_handlers: [
+      { action: "/admin/", accept: { "application/json": [".json"] } },
+    ],
+    scope_extensions: [
+      { origin: "https://emossdevtoolsbot.onrender.com" },
+    ],
     iarc_rating_id: "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
-    widgets: [],
+    widgets: [
+      { name: "EmossDev Durum", description: "Bot durum widget", tag: "emossdev-status", ms_ac_template: "/admin/manifest.json", data: "/admin/" },
+    ],
     edge_side_panel: {
       preferred_width: 400,
     },
@@ -781,13 +851,8 @@ router.get("/manifest.json", (_req, res) => {
       new_note_url: "/admin/",
     },
     screenshots: [
-      {
-        src: "/admin/app-icon.jpg",
-        sizes: "512x512",
-        type: "image/jpeg",
-        form_factor: "narrow",
-        label: "EmossDev Panel Ana Ekran",
-      },
+      { src: "/admin/icon-512.png", sizes: "512x512", type: "image/png", form_factor: "narrow", label: "EmossDev Panel" },
+      { src: "/admin/icon-512.png", sizes: "512x512", type: "image/png", form_factor: "wide", label: "EmossDev Panel Geniş" },
     ],
     shortcuts: [
       {
@@ -795,25 +860,19 @@ router.get("/manifest.json", (_req, res) => {
         short_name: "Durum",
         description: "Bot durumunu görüntüle",
         url: "/admin/?tab=status",
-        icons: [{ src: "/admin/app-icon.jpg", sizes: "192x192" }],
+        icons: [{ src: "/admin/icon-192.png", sizes: "192x192", type: "image/png" }],
       },
       {
         name: "Filtreler",
         short_name: "Filtreler",
         description: "Filtreleri yönet",
         url: "/admin/?tab=filters",
-        icons: [{ src: "/admin/app-icon.jpg", sizes: "192x192" }],
+        icons: [{ src: "/admin/icon-192.png", sizes: "192x192", type: "image/png" }],
       },
     ],
     icons: [
-      { src: "/admin/app-icon.jpg", sizes: "192x192", type: "image/jpeg" },
-      { src: "/admin/app-icon.jpg", sizes: "512x512", type: "image/jpeg" },
-      {
-        src: "/admin/app-icon.jpg",
-        sizes: "1024x1024",
-        type: "image/jpeg",
-        purpose: "any maskable",
-      },
+      { src: "/admin/icon-192.png", sizes: "192x192", type: "image/png" },
+      { src: "/admin/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
     ],
   });
 });
