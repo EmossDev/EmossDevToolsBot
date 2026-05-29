@@ -3,10 +3,12 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const CONFIG_PATH = resolve(
-  "/home/runner/workspace/telegram-bot/COMMAND_FILES/DATA_FILE/config.json",
+  process.cwd(),
+  "telegram-bot/COMMAND_FILES/DATA_FILE/config.json",
 );
 const DATA_PATH = resolve(
-  "/home/runner/workspace/telegram-bot/COMMAND_FILES/DATA_FILE/data.json",
+  process.cwd(),
+  "telegram-bot/COMMAND_FILES/DATA_FILE/data.json",
 );
 
 const router = Router();
