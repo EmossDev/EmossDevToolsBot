@@ -779,9 +779,8 @@ router.get("/app-icon.jpg", (_req, res) => {
 });
 
 router.get("/icon-192.png", (_req, res) => {
-  res.setHeader("Content-Type", "image/png");
   res.setHeader("Cache-Control", "public, max-age=86400");
-  res.send(ICON_192);
+  res.sendFile(resolve(process.cwd(), "artifacts/api-server/public/appicon.png"));
 });
 
 router.get("/icon-512.png", (_req, res) => {
