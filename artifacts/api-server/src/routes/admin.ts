@@ -772,6 +772,14 @@ router.get("/manifest.json", (_req, res) => {
     protocol_handlers: [],
     file_handlers: [],
     scope_extensions: [],
+    iarc_rating_id: "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+    widgets: [],
+    edge_side_panel: {
+      preferred_width: 400,
+    },
+    note_taking: {
+      new_note_url: "/admin/",
+    },
     screenshots: [
       {
         src: "/admin/app-icon.jpg",
