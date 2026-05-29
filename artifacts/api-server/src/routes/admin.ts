@@ -756,6 +756,22 @@ router.get("/manifest.json", (_req, res) => {
     dir: "ltr",
     categories: ["utilities", "productivity"],
     prefer_related_applications: false,
+    related_applications: [],
+    launch_handler: {
+      client_mode: ["navigate-existing", "auto"],
+    },
+    share_target: {
+      action: "/admin/",
+      method: "GET",
+      params: {
+        title: "title",
+        text: "text",
+        url: "url",
+      },
+    },
+    protocol_handlers: [],
+    file_handlers: [],
+    scope_extensions: [],
     screenshots: [
       {
         src: "/admin/app-icon.jpg",
