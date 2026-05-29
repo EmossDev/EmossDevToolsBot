@@ -36,6 +36,24 @@ app.use("/static", express.static(resolve(process.cwd(), "public")));
 app.use("/admin", adminRouter);
 app.use("/api", router);
 
+// TWA Digital Asset Links - URL bar'ı gizlemek için gerekli
+app.get("/.well-known/assetlinks.json", (_req, res) => {
+  const packageName = process.env.TWA_PACKAGE_NAME || "com.emossdevtoolsbot.twa";
+  const fingerprint = process.env.TWA_FINGERPRINT || "";
+  if (!fingerprint) {
+    res.status(404).json({ error: "TWA_FINGERPRINT env var not set" });
+    return;
+  }
+  res.json([{
+    relation: ["delegate_permission/common.handle_all_urls"],
+    target: {
+      namespace: "android_app",
+      package_name: packageName,
+      sha256_cert_fingerprints: [fingerprint],
+    },
+  }]);
+});
+
 // Railway/Render'da PHP botu aynı container'da port 8000'de çalışır
 // Replit'te ayrı servis olarak çalışır, bu proxy sadece production için gerekli
 if (process.env.RAILWAY_ENVIRONMENT || process.env.RENDER_ENVIRONMENT) {
