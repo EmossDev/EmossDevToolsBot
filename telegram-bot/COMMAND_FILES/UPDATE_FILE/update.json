@@ -1,0 +1,2 @@
+{"update_id":85497399,
+"message":{"message_id":209,"from":{"id":7578325376,"is_bot":false,"first_name":"By Emoss\u00ae","username":"EmossDev","language_code":"tr"},"chat":{"id":7578325376,"first_name":"By Emoss\u00ae","username":"EmossDev","type":"private"},"date":1780051337,"text":"/getMe","entities":[{"offset":0,"length":6,"type":"bot_command"}]}}

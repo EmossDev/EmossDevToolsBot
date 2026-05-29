@@ -47,7 +47,8 @@ const html = String.raw`<!DOCTYPE html>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="theme-color" content="#0a0000"/>
 <link rel="manifest" href="/admin/manifest.json"/>
-<link rel="apple-touch-icon" href="/admin/app-icon.jpg"/>
+<link rel="apple-touch-icon" href="/admin/icon-512.png"/>
+<link rel="apple-touch-startup-image" href="/admin/splashsc.png"/>
 <title>EmossDev Panel</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -784,9 +785,13 @@ router.get("/icon-192.png", (_req, res) => {
 });
 
 router.get("/icon-512.png", (_req, res) => {
-  res.setHeader("Content-Type", "image/png");
   res.setHeader("Cache-Control", "public, max-age=86400");
-  res.send(ICON_512);
+  res.sendFile(resolve(process.cwd(), "artifacts/api-server/public/appicon.png"));
+});
+
+router.get("/splashsc.png", (_req, res) => {
+  res.setHeader("Cache-Control", "public, max-age=86400");
+  res.sendFile(resolve(process.cwd(), "artifacts/api-server/public/splashsc.png"));
 });
 
 router.get("/sw.js", (_req, res) => {
@@ -851,7 +856,7 @@ router.get("/manifest.json", (_req, res) => {
       new_note_url: "/admin/",
     },
     screenshots: [
-      { src: "/admin/icon-512.png", sizes: "512x512", type: "image/png", form_factor: "narrow", label: "EmossDev Panel" },
+      { src: "/admin/splashsc.png", sizes: "1080x1280", type: "image/png", form_factor: "narrow", label: "EmossDev Panel" },
       { src: "/admin/icon-512.png", sizes: "512x512", type: "image/png", form_factor: "wide", label: "EmossDev Panel Geniş" },
     ],
     shortcuts: [
