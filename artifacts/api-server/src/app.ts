@@ -36,9 +36,9 @@ app.use("/static", express.static(resolve(process.cwd(), "public")));
 app.use("/admin", adminRouter);
 app.use("/api", router);
 
-// Railway'de PHP botu aynı container'da port 8000'de çalışır
-// Replit'te ayrı servis olarak çalışır, bu proxy sadece Railway için gerekli
-if (process.env.RAILWAY_ENVIRONMENT) {
+// Railway/Render'da PHP botu aynı container'da port 8000'de çalışır
+// Replit'te ayrı servis olarak çalışır, bu proxy sadece production için gerekli
+if (process.env.RAILWAY_ENVIRONMENT || process.env.RENDER_ENVIRONMENT) {
   app.use(
     "/bot",
     createProxyMiddleware({
