@@ -1,45 +1,54 @@
 # EmossDev Tools Bot
 
-Bu proje, EmossDevToolsBot adlı PHP tabanlı Telegram botunu Replit üzerinde çalıştırır.
+PHP tabanlı Telegram botu — Termux (Android) üzerinde 7/24 çalışır.
 
-## Run & Operate
+## Çalıştırma
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+### Termux (Ana ortam)
+```bash
+bash start-local.sh
+```
+- PHP Bot: `http://localhost:8000`
+- Admin Panel: `http://localhost:3000/admin`
+- Loglar: `tail -f $TMPDIR/emoss-php.log`
+
+### GitHub'a push
+```bash
+bash setup-github.sh && git push github main
+```
+
+## Mimari
+
+- **PHP Bot** (`telegram-bot/`) — Telegram webhook'larını işler
+- **Admin Panel** (`artifacts/api-server/`) — Express 5 API + yönetim arayüzü
+- **PHP Sunucu** — `php-server.php` (lock-free socket sunucusu, MIUI uyumlu)
+- **Webhook** — localhost.run tüneli üzerinden Telegram'a bağlanır
 
 ## Stack
 
-- pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- PHP 8.5 (bot), Node.js 26, TypeScript 5.9
+- pnpm workspaces, Express 5, esbuild
+- Telegram Bot API (webhook modu)
 
-## Where things live
+## Önemli Dosyalar
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
-
-## Architecture decisions
-
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
-
-## Product
-
-_Describe the high-level user-facing capabilities of this app once they exist._
-
-## User preferences
-
-_Populate as you build — explicit user instructions worth remembering across sessions._
+| Dosya | Açıklama |
+|-------|----------|
+| `start-local.sh` | Termux başlatma scripti |
+| `telegram-bot/php-server.php` | Lock-free PHP HTTP sunucusu |
+| `telegram-bot/index.php` | Bot ana dosyası |
+| `telegram-bot/COMMAND_FILES/DATA_FILE/config.json` | Bot token, webhook URL |
+| `artifacts/api-server/dist/` | Pre-built panel (build atlanır) |
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- **MIUI flock() yasağı**: `php -S`, `php-cgi -b`, `php-fpm` hepsi "Cannot create lock" hatası verir. Çözüm: `php-server.php` (socket_*() kullanır, lock yok)
+- **php://input CLI'da çalışmaz**: Body temp dosyaya yazılır, `BRIDGE_INPUT_FILE` env var ile PHP'ye iletilir
+- **MongoDB URL**: `config.json`'daki `databaseUrl` HTTP URL değil, mongodb+srv:// — `file_get_contents` ile kullanılamaz; `$onlinePhishing = ""` sabitlenmiş
+- **Webhook 200 OK**: PHP işlemesi bitmeden 200 döner (async), aksi halde Telegram retry yapar
+- **Pre-built dist**: `artifacts/api-server/dist/` commit'li — Termux'ta build/install atlanır
 
-## Pointers
+## User preferences
 
-- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+- Render kullanılmıyor, sadece Termux
+- Webhook: localhost.run tüneli

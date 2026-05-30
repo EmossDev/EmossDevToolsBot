@@ -1,0 +1,3 @@
+- [MIUI PHP lock bypass](miui-php-lock.md) — MIUI flock() engeller; php-S/php-cgi-b/php-fpm hepsi başarısız; çözüm: php-server.php (socket_*())
+- [PHP CLI stdin sorunu](php-cli-stdin.md) — php://input CLI'da çalışmaz; body temp dosyaya yaz, BRIDGE_INPUT_FILE env var ile PHP'ye ilet
+- [Telegram webhook async](telegram-webhook-async.md) — 200 OK anında dönmeli, PHP işlemesi arka planda; aksi halde Telegram retry yapar ve kullanıcı gecikme hisseder
