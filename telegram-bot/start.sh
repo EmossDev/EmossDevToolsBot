@@ -1,4 +1,5 @@
 #!/bin/bash
-cd /home/runner/workspace/telegram-bot
-PORT=${PORT:-8000}
-exec php -S 0.0.0.0:$PORT -t /home/runner/workspace/telegram-bot router.php
+# PHP bot başlatma — Replit, Render, Termux, Linux hepsinde çalışır
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+PORT="${PORT:-8000}"
+exec php -S 0.0.0.0:"$PORT" -t "$ROOT" "$ROOT/router.php"
