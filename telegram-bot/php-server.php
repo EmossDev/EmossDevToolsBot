@@ -145,7 +145,11 @@ while (true) {
             file_put_contents($errLog, date('[H:i:s] ') . "fork child başladı, tmpFile=$tmpFile\n", FILE_APPEND);
             // Çıktıyı sustur (bot() zaten Telegram API'yi kendisi çağırır)
             ob_start();
-            include $root . '/router.php';
+            try {
+                include $root . '/router.php';
+            } catch (\Throwable $e) {
+                file_put_contents($errLog, date('[H:i:s] ') . "HATA: " . $e->getMessage() . " @ " . $e->getFile() . ":" . $e->getLine() . "\n", FILE_APPEND);
+            }
             ob_end_clean();
             file_put_contents($errLog, date('[H:i:s] ') . "fork child bitti\n", FILE_APPEND);
             @unlink($tmpFile);
