@@ -11,13 +11,17 @@ mkdir -p "$TMPD"
 export TMPDIR="$TMPD"
 export TMP="$TMPD"
 export TEMP="$TMPD"
-# PHP 8.3+ built-in server: tek worker modunda lock dosyası oluşturmaz
 export PHP_CLI_SERVER_WORKERS=1
 
-exec php \
-  -d sys_temp_dir="$TMPD" \
-  -d session.save_path="$TMPD" \
-  -d upload_tmp_dir="$TMPD" \
+# -d sys_temp_dir çok geç işleniyor; -c ile erken yüklenen php.ini kullan
+PHP_INI="$TMPD/php-local.ini"
+cat > "$PHP_INI" <<EOF
+sys_temp_dir = $TMPD
+session.save_path = $TMPD
+upload_tmp_dir = $TMPD
+EOF
+
+exec php -c "$PHP_INI" \
   -S 0.0.0.0:"$PORT" \
   -t "$ROOT" \
   "$ROOT/router.php"
