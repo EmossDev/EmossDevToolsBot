@@ -321,11 +321,11 @@ if ($reply_document){
 
 # ENTİTİES RESULT
 
-$entities_id = $message->entities{1}->user->id;
-$entities_first_name = $message->entities{1}->user->first_name;
-$entities_last_name = $message->entities{1}->user->last_name;
-$entities_username = $message->entities{1}->user->username;
-$bot_command_control = $message->entities{0}->type;
+$entities_id = $message->entities[1]->user->id;
+$entities_first_name = $message->entities[1]->user->first_name;
+$entities_last_name = $message->entities[1]->user->last_name;
+$entities_username = $message->entities[1]->user->username;
+$bot_command_control = $message->entities[0]->type;
 
 
 # CALLBACK
@@ -342,10 +342,10 @@ $callback_last_name_ = $update->callback_query->from->last_name;
 $callback_username_ = $update->callback_query->from->username;
 $callback_message_id = $update->callback_query->message->message_id;
 
-$callback_entities_id = $update->callback_query->message->entities{1}->user->id;
-$callback_entities_first_name_ = $update->callback_query->message->entities{1}->user->first_name;
-$callback_entities_last_name_ = $update->callback_query->message->entities{1}->user->last_name;
-$callback_entities_username_ = $update->callback_query->message->entities{1}->user->username;
+$callback_entities_id = $update->callback_query->message->entities[1]->user->id;
+$callback_entities_first_name_ = $update->callback_query->message->entities[1]->user->first_name;
+$callback_entities_last_name_ = $update->callback_query->message->entities[1]->user->last_name;
+$callback_entities_username_ = $update->callback_query->message->entities[1]->user->username;
 
 
 /////////////////////////
