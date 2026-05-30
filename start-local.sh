@@ -94,7 +94,7 @@ if [ "$TERMUX" = true ]; then
   # Termux/Xiaomi: php -S ve php-cgi lock sorunu yaşar
   # Çözüm: Node.js PHP köprüsü — php-cgi CGI modunda çalıştırır, lock yok
   echo "[*] Node.js PHP köprüsü kullanılıyor (lock sorunu bypass)..."
-  export PHP_CGI_BIN="$(command -v php-cgi)"
+  export PHP_BIN="$(command -v php)"
   PORT=8000 node "$ROOT/telegram-bot/php-bridge.mjs" > "$PHP_LOG" 2>&1 &
   PHP_PID=$!
 else

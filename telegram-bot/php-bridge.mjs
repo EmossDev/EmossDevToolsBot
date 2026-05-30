@@ -39,8 +39,8 @@ const server = http.createServer((req, res) => {
       env['HTTP_' + k.toUpperCase().replace(/-/g, '_')] = v;
     }
 
-    // php-cgi CGI modunda çalıştır (FastCGI değil → lock yok)
-    const phpBin = process.env.PHP_CGI_BIN || 'php-cgi';
+    // Düz php CLI kullan — php-cgi/php-S lock mekanizması yok
+    const phpBin = process.env.PHP_BIN || 'php';
     const php = spawn(phpBin, ['router.php'], { cwd: __dir, env });
 
     if (body.length > 0) php.stdin.write(body);
