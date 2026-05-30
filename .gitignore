@@ -2,6 +2,8 @@
 
 # compiled output
 dist
+# api-server dist'i repo'ya dahil — Termux/Linux'ta build gerekmez
+!artifacts/api-server/dist/
 tmp
 out-tsc
 *.tsbuildinfo

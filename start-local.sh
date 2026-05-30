@@ -59,16 +59,22 @@ if ! command -v pnpm &>/dev/null; then
 fi
 echo "[OK] pnpm: $(pnpm -v)"
 
-# ---- Bağımlılıkları yükle ----
-if [ ! -d "$ROOT/node_modules" ]; then
-  echo "[*] Bağımlılıklar yükleniyor (ilk kurulumda biraz sürebilir)..."
-  pnpm install --no-frozen-lockfile
-fi
+# ---- Build kontrolü ----
+DIST="$ROOT/artifacts/api-server/dist/index.mjs"
+if [ -f "$DIST" ]; then
+  echo "[OK] Derlenmiş panel hazır, build atlanıyor."
+else
+  echo "[*] dist bulunamadı, derleniyor..."
 
-# ---- Build ----
-echo "[*] Admin panel derleniyor..."
-pnpm --filter @workspace/api-server run build
-echo "[OK] Build tamamlandı."
+  # Bağımlılıkları yükle
+  if [ ! -d "$ROOT/node_modules" ]; then
+    echo "[*] Bağımlılıklar yükleniyor..."
+    pnpm install --no-frozen-lockfile
+  fi
+
+  pnpm --filter @workspace/api-server run build
+  echo "[OK] Build tamamlandı."
+fi
 
 # ---- Port ayarları ----
 export PORT="${PORT:-3000}"
