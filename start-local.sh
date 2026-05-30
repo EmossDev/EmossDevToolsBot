@@ -163,9 +163,10 @@ FPMCONF
   fi
 
   if [ "$USE_FPM" != true ]; then
-    echo "[*] Spawn köprüsü kullanılıyor (yavaş — php-fpm/php-cgi yoksa)..."
+    # Son seçenek: lock-free PHP socket sunucusu (socket_*() flock gerektirmez)
+    echo "[*] Lock-free PHP socket sunucusu kullanılıyor..."
     export PHP_BIN="$(command -v php)"
-    PORT=8000 node "$ROOT/telegram-bot/php-bridge.mjs" > "$PHP_LOG" 2>&1 &
+    PORT=8000 PHP_BIN="$PHP_BIN" php "$ROOT/telegram-bot/php-server.php" > "$PHP_LOG" 2>&1 &
     PHP_PID=$!
   fi
 
