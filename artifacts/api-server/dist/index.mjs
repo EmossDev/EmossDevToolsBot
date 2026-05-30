@@ -37592,9 +37592,7 @@ router4.get("/manifest.json", (_req, res) => {
     dir: "ltr",
     categories: ["utilities", "productivity"],
     prefer_related_applications: false,
-    related_applications: [
-      { platform: "webapp", url: "https://emossdevtoolsbot.onrender.com/admin/manifest.json" }
-    ],
+    related_applications: [],
     launch_handler: {
       client_mode: ["navigate-existing", "auto"]
     },
@@ -37613,9 +37611,7 @@ router4.get("/manifest.json", (_req, res) => {
     file_handlers: [
       { action: "/admin/", accept: { "application/json": [".json"] } }
     ],
-    scope_extensions: [
-      { origin: "https://emossdevtoolsbot.onrender.com" }
-    ],
+    scope_extensions: [],
     iarc_rating_id: "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
     widgets: [
       { name: "EmossDev Durum", description: "Bot durum widget", tag: "emossdev-status", ms_ac_template: "/admin/manifest.json", data: "/admin/" }
