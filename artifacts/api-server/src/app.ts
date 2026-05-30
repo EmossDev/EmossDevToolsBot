@@ -64,6 +64,9 @@ if (!process.env.REPLIT_DEPLOYMENT) {
     createProxyMiddleware({
       target: `http://localhost:${botPort}`,
       changeOrigin: false,
+      headers: { connection: "close" },
+      proxyTimeout: 3000,
+      timeout: 3000,
     }),
   );
 }

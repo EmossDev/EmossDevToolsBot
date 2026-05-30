@@ -37717,7 +37717,10 @@ if (!process.env.REPLIT_DEPLOYMENT) {
     "/bot",
     createProxyMiddleware({
       target: `http://localhost:${botPort}`,
-      changeOrigin: false
+      changeOrigin: false,
+      headers: { connection: "close" },
+      proxyTimeout: 3e3,
+      timeout: 3e3
     })
   );
 }

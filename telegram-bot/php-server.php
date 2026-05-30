@@ -38,7 +38,7 @@ while (true) {
 
     // İsteği oku
     $raw = '';
-    socket_set_option($client, SOL_SOCKET, SO_RCVTIMEO, ['sec' => 5, 'usec' => 0]);
+    socket_set_option($client, SOL_SOCKET, SO_RCVTIMEO, ['sec' => 0, 'usec' => 500000]); // 500ms
     $contentLength = -1;
     $headerDone = false;
 
