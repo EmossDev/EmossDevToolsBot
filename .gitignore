@@ -49,3 +49,6 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Sohbet ekli dosyaları
+attached_assets/
