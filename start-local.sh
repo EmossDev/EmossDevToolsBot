@@ -213,10 +213,10 @@ if command -v ssh &>/dev/null; then
       > "$TUNNEL_LOG" 2>&1 &
   TUNNEL_PID=$!
 
-  # URL'nin gelmesini bekle (max 8 saniye)
-  for i in $(seq 1 16); do
+  # URL'nin gelmesini bekle (max 20 saniye)
+  for i in $(seq 1 40); do
     sleep 0.5
-    TUNNEL_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.(lhr\.life|lhrtunnel\.link)' "$TUNNEL_LOG" 2>/dev/null | head -1 || true)
+    TUNNEL_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.(lhr\.life|lhrtunnel\.link)' "$TUNNEL_LOG" 2>/dev/null | tail -1 || true)
     [ -n "$TUNNEL_URL" ] && break
   done
 
