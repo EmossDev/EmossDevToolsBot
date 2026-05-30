@@ -27,7 +27,7 @@ function Filters_Datas($name,$command="0") {
 
                         $type = $data["data"]["filters"]["$name"]["$keys"]["type"];
 
-                        if (preg_match("/^$filters_name\b/i", $query)){
+                        if ($query !== null && preg_match("/^$filters_name\b/i", $query)){
                                 if ($type == "0"){
                                         bot("sendMessage",[
                                                 'chat_id'=>_CHAT_ID,
