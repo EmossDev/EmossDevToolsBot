@@ -131,8 +131,12 @@ while (true) {
         if ($pid === 0) {
             // ── ÇOCUK süreç ───────────────────────────────────────────────
             socket_close($sock); // sunucu soketini kapat
-            // Env'i yükle
-            foreach ($env as $k => $v) putenv("$k=$v");
+            // Env'i yükle — putenv + $_SERVER + $_ENV hepsini doldur
+            foreach ($env as $k => $v) {
+                putenv("$k=$v");
+                $_SERVER[$k] = $v;
+                $_ENV[$k]    = $v;
+            }
             chdir($root);
             // Çıktıyı sustur (bot() zaten Telegram API'yi kendisi çağırır)
             ob_start();
