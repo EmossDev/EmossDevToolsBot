@@ -113,8 +113,14 @@ while (true) {
         $env[$envKey] = trim($v);
     }
 
-    // PHP'yi spawn et
-    $descriptor = [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']];
+    // Telegram'a 200 OK HEMEN dön — PHP işlemesi arka planda devam eder
+    // Bu sayede kullanıcı bekleme hissetmez; Telegram retry yapmaz
+    $ack = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nContent-Type: text/plain\r\nConnection: close\r\n\r\n";
+    socket_write($client, $ack, strlen($ack));
+    socket_close($client);
+
+    // PHP'yi arka planda spawn et (bağlantı zaten kapatıldı)
+    $descriptor = [['pipe', 'r'], ['pipe', 'w'], STDERR];
     $proc = proc_open(
         $phpBin . ' -d display_errors=Off ' . escapeshellarg($root . '/router.php'),
         $descriptor,
@@ -124,43 +130,10 @@ while (true) {
     );
 
     fclose($pipes[0]);
-    $phpOut = stream_get_contents($pipes[1]);
+    // stdout'u oku (PHP çıktısı — genellikle boş; Telegram API zaten çağrıldı)
+    stream_get_contents($pipes[1]);
     fclose($pipes[1]);
-    fclose($pipes[2]);
     proc_close($proc);
 
     @unlink($tmpFile);
-
-    // HTTP yanıtı oluştur
-    $sep4 = strpos($phpOut, "\r\n\r\n");
-    $sep2 = strpos($phpOut, "\n\n");
-    $sepIdx = ($sep4 !== false) ? $sep4 : $sep2;
-
-    if ($sepIdx === false) {
-        // Header yok — sadece body
-        $response = "HTTP/1.1 200 OK\r\nContent-Length: " . strlen($phpOut) . "\r\nContent-Type: text/html\r\nConnection: close\r\n\r\n" . $phpOut;
-    } else {
-        $rawHeaders = substr($phpOut, 0, $sepIdx);
-        $phpBody    = substr($phpOut, $sepIdx + ($sep4 !== false ? 4 : 2));
-
-        $statusLine = 200;
-        $respHeaders = '';
-        foreach (explode("\n", str_replace("\r\n", "\n", $rawHeaders)) as $line) {
-            $line = trim($line);
-            if (!$line) continue;
-            if (preg_match('/^status:\s*(\d+)/i', $line, $m)) {
-                $statusLine = (int)$m[1];
-            } else {
-                $respHeaders .= $line . "\r\n";
-            }
-        }
-        $response  = "HTTP/1.1 $statusLine OK\r\n";
-        $response .= $respHeaders;
-        $response .= "Content-Length: " . strlen($phpBody) . "\r\n";
-        $response .= "Connection: close\r\n\r\n";
-        $response .= $phpBody;
-    }
-
-    socket_write($client, $response, strlen($response));
-    socket_close($client);
 }
