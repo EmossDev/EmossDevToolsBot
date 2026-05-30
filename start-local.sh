@@ -222,6 +222,23 @@ if command -v ssh &>/dev/null; then
 
   if [ -n "$TUNNEL_URL" ]; then
     echo "[OK] Tünel: $TUNNEL_URL"
+
+    # Webhook'u otomatik Telegram'a kaydet
+    CONFIG_FILE="$ROOT/telegram-bot/COMMAND_FILES/DATA_FILE/config.json"
+    BOT_TOKEN=""
+    if command -v python3 &>/dev/null; then
+      BOT_TOKEN=$(python3 -c "import json,sys; d=json.load(open('$CONFIG_FILE')); print(d['bot']['token'])" 2>/dev/null || true)
+    fi
+    if [ -n "$BOT_TOKEN" ]; then
+      WEBHOOK_RESP=$(curl -sf "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${TUNNEL_URL}/bot/" 2>/dev/null || true)
+      if echo "$WEBHOOK_RESP" | grep -q '"ok":true'; then
+        echo "[OK] Webhook güncellendi: ${TUNNEL_URL}/bot/"
+      else
+        echo "[!] Webhook güncellenemedi: $WEBHOOK_RESP"
+      fi
+    else
+      echo "[!] Bot token okunamadı, webhook elle güncelle."
+    fi
   else
     echo "[!] Tünel URL'si alınamadı — log: $TUNNEL_LOG"
   fi
