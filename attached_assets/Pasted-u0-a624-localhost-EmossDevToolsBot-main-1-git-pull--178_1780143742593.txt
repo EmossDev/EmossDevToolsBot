@@ -1,0 +1,49 @@
+u0_a624@localhost ~/EmossDevToolsBot (main) [1]> git pull
+                                                 bash start-local.sh
+remote: Enumerating objects: 22, done.
+remote: Counting objects: 100% (22/22), done.
+remote: Compressing objects: 100% (8/8), done.
+remote: Total 17 (delta 9), reused 17 (delta 9), pack-reused 0 (from 0)
+Unpacking objects: 100% (17/17), 1.02 MiB | 863.00 KiB/s, done.
+From https://github.com/EmossDev/EmossDevToolsBot
+   ed763b9..344122d  main       -> origin/main
+Updating ed763b9..344122d
+Fast-forward
+ .gitignore                                             |     2 +
+ artifacts/api-server/dist/index.mjs                    | 38077 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ artifacts/api-server/dist/index.mjs.map                |     7 +
+ artifacts/api-server/dist/pino-file.mjs                |  4350 +++++++
+ artifacts/api-server/dist/pino-file.mjs.map            |     7 +
+ artifacts/api-server/dist/pino-pretty.mjs              |  3312 +++++
+ artifacts/api-server/dist/pino-pretty.mjs.map          |     7 +
+ artifacts/api-server/dist/pino-worker.mjs              |  4706 +++++++
+ artifacts/api-server/dist/pino-worker.mjs.map          |     7 +
+ artifacts/api-server/dist/thread-stream-worker.mjs     |   228 +
+ artifacts/api-server/dist/thread-stream-worker.mjs.map |     7 +
+ start-local.sh                                         |    24 +-
+ 12 files changed, 50725 insertions(+), 9 deletions(-)
+ create mode 100644 artifacts/api-server/dist/index.mjs
+ create mode 100644 artifacts/api-server/dist/index.mjs.map
+ create mode 100644 artifacts/api-server/dist/pino-file.mjs
+ create mode 100644 artifacts/api-server/dist/pino-file.mjs.map
+ create mode 100644 artifacts/api-server/dist/pino-pretty.mjs
+ create mode 100644 artifacts/api-server/dist/pino-pretty.mjs.map
+ create mode 100644 artifacts/api-server/dist/pino-worker.mjs
+ create mode 100644 artifacts/api-server/dist/pino-worker.mjs.map
+ create mode 100644 artifacts/api-server/dist/thread-stream-worker.mjs
+ create mode 100644 artifacts/api-server/dist/thread-stream-worker.mjs.map
+========================================
+  EmossDev Panel + Bot
+========================================
+
+[*] Ortam: Termux (Android)
+[OK] PHP: 8.5.1
+[OK] Node.js: v26.2.0
+[OK] pnpm: 11.5.0
+[OK] Derlenmiş panel hazır, build atlanıyor.
+
+[*] PHP Bot başlatılıyor (port 8000)...
+start-local.sh: line 86: /tmp/emoss-php.log: Permission denied
+[HATA] PHP bot başlatılamadı! Log:
+cat: /tmp/emoss-php.log: No such file or directory
+u0_a624@localhost ~/EmossDevToolsBot (main) [1]>

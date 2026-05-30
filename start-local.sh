@@ -82,28 +82,33 @@ export NODE_ENV=production
 export RENDER_ENVIRONMENT=true   # PHP proxy aktif olsun diye
 
 echo ""
+# Termux'ta /tmp yazılabilir değil, $TMPDIR kullan
+LOGDIR="${TMPDIR:-/tmp}"
+PHP_LOG="$LOGDIR/emoss-php.log"
+NODE_LOG="$LOGDIR/emoss-node.log"
+
 echo "[*] PHP Bot başlatılıyor (port 8000)..."
-PORT=8000 bash "$ROOT/telegram-bot/start.sh" > /tmp/emoss-php.log 2>&1 &
+PORT=8000 bash "$ROOT/telegram-bot/start.sh" > "$PHP_LOG" 2>&1 &
 PHP_PID=$!
 
 sleep 1
 
 if ! kill -0 "$PHP_PID" 2>/dev/null; then
   echo "[HATA] PHP bot başlatılamadı! Log:"
-  cat /tmp/emoss-php.log
+  cat "$PHP_LOG"
   exit 1
 fi
 echo "[OK] PHP Bot çalışıyor (PID: $PHP_PID)"
 
 echo "[*] Admin Panel başlatılıyor (port $PORT)..."
-node --enable-source-maps "$ROOT/artifacts/api-server/dist/index.mjs" > /tmp/emoss-node.log 2>&1 &
+node --enable-source-maps "$ROOT/artifacts/api-server/dist/index.mjs" > "$NODE_LOG" 2>&1 &
 NODE_PID=$!
 
 sleep 1
 
 if ! kill -0 "$NODE_PID" 2>/dev/null; then
   echo "[HATA] Admin panel başlatılamadı! Log:"
-  cat /tmp/emoss-node.log
+  cat "$NODE_LOG"
   kill "$PHP_PID" 2>/dev/null
   exit 1
 fi
@@ -115,8 +120,8 @@ echo "  Admin Panel : http://localhost:$PORT/admin"
 echo "  PHP Bot      : http://localhost:8000"
 echo ""
 echo "  Loglar:"
-echo "    tail -f /tmp/emoss-node.log"
-echo "    tail -f /tmp/emoss-php.log"
+echo "    tail -f $NODE_LOG"
+echo "    tail -f $PHP_LOG"
 echo ""
 echo "  Durdurmak için: Ctrl+C"
 echo "========================================"
