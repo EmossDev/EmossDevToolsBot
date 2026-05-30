@@ -52,3 +52,6 @@ Thumbs.db
 
 # Sohbet ekli dosyaları
 attached_assets/
+
+# PHP runtime temp (Termux/Linux yerel çalışma)
+telegram-bot/.tmp/
