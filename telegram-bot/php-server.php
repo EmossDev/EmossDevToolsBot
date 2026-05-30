@@ -113,27 +113,48 @@ while (true) {
         $env[$envKey] = trim($v);
     }
 
-    // Telegram'a 200 OK HEMEN dön — PHP işlemesi arka planda devam eder
-    // Bu sayede kullanıcı bekleme hissetmez; Telegram retry yapmaz
+    // ── 200 OK HEMEN dön ──────────────────────────────────────────────────
     $ack = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nContent-Type: text/plain\r\nConnection: close\r\n\r\n";
     socket_write($client, $ack, strlen($ack));
     socket_close($client);
 
-    // PHP'yi arka planda spawn et (bağlantı zaten kapatıldı)
+    // ── İşleme: fork varsa fork, yoksa proc_open ──────────────────────────
+    if (function_exists('pcntl_fork')) {
+        // Zombie reap — önceki tamamlanmış çocukları temizle
+        pcntl_waitpid(-1, $_st, WNOHANG);
+
+        $pid = pcntl_fork();
+        if ($pid === -1) {
+            // Fork başarısız → proc_open'a düş
+            goto spawn;
+        }
+        if ($pid === 0) {
+            // ── ÇOCUK süreç ───────────────────────────────────────────────
+            socket_close($sock); // sunucu soketini kapat
+            // Env'i yükle
+            foreach ($env as $k => $v) putenv("$k=$v");
+            chdir($root);
+            // Çıktıyı sustur (bot() zaten Telegram API'yi kendisi çağırır)
+            ob_start();
+            @include $root . '/router.php';
+            ob_end_clean();
+            @unlink($tmpFile);
+            exit(0);
+        }
+        // ── ANA süreç — sonraki bağlantıya geç ───────────────────────────
+        continue;
+    }
+
+    spawn:
+    // proc_open fallback (fork yoksa)
     $descriptor = [['pipe', 'r'], ['pipe', 'w'], STDERR];
     $proc = proc_open(
         $phpBin . ' -d display_errors=Off ' . escapeshellarg($root . '/router.php'),
-        $descriptor,
-        $pipes,
-        $root,
-        $env
+        $descriptor, $pipes, $root, $env
     );
-
     fclose($pipes[0]);
-    // stdout'u oku (PHP çıktısı — genellikle boş; Telegram API zaten çağrıldı)
     stream_get_contents($pipes[1]);
     fclose($pipes[1]);
     proc_close($proc);
-
     @unlink($tmpFile);
 }
