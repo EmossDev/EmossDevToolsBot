@@ -37711,11 +37711,12 @@ app.get("/.well-known/assetlinks.json", (_req, res) => {
     }
   }]);
 });
-if (process.env.RAILWAY_ENVIRONMENT || process.env.RENDER_ENVIRONMENT) {
+if (!process.env.REPLIT_DEPLOYMENT) {
+  const botPort = process.env.BOT_PORT || "8000";
   app.use(
     "/bot",
     createProxyMiddleware({
-      target: "http://localhost:8000",
+      target: `http://localhost:${botPort}`,
       changeOrigin: false
     })
   );

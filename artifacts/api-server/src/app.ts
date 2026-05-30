@@ -54,13 +54,15 @@ app.get("/.well-known/assetlinks.json", (_req, res) => {
   }]);
 });
 
-// Railway/Render'da PHP botu aynı container'da port 8000'de çalışır
-// Replit'te ayrı servis olarak çalışır, bu proxy sadece production için gerekli
-if (process.env.RAILWAY_ENVIRONMENT || process.env.RENDER_ENVIRONMENT) {
+// PHP bot proxy — Replit dışında her zaman aktif
+// Tek port (3000) üzerinden hem admin hem bot çalışır
+// Telegram webhook: https://tunnel/bot/
+if (!process.env.REPLIT_DEPLOYMENT) {
+  const botPort = process.env.BOT_PORT || "8000";
   app.use(
     "/bot",
     createProxyMiddleware({
-      target: "http://localhost:8000",
+      target: `http://localhost:${botPort}`,
       changeOrigin: false,
     }),
   );

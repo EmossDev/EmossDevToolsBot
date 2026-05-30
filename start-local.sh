@@ -75,8 +75,8 @@ fi
 
 # ---- Port ayarları ----
 export PORT="${PORT:-3000}"
+export BOT_PORT=8000
 export NODE_ENV=production
-export RENDER_ENVIRONMENT=true
 
 echo ""
 LOGDIR="${TMPDIR:-$ROOT/.tmp}"
