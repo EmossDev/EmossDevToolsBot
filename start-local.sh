@@ -65,13 +65,10 @@ if [ -f "$DIST" ]; then
   echo "[OK] Derlenmiş panel hazır, build atlanıyor."
 else
   echo "[*] dist bulunamadı, derleniyor..."
-
-  # Bağımlılıkları yükle
   if [ ! -d "$ROOT/node_modules" ]; then
     echo "[*] Bağımlılıklar yükleniyor..."
     pnpm install --no-frozen-lockfile
   fi
-
   pnpm --filter @workspace/api-server run build
   echo "[OK] Build tamamlandı."
 fi
@@ -79,24 +76,74 @@ fi
 # ---- Port ayarları ----
 export PORT="${PORT:-3000}"
 export NODE_ENV=production
-export RENDER_ENVIRONMENT=true   # PHP proxy aktif olsun diye
+export RENDER_ENVIRONMENT=true
 
 echo ""
-# Log dizini — Termux'ta /tmp yerine $TMPDIR
 LOGDIR="${TMPDIR:-$ROOT/.tmp}"
 mkdir -p "$LOGDIR"
+mkdir -p "$ROOT/telegram-bot/.tmp"
 PHP_LOG="$LOGDIR/emoss-php.log"
 NODE_LOG="$LOGDIR/emoss-node.log"
 
-# PHP sunucu başlatma
+# ── PHP Bot başlatma ───────────────────────────────────────────────────────
 echo "[*] PHP Bot başlatılıyor (port 8000)..."
+
+PHP_PID=""
+
 if [ "$TERMUX" = true ]; then
-  # Termux/Xiaomi: php -S ve php-cgi lock sorunu yaşar
-  # Çözüm: Node.js PHP köprüsü — php-cgi CGI modunda çalıştırır, lock yok
-  echo "[*] Node.js PHP köprüsü kullanılıyor (lock sorunu bypass)..."
-  export PHP_BIN="$(command -v php)"
-  PORT=8000 node "$ROOT/telegram-bot/php-bridge.mjs" > "$PHP_LOG" 2>&1 &
-  PHP_PID=$!
+  # Termux: önce php-fpm dene (çok daha hızlı — süreç canlı kalır)
+  FPM_BIN="$(command -v php-fpm 2>/dev/null || true)"
+  if [ -n "$FPM_BIN" ]; then
+    echo "[*] php-fpm bulundu — FastCGI modu (hızlı)..."
+    FPM_CONF="$ROOT/telegram-bot/.tmp/php-fpm.conf"
+    FPM_PID_FILE="$ROOT/telegram-bot/.tmp/php-fpm.pid"
+    FPM_SOCK_PORT=9000
+
+    cat > "$FPM_CONF" <<FPMCONF
+[global]
+pid = $FPM_PID_FILE
+error_log = $LOGDIR/php-fpm-error.log
+daemonize = yes
+
+[www]
+listen = 127.0.0.1:$FPM_SOCK_PORT
+pm = static
+pm.max_children = 2
+php_admin_value[sys_temp_dir] = $ROOT/telegram-bot/.tmp
+php_admin_value[upload_tmp_dir] = $ROOT/telegram-bot/.tmp
+php_admin_value[display_errors] = Off
+FPMCONF
+
+    # Eski fpm varsa durdur
+    if [ -f "$FPM_PID_FILE" ]; then
+      kill "$(cat "$FPM_PID_FILE")" 2>/dev/null || true
+      rm -f "$FPM_PID_FILE"
+      sleep 1
+    fi
+
+    "$FPM_BIN" -y "$FPM_CONF" 2>>"$LOGDIR/php-fpm-error.log"
+    sleep 1
+
+    if [ -f "$FPM_PID_FILE" ] && kill -0 "$(cat "$FPM_PID_FILE")" 2>/dev/null; then
+      echo "[OK] php-fpm çalışıyor (PID: $(cat "$FPM_PID_FILE"))"
+      FPM_PORT=$FPM_SOCK_PORT PORT=8000 node "$ROOT/telegram-bot/php-fpm-bridge.mjs" > "$PHP_LOG" 2>&1 &
+      PHP_PID=$!
+      USE_FPM=true
+    else
+      echo "[!] php-fpm başlatılamadı, fallback: spawn köprüsü..."
+      USE_FPM=false
+    fi
+  else
+    echo "[*] php-fpm yok — spawn köprüsü kullanılıyor..."
+    USE_FPM=false
+  fi
+
+  if [ "$USE_FPM" != true ]; then
+    export PHP_BIN="$(command -v php)"
+    PORT=8000 node "$ROOT/telegram-bot/php-bridge.mjs" > "$PHP_LOG" 2>&1 &
+    PHP_PID=$!
+  fi
+
 else
   # Linux: php -S normalde çalışır
   PORT=8000 bash "$ROOT/telegram-bot/start.sh" > "$PHP_LOG" 2>&1 &
@@ -139,19 +186,26 @@ echo "  Durdurmak için: Ctrl+C"
 echo "========================================"
 echo ""
 
-# Ctrl+C gelince her ikisini de durdur
 cleanup() {
   echo ""
   echo "[*] Durduruluyor..."
   kill "$PHP_PID" "$NODE_PID" 2>/dev/null
+  # php-fpm'i de durdur
+  FPM_PID_FILE="$ROOT/telegram-bot/.tmp/php-fpm.pid"
+  if [ -f "$FPM_PID_FILE" ]; then
+    kill "$(cat "$FPM_PID_FILE")" 2>/dev/null || true
+  fi
   exit 0
 }
 trap cleanup INT TERM
 
-# Her iki process'i de bekle (bash 3+ uyumlu)
 while kill -0 "$PHP_PID" 2>/dev/null && kill -0 "$NODE_PID" 2>/dev/null; do
   sleep 2
 done
 
 echo "[!] Bir servis kapandı, diğeri de durduruluyor..."
 kill "$PHP_PID" "$NODE_PID" 2>/dev/null
+FPM_PID_FILE="$ROOT/telegram-bot/.tmp/php-fpm.pid"
+if [ -f "$FPM_PID_FILE" ]; then
+  kill "$(cat "$FPM_PID_FILE")" 2>/dev/null || true
+fi
