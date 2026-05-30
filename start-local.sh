@@ -82,14 +82,49 @@ export NODE_ENV=production
 export RENDER_ENVIRONMENT=true   # PHP proxy aktif olsun diye
 
 echo ""
-# Termux'ta /tmp yazılabilir değil, $TMPDIR kullan
-LOGDIR="${TMPDIR:-/tmp}"
+# Log dizini — Termux'ta /tmp yerine $TMPDIR
+LOGDIR="${TMPDIR:-$ROOT/.tmp}"
+mkdir -p "$LOGDIR"
 PHP_LOG="$LOGDIR/emoss-php.log"
 NODE_LOG="$LOGDIR/emoss-node.log"
 
+# PHP sunucu başlatma
 echo "[*] PHP Bot başlatılıyor (port 8000)..."
-PORT=8000 bash "$ROOT/telegram-bot/start.sh" > "$PHP_LOG" 2>&1 &
-PHP_PID=$!
+if [ "$TERMUX" = true ]; then
+  # Termux: php -S lock sorunu yaşar, lighttpd kullan
+  if ! command -v lighttpd &>/dev/null; then
+    echo "[*] lighttpd kuruluyor..."
+    pkg install lighttpd -y
+  fi
+  # lighttpd için dinamik config oluştur
+  LIGHTY_CONF="$LOGDIR/lighttpd.conf"
+  PHP_CGI="$(command -v php-cgi || echo php-cgi)"
+  PHP_SOCK="$LOGDIR/php-cgi.sock"
+  cat > "$LIGHTY_CONF" <<EOF
+server.document-root = "$ROOT/telegram-bot"
+server.port = 8000
+server.modules = ("mod_fastcgi", "mod_rewrite")
+index-file.names = ("router.php", "index.php")
+url.rewrite-once = ("^/(.*)$" => "/router.php")
+fastcgi.server = (
+  ".php" => ((
+    "bin-path"    => "$PHP_CGI",
+    "socket"      => "$PHP_SOCK",
+    "max-procs"   => 1,
+    "bin-environment" => (
+      "PHP_SELF" => "/router.php",
+      "TMPDIR"   => "$LOGDIR"
+    )
+  ))
+)
+EOF
+  lighttpd -f "$LIGHTY_CONF" -D > "$PHP_LOG" 2>&1 &
+  PHP_PID=$!
+else
+  # Linux: php -S normalde çalışır
+  PORT=8000 bash "$ROOT/telegram-bot/start.sh" > "$PHP_LOG" 2>&1 &
+  PHP_PID=$!
+fi
 
 sleep 1
 
