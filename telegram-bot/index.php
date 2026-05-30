@@ -24,13 +24,9 @@ $BotWebhookUrl = $config_data->bot->webhookUrl;
 $_BotWebhookUrl = $BotWebhookUrl;
 //$_BotWebhookUrl = "False";
 
-// Köprü üzerinden (yerel) çalışırken MongoDB çağrısı atla — zaten bağlantı yok
-if (getenv('BRIDGE_INPUT_FILE')) {
-    $onlinePhishing = "";
-} else {
-    $_db_ctx = stream_context_create(['http' => ['timeout' => 3], 'https' => ['timeout' => 3]]);
-    $onlinePhishing = @file_get_contents("$BotDatabaseUrl/link.txt", false, $_db_ctx);
-}
+// BotDatabaseUrl bir MongoDB SRV adresi — HTTP değil, file_get_contents ile okunamaz.
+// Her istekte 3 saniyelik timeout'a neden olur. Devre dışı.
+$onlinePhishing = "";
 //$onlinePhishing = "https://muroo.herokuapp.com/index.php?login";
 
 
