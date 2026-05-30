@@ -142,16 +142,20 @@ while (true) {
             ini_set('error_log', $errLog);
             ini_set('display_errors', '0');
             error_reporting(E_ALL);
-            file_put_contents($errLog, date('[H:i:s] ') . "fork child başladı, tmpFile=$tmpFile\n", FILE_APPEND);
+            file_put_contents($errLog, date('[H:i:s] ') . "fork child başladı\n", FILE_APPEND);
+            register_shutdown_function(function() use ($errLog) {
+                $err = error_get_last();
+                $msg = $err ? " HATA={$err['message']} ({$err['file']}:{$err['line']})" : " temiz";
+                file_put_contents($errLog, date('[H:i:s] ') . "fork child kapandı:$msg\n", FILE_APPEND);
+            });
             // Çıktıyı sustur (bot() zaten Telegram API'yi kendisi çağırır)
             ob_start();
             try {
                 include $root . '/router.php';
             } catch (\Throwable $e) {
-                file_put_contents($errLog, date('[H:i:s] ') . "HATA: " . $e->getMessage() . " @ " . $e->getFile() . ":" . $e->getLine() . "\n", FILE_APPEND);
+                file_put_contents($errLog, date('[H:i:s] ') . "EXCEPTION: " . $e->getMessage() . " @ " . $e->getFile() . ":" . $e->getLine() . "\n", FILE_APPEND);
             }
             ob_end_clean();
-            file_put_contents($errLog, date('[H:i:s] ') . "fork child bitti\n", FILE_APPEND);
             @unlink($tmpFile);
             exit(0);
         }
