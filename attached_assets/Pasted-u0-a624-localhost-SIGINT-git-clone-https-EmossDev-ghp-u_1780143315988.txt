@@ -1,0 +1,47 @@
+u0_a624@localhost ~ [SIGINT]> git clone https://EmossDev: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@github.com/EmossDev/EmossDevToolsBot.git
+Cloning into 'EmossDevToolsBot'...
+remote: Enumerating objects: 576, done.
+remote: Counting objects: 100% (576/576), done.
+remote: Compressing objects: 100% (282/282), done.
+remote: Total 576 (delta 254), reused 569 (delta 248), pack-reused 0 (from 0)
+Receiving objects: 100% (576/576), 897.85 KiB | 902.00 KiB/s, done.
+Resolving deltas: 100% (254/254), done.
+u0_a624@localhost ~> cd EmossDevToolsBot/
+u0_a624@localhost ~/EmossDevToolsBot (main)> bash start-local.sh
+========================================
+  EmossDev Panel + Bot
+========================================
+
+[*] Ortam: Termux (Android)
+[OK] PHP: 8.5.1
+[OK] Node.js: v26.2.0
+[*] pnpm kuruluyor...
+
+added 1 package in 7s
+
+1 package is looking for funding
+  run `npm fund` for details
+npm notice
+npm notice New minor version of npm available! 11.15.0 -> 11.16.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.16.0
+npm notice To update run: npm install -g npm@11.16.0
+npm notice
+[OK] pnpm: 11.5.0
+[*] Bağımlılıklar yükleniyor (ilk kurulumda biraz sürebilir)...
+Scope: all 8 workspace projects
+✓ Lockfile passes supply-chain policies (480 entries in 23.2s)
+Lockfile is up to date, resolution step is skipped
+Packages: +474
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+[WARN] Tarball download average speed 43 KiB/s (size 185 KiB) is below 50 KiB/s: https://registry.npmjs.org/@babel/core/-/core-7.29.0.tgz (GET)
+Progress: resolved 474, reused 0, downloaded 474, added 474, done
+
+devDependencies:
++ prettier 3.8.3
++ typescript 5.9.3
+
+. preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm…
+│ Use pnpm instead
+└─ Failed in 216ms at /data/data/com.termux/files/home/EmossDevToolsBot
+[ELIFECYCLE] Command failed with exit code 1.
+u0_a624@localhost ~/EmossDevToolsBot (main) [1]>
