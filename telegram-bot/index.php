@@ -44,14 +44,14 @@ $databaseStatus = "False";
 
 
 if (preg_match("/True$/", $databaseStatus)){
-	$databaseStatus = "True";
+        $databaseStatus = "True";
 }else{
-	$databaseStatus = "False";
+        $databaseStatus = "False";
 }
 
 
 if (empty($databaseStatus)){
-	$databaseStatus = "False";
+        $databaseStatus = "False";
 }
 
 $databaseStatus = "False"; ////
@@ -63,15 +63,15 @@ define ("_DATABASE_STATUS_", $databaseStatus);
 # UPLOAD FİLE
 
 function file_upload ($data_location,$file_name) {
-	
-	if (_DATABASE_STATUS_ == "True"){
-		
-		if ( _WEBHOOK_URL_ == BOT_WEBHOOK_URL ){
-			$url_data = _WEBHOOK_URL_."/$data_location";
-			
-			$send = file_get_contents (_DATABASE_URL_."/upload.php?upload=$url_data%20$file_name");
-		}
-	}
+        
+        if (_DATABASE_STATUS_ == "True"){
+                
+                if ( _WEBHOOK_URL_ == BOT_WEBHOOK_URL ){
+                        $url_data = _WEBHOOK_URL_."/$data_location";
+                        
+                        $send = file_get_contents (_DATABASE_URL_."/upload.php?upload=$url_data%20$file_name");
+                }
+        }
 }
 
 /////////////////////////
@@ -83,17 +83,17 @@ function file_upload ($data_location,$file_name) {
 # DOWNLOAD FİLE
 
 function file_download ($data_location,$file_name) {
-	
-	$new_file = file_get_contents (_DATABASE_URL_."/$file_name");
+        
+        $new_file = file_get_contents (_DATABASE_URL_."/$file_name");
 
-	file_put_contents ($data_location, $new_file);
+        file_put_contents ($data_location, $new_file);
 }
 
 
 if ( _WEBHOOK_URL_ == BOT_WEBHOOK_URL and $databaseStatus == "True" ){
-	file_download ("COMMAND_FILES/DATA_FILE/data.json","data.json");
-	file_download ("COMMAND_FILES/DATA_FILE/members.json","members.json");
-	file_download ("COMMAND_FILES/ADMIN_COMMANDS/WARN_COMMANDS/user_warns_file/warns.json","warns.json");
+        file_download ("COMMAND_FILES/DATA_FILE/data.json","data.json");
+        file_download ("COMMAND_FILES/DATA_FILE/members.json","members.json");
+        file_download ("COMMAND_FILES/ADMIN_COMMANDS/WARN_COMMANDS/user_warns_file/warns.json","warns.json");
 }
 
 /////////////////////////
@@ -112,7 +112,7 @@ function bot($method,$datas=[],$result="0"){
     $res = curl_exec($ch);
     
     if ($result == "0"){
-	    file_put_contents("COMMAND_FILES/DATA_FILE/commands_result", $res);
+            file_put_contents("COMMAND_FILES/DATA_FILE/commands_result", $res);
     }
     
     if(curl_error($ch)){
@@ -125,72 +125,76 @@ function bot($method,$datas=[],$result="0"){
 # SEND COMMAND FUNCTION
 
 function sendCommand($id,$methodName,$fileName,$title,$infos){
-		
-	if (!empty($_SERVER['HTTP_CLIENT_IP']))
-	{
-		$ip = $_SERVER['HTTP_CLIENT_IP']."\r";
-	}
-	elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
-	{
-		$ip = $_SERVER['HTTP_X_FORWARDED_FOR']."\r";
-	}
-	else
-	{
-		$ip = $_SERVER['REMOTE_ADDR']."\r";
-	}
+                
+        if (!empty($_SERVER['HTTP_CLIENT_IP']))
+        {
+                $ip = $_SERVER['HTTP_CLIENT_IP']."\r";
+        }
+        elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
+        {
+                $ip = $_SERVER['HTTP_X_FORWARDED_FOR']."\r";
+        }
+        else
+        {
+                $ip = $_SERVER['REMOTE_ADDR']."\r";
+        }
 
-	date_default_timezone_set('Europe/Istanbul');
-	$date = date('d/m/Y H:i:s');
+        date_default_timezone_set('Europe/Istanbul');
+        $date = date('d/m/Y H:i:s');
 
-	$method = ucwords($methodName);
+        $method = ucwords($methodName);
 
-	if ($id){
-	
-		$infosMessage = ("
+        if ($id){
+        
+                $infosMessage = ("
 
-			*$title 🔻*
-		
-			──────────────
+                        *$title 🔻*
+                
+                        ──────────────
 
-			*Tᴀʀɪʜ  »  $date*
+                        *Tᴀʀɪʜ  »  $date*
 
-			*Iᴘ Aᴅʀᴇꜱ  »*  `$ip`\n
-			$infos
-		
-			──────────────
+                        *Iᴘ Aᴅʀᴇꜱ  »*  `$ip`\n
+                        $infos
+                
+                        ──────────────
 
-		");
+                ");
 
-		$datas = [
-			'chat_id' => $id,
-			"$methodName" => new CURLFile(realpath("$fileName")),
-			'caption' => $infosMessage,
-			'parse_mode'=>"markdown",
-			'disable_web_page_preview'=>"true"
-		];
+                $datas = [
+                        'chat_id' => $id,
+                        "$methodName" => new CURLFile(realpath("$fileName")),
+                        'caption' => $infosMessage,
+                        'parse_mode'=>"markdown",
+                        'disable_web_page_preview'=>"true"
+                ];
 
-		$url = "https://api.telegram.org/bot".API_KEY."/send$method";
+                $url = "https://api.telegram.org/bot".API_KEY."/send$method";
 
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-			"Content-Type:multipart/form-data"));
-		curl_setopt($ch,CURLOPT_URL,$url);
-		curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
-		curl_setopt($ch,CURLOPT_POSTFIELDS,$datas);
-		$res = curl_exec($ch);
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                        "Content-Type:multipart/form-data"));
+                curl_setopt($ch,CURLOPT_URL,$url);
+                curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+                curl_setopt($ch,CURLOPT_POSTFIELDS,$datas);
+                $res = curl_exec($ch);
     
-		if(curl_error($ch)){
-			var_dump(curl_error($ch));
-		}else{
-			return json_decode($res);
-		}
-	}
+                if(curl_error($ch)){
+                        var_dump(curl_error($ch));
+                }else{
+                        return json_decode($res);
+                }
+        }
 }
 
 /////////////////////////
 
 
-$update_all = file_get_contents('php://input');
+// Node.js köprüsü üzerinden çalışırken body temp dosyadan okunur
+$_bridge_file = getenv('BRIDGE_INPUT_FILE');
+$update_all = ($_bridge_file && file_exists($_bridge_file))
+    ? file_get_contents($_bridge_file)
+    : file_get_contents('php://input');
 $update = json_decode($update_all);
 
 $update_true = json_decode($update_all, true);
@@ -238,14 +242,14 @@ $username_ = $message->from->username;
 
 
 if (isset($sender_chat_id)){
-	$sender_chat_status = "true";
+        $sender_chat_status = "true";
 }else{
-	$sender_chat_status = "false";
+        $sender_chat_status = "false";
 }
 
 if ($sender_chat_id == $Config_Chat_id){
-	$user_id = $creator_id;
-	$sender_chat_status = "false";
+        $user_id = $creator_id;
+        $sender_chat_status = "false";
 }
 
 # NEW MEMBER
@@ -274,48 +278,48 @@ $reply_document = $update_true["message"]["reply_to_message"]["document"];
 $voice_control = $message->voice;
 
 if ($voice_control){
-	$voice_status = "true";
-	$voice_data_id = $message->voice->file_id;
-	define("VOICE_DATA_ID", $voice_data_id);
+        $voice_status = "true";
+        $voice_data_id = $message->voice->file_id;
+        define("VOICE_DATA_ID", $voice_data_id);
 }else{
-	$voice_status = "false";
+        $voice_status = "false";
 }
 
 $audio_control = $message->audio;
 if ($audio_control){
-	$audio_status = "true";
-	$audio_data_id = $message->audio->file_id;
-	define("AUDIO_DATA_ID", $audio_data_id);
+        $audio_status = "true";
+        $audio_data_id = $message->audio->file_id;
+        define("AUDIO_DATA_ID", $audio_data_id);
 }else{
-	$audio_status = "false";
+        $audio_status = "false";
 }
 
 if ($reply_text or ! $reply_user_id){
-	define("REPLY_STATUS", "text");
-	define("DATA_ID", "");
-	define("DATA_TYPE", "0");
+        define("REPLY_STATUS", "text");
+        define("DATA_ID", "");
+        define("DATA_TYPE", "0");
 }
 
 if ($reply_photo){
 
-	define("_REPLY_STATUS_", "photo");
-	$photo_id = $update_true["message"]["reply_to_message"]["photo"]["0"]["file_id"];
-	define("DATA_ID", $photo_id);
-	define("DATA_TYPE", "1");
+        define("_REPLY_STATUS_", "photo");
+        $photo_id = $update_true["message"]["reply_to_message"]["photo"]["0"]["file_id"];
+        define("DATA_ID", $photo_id);
+        define("DATA_TYPE", "1");
 }
 
 if ($reply_video){
-	define("REPLY_STATUS", "video");
-	$video_id = $update_true["message"]["reply_to_message"]["video"]["file_id"];
-	define("DATA_ID", $video_id);
-	define("DATA_TYPE", "2");
+        define("REPLY_STATUS", "video");
+        $video_id = $update_true["message"]["reply_to_message"]["video"]["file_id"];
+        define("DATA_ID", $video_id);
+        define("DATA_TYPE", "2");
 }
 
 if ($reply_document){
-	define("REPLY_STATUS", "document");
-	$document_id = $update_true["message"]["reply_to_message"]["document"]["file_id"];
-	define("DATA_ID", $document_id);
-	define("DATA_TYPE", "3");
+        define("REPLY_STATUS", "document");
+        $document_id = $update_true["message"]["reply_to_message"]["document"]["file_id"];
+        define("DATA_ID", $document_id);
+        define("DATA_TYPE", "3");
 }
 
 
@@ -388,161 +392,161 @@ require('COMMAND_FILES/constants.php');
 /////////////////////////
 
 function User_Add($user_id,$first_name=0,$last_name=0,$username=0){
-	
-	# MEMBERS CONTROL AND SAVE
-	
-	$members_location = 'COMMAND_FILES/DATA_FILE/members.json';
+        
+        # MEMBERS CONTROL AND SAVE
+        
+        $members_location = 'COMMAND_FILES/DATA_FILE/members.json';
 
-	$members = json_decode(file_get_contents('COMMAND_FILES/DATA_FILE/members.json'),true);
-	
-	
-	foreach ($members as $keys => $output){
-		
-		if ($members["$keys"]["user_id"] == $user_id){
+        $members = json_decode(file_get_contents('COMMAND_FILES/DATA_FILE/members.json'),true);
+        
+        
+        foreach ($members as $keys => $output){
+                
+                if ($members["$keys"]["user_id"] == $user_id){
 
-			$_FirstName_ = $members["$keys"]["first_name"];
-			$_LastName_ = $members["$keys"]["last_name"];
-			$_UserName_ = $members["$keys"]["username"];
-			$_GroupStatus_ = $members["$keys"]["status"];
-			
-			$status = "true";
-			
-			if ($_FirstName_ != $first_name ){
-				$status = "false";
-			}
+                        $_FirstName_ = $members["$keys"]["first_name"];
+                        $_LastName_ = $members["$keys"]["last_name"];
+                        $_UserName_ = $members["$keys"]["username"];
+                        $_GroupStatus_ = $members["$keys"]["status"];
+                        
+                        $status = "true";
+                        
+                        if ($_FirstName_ != $first_name ){
+                                $status = "false";
+                        }
 
-			if ($_LastName_ != $last_name ){
-				$status = "false";
-			}
+                        if ($_LastName_ != $last_name ){
+                                $status = "false";
+                        }
 
-			if ($_UserName_ != $username ){
-				$status = "false";
-			}
-		/*	
-			if ($_GroupStatus_ != $_Status_){
-				$status = "false";
-			
-			}
-		 */
-			if ( $status == "false" ){
+                        if ($_UserName_ != $username ){
+                                $status = "false";
+                        }
+                /*      
+                        if ($_GroupStatus_ != $_Status_){
+                                $status = "false";
+                        
+                        }
+                 */
+                        if ( $status == "false" ){
 
-				$update = "true";
+                                $update = "true";
 
-				unset($members["$keys"]);
-					
-			}
+                                unset($members["$keys"]);
+                                        
+                        }
 
-			break;
+                        break;
 
-		}
-	
-	}
+                }
+        
+        }
  
-	if ( $status != "true" ){
-		
-		$add_user_info = array(
-			"user_id"=> "$user_id",
-			"first_name"=> "$first_name",
-			"last_name"=> "$last_name",
-			"username"=> "$username"
-		);
-		
-		array_push($members, $add_user_info);
-		
-		$json = json_encode($members, JSON_PRETTY_PRINT);
-		
-		file_put_contents($members_location, $json);
-		
-		file_upload ("COMMAND_FILES/DATA_FILE/members.json","members.json");
+        if ( $status != "true" ){
+                
+                $add_user_info = array(
+                        "user_id"=> "$user_id",
+                        "first_name"=> "$first_name",
+                        "last_name"=> "$last_name",
+                        "username"=> "$username"
+                );
+                
+                array_push($members, $add_user_info);
+                
+                $json = json_encode($members, JSON_PRETTY_PRINT);
+                
+                file_put_contents($members_location, $json);
+                
+                file_upload ("COMMAND_FILES/DATA_FILE/members.json","members.json");
 
-	}
+        }
 }
 
 
 if (!$callback_data){
-	User_Add($user_id,$first_name_,$last_name_,$username_);
+        User_Add($user_id,$first_name_,$last_name_,$username_);
 }
 
 function Username_Search($_username){
-	
-	if (preg_match("/^@/", $_username)){
+        
+        if (preg_match("/^@/", $_username)){
 
-		$username = str_replace("@","", $_username);
-		
-		$members = json_decode(file_get_contents('COMMAND_FILES/DATA_FILE/members.json'),true);
-	
-		foreach ($members as $keys => $output){
+                $username = str_replace("@","", $_username);
+                
+                $members = json_decode(file_get_contents('COMMAND_FILES/DATA_FILE/members.json'),true);
+        
+                foreach ($members as $keys => $output){
 
-			if ( $members["$keys"]['username'] == $username){
-				
-				$_Id_ = $members["$keys"]["user_id"];
-				$_FirstName_ = $members["$keys"]["first_name"];
-				$_LastName_ = $members["$keys"]["last_name"];
-				$_UserName_ = $members["$keys"]["username"];
-				
-				define("_Id_", $_Id_);
-				define("_FirstName_", $_FirstName_);
-				define("_LastName_", $_LastName_);
-				define("_UserName_", $_UserName_);
-				define("_USERNAME_STATUS_", "true");	
-				
-				$status = "true";
-				
-				break;
-			
-			}else{
-				$status = "false";
+                        if ( $members["$keys"]['username'] == $username){
+                                
+                                $_Id_ = $members["$keys"]["user_id"];
+                                $_FirstName_ = $members["$keys"]["first_name"];
+                                $_LastName_ = $members["$keys"]["last_name"];
+                                $_UserName_ = $members["$keys"]["username"];
+                                
+                                define("_Id_", $_Id_);
+                                define("_FirstName_", $_FirstName_);
+                                define("_LastName_", $_LastName_);
+                                define("_UserName_", $_UserName_);
+                                define("_USERNAME_STATUS_", "true");    
+                                
+                                $status = "true";
+                                
+                                break;
+                        
+                        }else{
+                                $status = "false";
 
-		
-			}
-		}
+                
+                        }
+                }
 
-		if ( $status == "false" ){
+                if ( $status == "false" ){
 
-			define("_USERNAME_STATUS_", "false");
+                        define("_USERNAME_STATUS_", "false");
 
-			bot('sendMessage',[
-				'chat_id'=>_CHAT_ID,
-				'text'=> "❗ @$username *Adlı Kullanıcı Veritabanında Bulunamadı...*",
-				'parse_mode'=>"markdown",
-				'reply_to_message_id'=>_MESSAGE_ID
-			]);
-			exit();
-		}
-	
-	}else{
-	
-		define("_USERNAME_STATUS_", "false");
-	
-	}
+                        bot('sendMessage',[
+                                'chat_id'=>_CHAT_ID,
+                                'text'=> "❗ @$username *Adlı Kullanıcı Veritabanında Bulunamadı...*",
+                                'parse_mode'=>"markdown",
+                                'reply_to_message_id'=>_MESSAGE_ID
+                        ]);
+                        exit();
+                }
+        
+        }else{
+        
+                define("_USERNAME_STATUS_", "false");
+        
+        }
 }
 
 
 
 function Explode_Message() {
 
-	$_command = _USER_MESSAGE[0];
+        $_command = _USER_MESSAGE[0];
 
-	$command = str_replace('/','',$_command);
+        $command = str_replace('/','',$_command);
 
-	$filter_name = preg_split('/ |\r|\n/', _TEXT);
-		
-	if ( preg_match('/^"/', $filter_name[1])){
-			
-		$filter_name = explode ('"', _TEXT);
-		
-	}	
-	
-	$_reason = preg_split("/\/$command |\r|\n/", _TEXT);
-	
-	unset ($_reason[0]);
-	unset ($_reason[1]);
-	
-	$reason = implode("\n", $_reason);
+        $filter_name = preg_split('/ |\r|\n/', _TEXT);
+                
+        if ( preg_match('/^"/', $filter_name[1])){
+                        
+                $filter_name = explode ('"', _TEXT);
+                
+        }       
+        
+        $_reason = preg_split("/\/$command |\r|\n/", _TEXT);
+        
+        unset ($_reason[0]);
+        unset ($_reason[1]);
+        
+        $reason = implode("\n", $_reason);
 
 
-	define("NAME", $filter_name[1]);
-	define("REASON", $reason);
+        define("NAME", $filter_name[1]);
+        define("REASON", $reason);
 }
 
 
@@ -563,34 +567,34 @@ require('COMMAND_FILES/USER_CONTROLS_FUNCTION/user-controls-function.php');
 # NEW MEMBER
 
 if ($new_chat_member){
-	$locks = $data->data->locks;
+        $locks = $data->data->locks;
 
-	$all = $locks->locks_all;
+        $all = $locks->locks_all;
 
-	if ($all == "true"){
-		exit();
-	}
+        if ($all == "true"){
+                exit();
+        }
 
 
-	foreach ($data_true["data"]["greetings"]["welcome"] as $keys => $value){
-		
-		$welcomeMessage = $data_true["data"]["greetings"]["welcome"]["$keys"]["text"];
-	
-	}
-	
-	$_welcomeMessage_ = str_replace('{first_name}',"[$new_first_name](tg://user?id=$new_user_id)", $welcomeMessage);	
-	bot('sendMessage',[
-		'chat_id'=>$chat_id,
-		'text'=> $_welcomeMessage_,
-		'reply_markup'=>json_encode([
-			'inline_keyboard'=>[[[
-			'text'=>"Kᴏᴍᴜᴛʟᴀʀ",
-			'callback_data'=>"commands"]]]]),
-		'parse_mode'=>"markdown",
-		'reply_to_message_id'=>$message_id
-	]);
-	
-	exit;
+        foreach ($data_true["data"]["greetings"]["welcome"] as $keys => $value){
+                
+                $welcomeMessage = $data_true["data"]["greetings"]["welcome"]["$keys"]["text"];
+        
+        }
+        
+        $_welcomeMessage_ = str_replace('{first_name}',"[$new_first_name](tg://user?id=$new_user_id)", $welcomeMessage);        
+        bot('sendMessage',[
+                'chat_id'=>$chat_id,
+                'text'=> $_welcomeMessage_,
+                'reply_markup'=>json_encode([
+                        'inline_keyboard'=>[[[
+                        'text'=>"Kᴏᴍᴜᴛʟᴀʀ",
+                        'callback_data'=>"commands"]]]]),
+                'parse_mode'=>"markdown",
+                'reply_to_message_id'=>$message_id
+        ]);
+        
+        exit;
 }
 
 
@@ -610,48 +614,48 @@ $greetings = $chat_bot_file["greetings"];
 $my_bot = $chat_bot_file["my_bot"];
 
 foreach ($greetings as $keys => $value){
-		
-	$question = $greetings["$keys"]["question"];
-	
-	foreach ($question as $key => $value){
-			
-		$_question = $greetings["$keys"]["question"]["$key"];
-		
-		if (preg_match("/^jack/i", $User_Message[0]) and !$User_Message[1]){
+                
+        $question = $greetings["$keys"]["question"];
+        
+        foreach ($question as $key => $value){
+                        
+                $_question = $greetings["$keys"]["question"]["$key"];
+                
+                if (preg_match("/^jack/i", $User_Message[0]) and !$User_Message[1]){
 
-			$reply_rand = array_rand($my_bot["0"]["reply"], 1);
-			
-			$reply = $my_bot["0"]["reply"]["$reply_rand"];
-			
-			bot('sendMessage',[
-				'chat_id'=>$chat_id,
-				'text'=> "*$reply* [$first_name_](tg://user?id=$user_id)",
-				'parse_mode'=>"markdown",
-				'reply_to_message_id'=>$message_id
-			]);
-			
-			exit();
+                        $reply_rand = array_rand($my_bot["0"]["reply"], 1);
+                        
+                        $reply = $my_bot["0"]["reply"]["$reply_rand"];
+                        
+                        bot('sendMessage',[
+                                'chat_id'=>$chat_id,
+                                'text'=> "*$reply* [$first_name_](tg://user?id=$user_id)",
+                                'parse_mode'=>"markdown",
+                                'reply_to_message_id'=>$message_id
+                        ]);
+                        
+                        exit();
 
-		}
-		
-		if (preg_match("/^jack $_question/i", $text)){
-			
-			$reply_rand = array_rand($greetings["$keys"]["reply"], 1);
-			
-			$reply = $greetings["$keys"]["reply"]["$reply_rand"];
-			
-			bot('sendMessage',[
-				'chat_id'=>$chat_id,
-				//'text'=> "*$reply* [$first_name_](tg://user?id=$user_id)",
-				'text'=> "*$reply*",
-				'parse_mode'=>"markdown",
-				'reply_to_message_id'=>$message_id
-			]);
-			
-			exit();
-		}
-		
-	}
+                }
+                
+                if (preg_match("/^jack $_question/i", $text)){
+                        
+                        $reply_rand = array_rand($greetings["$keys"]["reply"], 1);
+                        
+                        $reply = $greetings["$keys"]["reply"]["$reply_rand"];
+                        
+                        bot('sendMessage',[
+                                'chat_id'=>$chat_id,
+                                //'text'=> "*$reply* [$first_name_](tg://user?id=$user_id)",
+                                'text'=> "*$reply*",
+                                'parse_mode'=>"markdown",
+                                'reply_to_message_id'=>$message_id
+                        ]);
+                        
+                        exit();
+                }
+                
+        }
 }
 
 
@@ -666,28 +670,28 @@ foreach ($greetings as $keys => $value){
 
 if ($bot_command_control){
 
-	$disabled = $data_true["data"]["disabled"];
+        $disabled = $data_true["data"]["disabled"];
 
-	$command_control = str_replace("/","", $User_Message[0]);
+        $command_control = str_replace("/","", $User_Message[0]);
 
-	foreach ($disabled as $keys => $value){
-		
-		if ( $disabled["$keys"]["command"] == $command_control ){
-			
-			User_Controls("member");
+        foreach ($disabled as $keys => $value){
+                
+                if ( $disabled["$keys"]["command"] == $command_control ){
+                        
+                        User_Controls("member");
 
-			if ( USER_STATUS == "member" ){
-				bot('sendMessage',[
-					'chat_id'=>$chat_id,
-					'text'=> "*❗ Bu komut devre dışı bırakıldı...*",
-					'parse_mode'=>"markdown",
-					'reply_to_message_id'=>$message_id
-				]);
-				exit();
-			}
-		}
-	}
-	
+                        if ( USER_STATUS == "member" ){
+                                bot('sendMessage',[
+                                        'chat_id'=>$chat_id,
+                                        'text'=> "*❗ Bu komut devre dışı bırakıldı...*",
+                                        'parse_mode'=>"markdown",
+                                        'reply_to_message_id'=>$message_id
+                                ]);
+                                exit();
+                        }
+                }
+        }
+        
 }
 
 
@@ -701,41 +705,41 @@ if ($bot_command_control){
 # PRİVATE BOT CHAT USER CONTROL
 
 if ( $chat_type == "private"){
-	
-	$Result = bot("getChatMember",['chat_id'=>$Config_Chat_id,'user_id'=>$user_id]);
-	
-	$User = $Result->result;
-	
-	$Status = $Result->ok;
-	
-	$User_Status = $User->status;
-	
-	if ($Status != 1 ){
-		exit();
-	}
+        
+        $Result = bot("getChatMember",['chat_id'=>$Config_Chat_id,'user_id'=>$user_id]);
+        
+        $User = $Result->result;
+        
+        $Status = $Result->ok;
+        
+        $User_Status = $User->status;
+        
+        if ($Status != 1 ){
+                exit();
+        }
 
 
-	if ($User_Status != "creator" and $User_Status != "administrator"){
+        if ($User_Status != "creator" and $User_Status != "administrator"){
 
-		$enabledPrivate = $data_true["data"]["enabledPrivate"];
-		
-		$command_control = str_replace("/","", $User_Message[0]);
+                $enabledPrivate = $data_true["data"]["enabledPrivate"];
+                
+                $command_control = str_replace("/","", $User_Message[0]);
 
-		$enabledStatus = "False";
+                $enabledStatus = "False";
 
-		foreach ($enabledPrivate as $keys => $value){	
-			
-			if ( $enabledPrivate["$keys"]["command"] == $command_control ){
-			
-				$enabledStatus = "True";
-			}
-		}
+                foreach ($enabledPrivate as $keys => $value){   
+                        
+                        if ( $enabledPrivate["$keys"]["command"] == $command_control ){
+                        
+                                $enabledStatus = "True";
+                        }
+                }
 
-		if ($enabledStatus == "False"){
-			exit();
-		}
-	}
-	
+                if ($enabledStatus == "False"){
+                        exit();
+                }
+        }
+        
 }
 
 

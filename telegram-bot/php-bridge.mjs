@@ -6,6 +6,8 @@ import http from 'http';
 import { spawn } from 'child_process';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { writeFileSync, unlinkSync } from 'fs';
+import { randomBytes } from 'crypto';
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const PORT = parseInt(process.env.PORT || '8000');
@@ -39,17 +41,22 @@ const server = http.createServer((req, res) => {
       env['HTTP_' + k.toUpperCase().replace(/-/g, '_')] = v;
     }
 
+    // Request body'yi temp dosyaya yaz — php://input CLI'da stdin okumaz
+    const tmpFile = resolve(__dir, '.tmp', 'req_' + randomBytes(8).toString('hex') + '.json');
+    try { writeFileSync(tmpFile, body); } catch(e) {}
+    env['BRIDGE_INPUT_FILE'] = tmpFile;
+
     // Düz php CLI kullan — php-cgi/php-S lock mekanizması yok
     const phpBin = process.env.PHP_BIN || 'php';
-    const php = spawn(phpBin, ['router.php'], { cwd: __dir, env });
+    const php = spawn(phpBin, ['-d', 'display_errors=Off', 'router.php'], { cwd: __dir, env });
 
-    if (body.length > 0) php.stdin.write(body);
     php.stdin.end();
 
     let out = Buffer.alloc(0);
     php.stdout.on('data', c => { out = Buffer.concat([out, c]); });
 
     php.stdout.on('end', () => {
+      try { unlinkSync(tmpFile); } catch(e) {}
       const str = out.toString('binary');
       // HTTP header bloğunu bul
       const sep4 = str.indexOf('\r\n\r\n');
