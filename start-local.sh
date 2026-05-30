@@ -199,14 +199,45 @@ if ! kill -0 "$NODE_PID" 2>/dev/null; then
 fi
 echo "[OK] Admin Panel çalışıyor (PID: $NODE_PID)"
 
+# ── localhost.run tüneli ───────────────────────────────────────────────────
+TUNNEL_LOG="$LOGDIR/emoss-tunnel.log"
+TUNNEL_PID=""
+TUNNEL_URL=""
+
+if command -v ssh &>/dev/null; then
+  echo "[*] localhost.run tüneli başlatılıyor..."
+  ssh -o StrictHostKeyChecking=no \
+      -o ServerAliveInterval=30 \
+      -o ServerAliveCountMax=3 \
+      -R "80:localhost:$PORT" nokey@localhost.run \
+      > "$TUNNEL_LOG" 2>&1 &
+  TUNNEL_PID=$!
+
+  # URL'nin gelmesini bekle (max 8 saniye)
+  for i in $(seq 1 16); do
+    sleep 0.5
+    TUNNEL_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.lhrtunnel\.link' "$TUNNEL_LOG" 2>/dev/null | head -1 || true)
+    [ -n "$TUNNEL_URL" ] && break
+  done
+
+  if [ -n "$TUNNEL_URL" ]; then
+    echo "[OK] Tünel: $TUNNEL_URL"
+  else
+    echo "[!] Tünel URL'si alınamadı — log: $TUNNEL_LOG"
+  fi
+else
+  echo "[!] ssh bulunamadı, tünel atlandı. Manuel: ssh -R 80:localhost:$PORT nokey@localhost.run"
+fi
+
 echo ""
 echo "========================================"
 echo "  Admin Panel : http://localhost:$PORT/admin"
-echo "  PHP Bot      : http://localhost:8000"
+echo "  Bot Webhook  : ${TUNNEL_URL:-<tünel-url>}/bot/"
 echo ""
 echo "  Loglar:"
 echo "    tail -f $NODE_LOG"
 echo "    tail -f $PHP_LOG"
+echo "    tail -f $TUNNEL_LOG"
 echo ""
 echo "  Durdurmak için: Ctrl+C"
 echo "========================================"
@@ -216,7 +247,7 @@ cleanup() {
   echo ""
   echo "[*] Durduruluyor..."
   kill "$PHP_PID" "$NODE_PID" 2>/dev/null
-  # php-fpm'i de durdur
+  [ -n "$TUNNEL_PID" ] && kill "$TUNNEL_PID" 2>/dev/null
   FPM_PID_FILE="$ROOT/telegram-bot/.tmp/php-fpm.pid"
   if [ -f "$FPM_PID_FILE" ]; then
     kill "$(cat "$FPM_PID_FILE")" 2>/dev/null || true
@@ -229,8 +260,9 @@ while kill -0 "$PHP_PID" 2>/dev/null && kill -0 "$NODE_PID" 2>/dev/null; do
   sleep 2
 done
 
-echo "[!] Bir servis kapandı, diğeri de durduruluyor..."
+echo "[!] Bir servis kapandı, diğerleri de durduruluyor..."
 kill "$PHP_PID" "$NODE_PID" 2>/dev/null
+[ -n "$TUNNEL_PID" ] && kill "$TUNNEL_PID" 2>/dev/null
 FPM_PID_FILE="$ROOT/telegram-bot/.tmp/php-fpm.pid"
 if [ -f "$FPM_PID_FILE" ]; then
   kill "$(cat "$FPM_PID_FILE")" 2>/dev/null || true
