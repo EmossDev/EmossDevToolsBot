@@ -138,9 +138,12 @@ while (true) {
                 $_ENV[$k]    = $v;
             }
             chdir($root);
+            ini_set('error_log', $root . '/.tmp/php-error.log');
+            ini_set('display_errors', '0');
+            error_reporting(E_ALL);
             // Çıktıyı sustur (bot() zaten Telegram API'yi kendisi çağırır)
             ob_start();
-            @include $root . '/router.php';
+            include $root . '/router.php';
             ob_end_clean();
             @unlink($tmpFile);
             exit(0);
