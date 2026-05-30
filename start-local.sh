@@ -92,7 +92,10 @@ PHP_PID=""
 
 if [ "$TERMUX" = true ]; then
   # Termux: önce php-fpm dene (çok daha hızlı — süreç canlı kalır)
-  FPM_BIN="$(command -v php-fpm 2>/dev/null || true)"
+  # Termux'ta php-fpm genellikle /data/data/com.termux/files/usr/sbin/ altındadır
+  FPM_BIN="$(command -v php-fpm 2>/dev/null \
+    || ls /data/data/com.termux/files/usr/sbin/php-fpm* 2>/dev/null | head -1 \
+    || true)"
   if [ -n "$FPM_BIN" ]; then
     echo "[*] php-fpm bulundu — FastCGI modu (hızlı)..."
     FPM_CONF="$ROOT/telegram-bot/.tmp/php-fpm.conf"
@@ -139,6 +142,28 @@ FPMCONF
   fi
 
   if [ "$USE_FPM" != true ]; then
+    # php-fpm yoksa php-cgi FastCGI modu dene (-b flag — lock sorunu YOK)
+    CGI_BIN="$(command -v php-cgi 2>/dev/null \
+      || ls /data/data/com.termux/files/usr/bin/php-cgi* 2>/dev/null | head -1 \
+      || true)"
+    if [ -n "$CGI_BIN" ]; then
+      echo "[*] php-cgi FastCGI modu kullanılıyor (port 9001)..."
+      "$CGI_BIN" -b 127.0.0.1:9001 >> "$LOGDIR/php-cgi.log" 2>&1 &
+      CGI_PID=$!
+      sleep 1
+      if kill -0 "$CGI_PID" 2>/dev/null; then
+        echo "[OK] php-cgi FastCGI çalışıyor (PID: $CGI_PID)"
+        FPM_PORT=9001 PORT=8000 node "$ROOT/telegram-bot/php-fpm-bridge.mjs" > "$PHP_LOG" 2>&1 &
+        PHP_PID=$!
+        USE_FPM=true
+      else
+        echo "[!] php-cgi de başlatılamadı, spawn köprüsüne geçiliyor..."
+      fi
+    fi
+  fi
+
+  if [ "$USE_FPM" != true ]; then
+    echo "[*] Spawn köprüsü kullanılıyor (yavaş — php-fpm/php-cgi yoksa)..."
     export PHP_BIN="$(command -v php)"
     PORT=8000 node "$ROOT/telegram-bot/php-bridge.mjs" > "$PHP_LOG" 2>&1 &
     PHP_PID=$!
