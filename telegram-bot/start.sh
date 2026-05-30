@@ -11,6 +11,8 @@ mkdir -p "$TMPD"
 export TMPDIR="$TMPD"
 export TMP="$TMPD"
 export TEMP="$TMPD"
+# PHP 8.3+ built-in server: tek worker modunda lock dosyası oluşturmaz
+export PHP_CLI_SERVER_WORKERS=1
 
 exec php \
   -d sys_temp_dir="$TMPD" \
