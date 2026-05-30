@@ -91,36 +91,11 @@ NODE_LOG="$LOGDIR/emoss-node.log"
 # PHP sunucu başlatma
 echo "[*] PHP Bot başlatılıyor (port 8000)..."
 if [ "$TERMUX" = true ]; then
-  # Termux: php -S lock sorunu yaşar, lighttpd kullan
-  if ! command -v lighttpd &>/dev/null; then
-    echo "[*] lighttpd kuruluyor..."
-    pkg install lighttpd -y
-  fi
-  # lighttpd için dinamik config oluştur (TCP FastCGI — socket'ten daha güvenilir)
-  LIGHTY_CONF="$LOGDIR/lighttpd.conf"
-  PHP_CGI="$(command -v php-cgi)"
-  FCG_PORT=9001
-  cat > "$LIGHTY_CONF" <<EOF
-server.document-root = "$ROOT/telegram-bot"
-server.port = 8000
-server.modules = ("mod_fastcgi", "mod_rewrite")
-server.errorlog = "$LOGDIR/lighttpd-error.log"
-index-file.names = ("router.php", "index.php")
-url.rewrite-once = ("^/(.*)$" => "/router.php")
-fastcgi.server = (
-  ".php" => ((
-    "host"        => "127.0.0.1",
-    "port"        => $FCG_PORT,
-    "bin-path"    => "$PHP_CGI",
-    "max-procs"   => 1,
-    "bin-environment" => (
-      "TMPDIR"          => "$LOGDIR",
-      "PHP_FCGI_MAX_REQUESTS" => "0"
-    )
-  ))
-)
-EOF
-  lighttpd -f "$LIGHTY_CONF" -D > "$PHP_LOG" 2>&1 &
+  # Termux/Xiaomi: php -S ve php-cgi lock sorunu yaşar
+  # Çözüm: Node.js PHP köprüsü — php-cgi CGI modunda çalıştırır, lock yok
+  echo "[*] Node.js PHP köprüsü kullanılıyor (lock sorunu bypass)..."
+  export PHP_CGI_BIN="$(command -v php-cgi)"
+  PORT=8000 node "$ROOT/telegram-bot/php-bridge.mjs" > "$PHP_LOG" 2>&1 &
   PHP_PID=$!
 else
   # Linux: php -S normalde çalışır
