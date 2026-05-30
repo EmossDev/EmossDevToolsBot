@@ -138,13 +138,16 @@ while (true) {
                 $_ENV[$k]    = $v;
             }
             chdir($root);
-            ini_set('error_log', $root . '/.tmp/php-error.log');
+            $errLog = $root . '/.tmp/php-error.log';
+            ini_set('error_log', $errLog);
             ini_set('display_errors', '0');
             error_reporting(E_ALL);
+            file_put_contents($errLog, date('[H:i:s] ') . "fork child başladı, tmpFile=$tmpFile\n", FILE_APPEND);
             // Çıktıyı sustur (bot() zaten Telegram API'yi kendisi çağırır)
             ob_start();
             include $root . '/router.php';
             ob_end_clean();
+            file_put_contents($errLog, date('[H:i:s] ') . "fork child bitti\n", FILE_APPEND);
             @unlink($tmpFile);
             exit(0);
         }
