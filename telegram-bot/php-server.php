@@ -148,14 +148,16 @@ while (true) {
                 $msg = $err ? " HATA={$err['message']} ({$err['file']}:{$err['line']})" : " temiz";
                 file_put_contents($errLog, date('[H:i:s] ') . "fork child kapandı:$msg\n", FILE_APPEND);
             });
-            // Çıktıyı sustur (bot() zaten Telegram API'yi kendisi çağırır)
             ob_start();
             try {
                 include $root . '/router.php';
             } catch (\Throwable $e) {
                 file_put_contents($errLog, date('[H:i:s] ') . "EXCEPTION: " . $e->getMessage() . " @ " . $e->getFile() . ":" . $e->getLine() . "\n", FILE_APPEND);
             }
-            ob_end_clean();
+            $phpOutput = ob_get_clean();
+            if (!empty(trim($phpOutput))) {
+                file_put_contents($errLog, date('[H:i:s] ') . "PHP_OUTPUT: " . substr(trim($phpOutput), 0, 800) . "\n", FILE_APPEND);
+            }
             @unlink($tmpFile);
             exit(0);
         }
