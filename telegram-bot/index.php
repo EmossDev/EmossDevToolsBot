@@ -113,13 +113,17 @@ function bot($method,$datas=[],$result="0"){
     curl_setopt($ch,CURLOPT_POSTFIELDS,$datas);
     curl_setopt($ch,CURLOPT_TIMEOUT,10);
     $res = curl_exec($ch);
-    
+
+    $_dbgLog = __DIR__ . '/.tmp/php-error.log';
+    $_curlErr = curl_error($ch);
+    file_put_contents($_dbgLog, date('[H:i:s] ') . "bot($method) " . ($_curlErr ? "CURL_ERR=$_curlErr" : "resp=" . substr($res,0,200)) . "\n", FILE_APPEND);
+
     if ($result == "0"){
             file_put_contents("COMMAND_FILES/DATA_FILE/commands_result", $res);
     }
     
-    if(curl_error($ch)){
-        var_dump(curl_error($ch));
+    if($_curlErr){
+        var_dump($_curlErr);
     }else{
         return json_decode($res);
     }
