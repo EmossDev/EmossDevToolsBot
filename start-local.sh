@@ -209,7 +209,7 @@ if command -v ssh &>/dev/null; then
   ssh -o StrictHostKeyChecking=no \
       -o ServerAliveInterval=30 \
       -o ServerAliveCountMax=3 \
-      -R "80:localhost:$PORT" nokey@localhost.run \
+      -R "80:localhost:$BOT_PORT" nokey@localhost.run \
       > "$TUNNEL_LOG" 2>&1 &
   TUNNEL_PID=$!
 
@@ -230,9 +230,9 @@ if command -v ssh &>/dev/null; then
       BOT_TOKEN=$(python3 -c "import json,sys; d=json.load(open('$CONFIG_FILE')); print(d['bot']['token'])" 2>/dev/null || true)
     fi
     if [ -n "$BOT_TOKEN" ]; then
-      WEBHOOK_RESP=$(curl -sf "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${TUNNEL_URL}/bot/" 2>/dev/null || true)
+      WEBHOOK_RESP=$(curl -sf "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${TUNNEL_URL}" 2>/dev/null || true)
       if echo "$WEBHOOK_RESP" | grep -q '"ok":true'; then
-        echo "[OK] Webhook güncellendi: ${TUNNEL_URL}/bot/"
+        echo "[OK] Webhook güncellendi: ${TUNNEL_URL}"
       else
         echo "[!] Webhook güncellenemedi: $WEBHOOK_RESP"
       fi
@@ -243,13 +243,13 @@ if command -v ssh &>/dev/null; then
     echo "[!] Tünel URL'si alınamadı — log: $TUNNEL_LOG"
   fi
 else
-  echo "[!] ssh bulunamadı, tünel atlandı. Manuel: ssh -R 80:localhost:$PORT nokey@localhost.run"
+  echo "[!] ssh bulunamadı, tünel atlandı. Manuel: ssh -R 80:localhost:$BOT_PORT nokey@localhost.run"
 fi
 
 echo ""
 echo "========================================"
 echo "  Admin Panel : http://localhost:$PORT/admin"
-echo "  Bot Webhook  : ${TUNNEL_URL:-<tünel-url>}/bot/"
+echo "  Bot Webhook  : ${TUNNEL_URL:-<tünel-url>}"
 echo ""
 echo "  Loglar:"
 echo "    tail -f $NODE_LOG"
@@ -273,46 +273,22 @@ cleanup() {
 }
 trap cleanup INT TERM
 
-# ── Tünel URL izleyici: değişince webhook'u otomatik güncelle ─────────────
 _LAST_URL="$TUNNEL_URL"
 
 _update_webhook() {
   local new_url="$1"
   CONFIG_FILE="$ROOT/telegram-bot/COMMAND_FILES/DATA_FILE/config.json"
-  BOT_TOKEN=""
-  if command -v python3 &>/dev/null; then
-    BOT_TOKEN=$(python3 -c "import json; d=json.load(open('$CONFIG_FILE')); print(d['bot']['token'])" 2>/dev/null || true)
-  fi
-  if [ -z "$BOT_TOKEN" ]; then return; fi
-
-  WEBHOOK_RESP=$(curl -sf "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${new_url}/bot/" 2>/dev/null || true)
-  if echo "$WEBHOOK_RESP" | grep -q '"ok":true'; then
-    echo "[OK] Webhook otomatik güncellendi: ${new_url}/bot/"
-    # config.json'daki webhookUrl'i de güncelle
-    if command -v python3 &>/dev/null; then
-      python3 - "$CONFIG_FILE" "${new_url}/bot/" <<'PYEOF'
-import json, sys
-path, url = sys.argv[1], sys.argv[2]
-d = json.load(open(path))
-d['bot']['webhookUrl'] = url
-open(path, 'w').write(json.dumps(d, indent=4, ensure_ascii=False))
-PYEOF
-    fi
-  else
-    echo "[!] Webhook güncellenemedi: $WEBHOOK_RESP"
-  fi
+  BOT_TOKEN=$(python3 -c "import json; d=json.load(open('$CONFIG_FILE')); print(d['bot']['token'])" 2>/dev/null || true)
+  [ -z "$BOT_TOKEN" ] && return
+  RESP=$(curl -sf "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${new_url}/bot/" 2>/dev/null || true)
+  echo "$RESP" | grep -q '"ok":true' && echo "[OK] Webhook guncellendi: ${new_url}/bot/"
 }
 
 while kill -0 "$PHP_PID" 2>/dev/null && kill -0 "$NODE_PID" 2>/dev/null; do
   sleep 5
-  if [ -n "$TUNNEL_PID" ] && [ -f "$TUNNEL_LOG" ]; then
-    NEW_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.(lhr\.life|lhrtunnel\.link)' "$TUNNEL_LOG" 2>/dev/null | tail -1 || true)
-    if [ -n "$NEW_URL" ] && [ "$NEW_URL" != "$_LAST_URL" ]; then
-      echo "[*] Tünel URL'si değişti: $NEW_URL"
-      _LAST_URL="$NEW_URL"
-      _update_webhook "$NEW_URL"
-    fi
-  fi
+  [ -n "$TUNNEL_PID" ] && [ -f "$TUNNEL_LOG" ] || continue
+  NEW_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.(lhr\.life|lhrtunnel\.link)' "$TUNNEL_LOG" 2>/dev/null | tail -1 || true)
+  [ -n "$NEW_URL" ] && [ "$NEW_URL" != "$_LAST_URL" ] && _LAST_URL="$NEW_URL" && _update_webhook "$NEW_URL"
 done
 
 echo "[!] Bir servis kapandı, diğerleri de durduruluyor..."
