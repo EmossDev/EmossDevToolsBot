@@ -273,8 +273,46 @@ cleanup() {
 }
 trap cleanup INT TERM
 
+# ── Tünel URL izleyici: değişince webhook'u otomatik güncelle ─────────────
+_LAST_URL="$TUNNEL_URL"
+
+_update_webhook() {
+  local new_url="$1"
+  CONFIG_FILE="$ROOT/telegram-bot/COMMAND_FILES/DATA_FILE/config.json"
+  BOT_TOKEN=""
+  if command -v python3 &>/dev/null; then
+    BOT_TOKEN=$(python3 -c "import json; d=json.load(open('$CONFIG_FILE')); print(d['bot']['token'])" 2>/dev/null || true)
+  fi
+  if [ -z "$BOT_TOKEN" ]; then return; fi
+
+  WEBHOOK_RESP=$(curl -sf "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${new_url}/bot/" 2>/dev/null || true)
+  if echo "$WEBHOOK_RESP" | grep -q '"ok":true'; then
+    echo "[OK] Webhook otomatik güncellendi: ${new_url}/bot/"
+    # config.json'daki webhookUrl'i de güncelle
+    if command -v python3 &>/dev/null; then
+      python3 - "$CONFIG_FILE" "${new_url}/bot/" <<'PYEOF'
+import json, sys
+path, url = sys.argv[1], sys.argv[2]
+d = json.load(open(path))
+d['bot']['webhookUrl'] = url
+open(path, 'w').write(json.dumps(d, indent=4, ensure_ascii=False))
+PYEOF
+    fi
+  else
+    echo "[!] Webhook güncellenemedi: $WEBHOOK_RESP"
+  fi
+}
+
 while kill -0 "$PHP_PID" 2>/dev/null && kill -0 "$NODE_PID" 2>/dev/null; do
-  sleep 2
+  sleep 5
+  if [ -n "$TUNNEL_PID" ] && [ -f "$TUNNEL_LOG" ]; then
+    NEW_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.(lhr\.life|lhrtunnel\.link)' "$TUNNEL_LOG" 2>/dev/null | tail -1 || true)
+    if [ -n "$NEW_URL" ] && [ "$NEW_URL" != "$_LAST_URL" ]; then
+      echo "[*] Tünel URL'si değişti: $NEW_URL"
+      _LAST_URL="$NEW_URL"
+      _update_webhook "$NEW_URL"
+    fi
+  fi
 done
 
 echo "[!] Bir servis kapandı, diğerleri de durduruluyor..."
