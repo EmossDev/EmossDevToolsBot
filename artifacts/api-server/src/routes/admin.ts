@@ -419,9 +419,50 @@ body::before{
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.ok{background:rgba(0,20,8,.9);border:1px solid rgba(0,200,83,.4);color:var(--g1)}
 .toast.err{background:rgba(20,0,0,.9);border:1px solid rgba(220,38,38,.4);color:var(--r3)}
+
+/* ── PARTICLE CANVAS ── */
+#px{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55}
+
+/* ── LIVE CLOCK ── */
+.hdr-clock{font-size:11px;font-weight:700;font-family:'Courier New',monospace;
+  color:rgba(255,138,128,.6);letter-spacing:.06em;margin-top:2px}
+
+/* ── GLITCH ── */
+@keyframes glitch1{
+  0%,90%,100%{clip-path:none;transform:none}
+  91%{clip-path:inset(20% 0 60% 0);transform:translateX(-3px)}
+  93%{clip-path:inset(60% 0 10% 0);transform:translateX(3px)}
+  95%{clip-path:inset(40% 0 30% 0);transform:translateX(-2px)}
+  97%{clip-path:none;transform:none}
+}
+.hdr-title.glitch{animation:titleflow 5s linear infinite,glitch1 .15s steps(1) forwards!important}
+
+/* ── NAV SLIDING PILL ── */
+.nav-pill{
+  position:absolute;bottom:8px;
+  width:calc(25% - 16px);height:calc(100% - 16px);
+  background:rgba(220,38,38,.1);
+  border-radius:18px;
+  border:1px solid rgba(220,38,38,.2);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;
+  left:8px;
+  box-shadow:0 0 16px rgba(220,38,38,.1);
+}
+
+/* ── RIPPLE ── */
+.ripple{
+  position:absolute;border-radius:50%;
+  background:rgba(255,255,255,.25);
+  transform:scale(0);
+  animation:rippleout .5s linear;
+  pointer-events:none;
+}
+@keyframes rippleout{to{transform:scale(4);opacity:0}}
 </style>
 </head>
 <body>
+<canvas id="px"></canvas>
 
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
   <symbol id="ic-bot" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="3"/><path d="M12 8V5"/><circle cx="12" cy="4" r="1"/><path d="M7 13h0m10 0h0M9 17h6"/><path d="M3 14H2m20 0h1"/></symbol>
@@ -453,8 +494,8 @@ body::before{
       onerror="this.outerHTML='<div class=logo-fallback>E</div>'"/>
   </div>
   <div class="hdr-info">
-    <div class="hdr-title">EmossDev Panel</div>
-    <div class="hdr-sub">Bot Yönetim Paneli</div>
+    <div class="hdr-title" id="hdrTitle">EmossDev Panel</div>
+    <div class="hdr-clock" id="hdrClock">--:--:--</div>
   </div>
   <div class="status-badge" id="statusBadge">
     <div class="sdot-wrap">
@@ -623,20 +664,21 @@ body::before{
 </div>
 
 <!-- FLOATING BOTTOM NAV -->
-<div class="bottom-nav">
-  <div class="nb active" id="nb-status" onclick="switchTab('status')">
+<div class="bottom-nav" id="bottomNav">
+  <div class="nav-pill" id="navPill"></div>
+  <div class="nb active" id="nb-status" onclick="switchTab('status',0,event)">
     <div class="n-ic"><svg><use href="#ic-pulse"/></svg></div>
     <span class="n-lbl">Durum</span>
   </div>
-  <div class="nb" id="nb-webhook" onclick="switchTab('webhook')">
+  <div class="nb" id="nb-webhook" onclick="switchTab('webhook',1,event)">
     <div class="n-ic"><svg><use href="#ic-webhook"/></svg></div>
     <span class="n-lbl">Webhook</span>
   </div>
-  <div class="nb" id="nb-config" onclick="switchTab('config')">
+  <div class="nb" id="nb-config" onclick="switchTab('config',2,event)">
     <div class="n-ic"><svg><use href="#ic-settings"/></svg></div>
     <span class="n-lbl">Ayarlar</span>
   </div>
-  <div class="nb" id="nb-filters" onclick="switchTab('filters')">
+  <div class="nb" id="nb-filters" onclick="switchTab('filters',3,event)">
     <div class="n-ic"><svg><use href="#ic-filter"/></svg></div>
     <span class="n-lbl">Filtreler</span>
   </div>
@@ -713,6 +755,101 @@ const T_CLS={0:'tb-0',1:'tb-1',2:'tb-2',3:'tb-3'};
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
+// ── PARTICLES ──
+(function(){
+  const cv=document.getElementById('px');
+  const ctx=cv.getContext('2d');
+  let W,H,pts=[];
+  function resize(){
+    W=cv.width=window.innerWidth;
+    H=cv.height=window.innerHeight;
+  }
+  resize();window.addEventListener('resize',resize);
+  const N=55;
+  const COLORS=['rgba(220,38,38,','rgba(156,39,176,','rgba(255,109,0,'];
+  for(let i=0;i<N;i++)pts.push({
+    x:Math.random()*1200,y:Math.random()*900,
+    vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,
+    r:Math.random()*1.8+.6,
+    c:COLORS[Math.floor(Math.random()*COLORS.length)]
+  });
+  const MAX=120;
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    for(const p of pts){
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1;
+      if(p.y<0||p.y>H)p.vy*=-1;
+    }
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<MAX){
+          const a=(1-d/MAX)*.4;
+          ctx.beginPath();
+          ctx.strokeStyle=pts[i].c+a+')';
+          ctx.lineWidth=.7;
+          ctx.moveTo(pts[i].x,pts[i].y);
+          ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.stroke();
+        }
+      }
+      ctx.beginPath();
+      ctx.arc(pts[i].x,pts[i].y,pts[i].r,0,Math.PI*2);
+      ctx.fillStyle=pts[i].c+'.7)';
+      ctx.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+// ── CLOCK ──
+function tickClock(){
+  const n=new Date();
+  document.getElementById('hdrClock').textContent=
+    n.getHours().toString().padStart(2,'0')+':'+
+    n.getMinutes().toString().padStart(2,'0')+':'+
+    n.getSeconds().toString().padStart(2,'0');
+}
+setInterval(tickClock,1000);tickClock();
+
+// ── GLITCH ──
+setInterval(()=>{
+  const el=document.getElementById('hdrTitle');
+  el.classList.add('glitch');
+  setTimeout(()=>el.classList.remove('glitch'),200);
+},7000);
+
+// ── RIPPLE ──
+function ripple(e){
+  const btn=e.currentTarget;
+  const r=document.createElement('span');
+  const rect=btn.getBoundingClientRect();
+  const size=Math.max(rect.width,rect.height);
+  r.className='ripple';
+  r.style.cssText='width:'+size+'px;height:'+size+'px;left:'+(e.clientX-rect.left-size/2)+'px;top:'+(e.clientY-rect.top-size/2)+'px';
+  btn.appendChild(r);
+  setTimeout(()=>r.remove(),500);
+}
+document.querySelectorAll('.btn').forEach(b=>b.addEventListener('click',ripple));
+
+// ── COUNT UP ──
+function countUp(el,target,dur=800){
+  const start=Date.now();
+  const from=parseInt(el.textContent)||0;
+  const t=parseInt(target)||0;
+  if(from===t)return;
+  const tick=()=>{
+    const p=Math.min((Date.now()-start)/dur,1);
+    const ease=1-Math.pow(1-p,3);
+    el.textContent=Math.round(from+(t-from)*ease);
+    if(p<1)requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
 // ── STATUS ──
 function setStatus(state,label){
   const badge=document.getElementById('statusBadge');
@@ -720,12 +857,23 @@ function setStatus(state,label){
   document.getElementById('sbadgeText').textContent=label;
 }
 
+// ── NAV PILL ──
+const TABS=['status','webhook','config','filters'];
+function movePill(idx){
+  const pill=document.getElementById('navPill');
+  const nav=document.getElementById('bottomNav');
+  const w=nav.offsetWidth;
+  const slotW=w/4;
+  pill.style.transform='translateX('+(idx*slotW)+'px)';
+}
+
 // ── TABS ──
-function switchTab(tab){
-  ['status','webhook','config','filters'].forEach(t=>{
+function switchTab(tab,idx=0,e){
+  TABS.forEach(t=>{
     document.getElementById('page-'+t).classList.toggle('active',t===tab);
     document.getElementById('nb-'+t).classList.toggle('active',t===tab);
   });
+  movePill(idx);
   document.getElementById('scrollArea').scrollTop=0;
 }
 
@@ -754,8 +902,8 @@ async function loadStatus(){
       const wb=d.webhook??{};
       const pend=wb.pending_update_count??0;
       const url=wb.url||'';
-      document.getElementById('statId').textContent=d.me.id;
-      document.getElementById('statPend').textContent=pend;
+      countUp(document.getElementById('statId'),d.me.id);
+      countUp(document.getElementById('statPend'),pend);
       document.getElementById('infoGrid').innerHTML=
         '<div class="info-cell"><label>Ad</label><span>'+esc(d.me.first_name)+'</span></div>'+
         '<div class="info-cell"><label>Kullanıcı Adı</label><span>@'+esc(d.me.username??'—')+'</span></div>';
