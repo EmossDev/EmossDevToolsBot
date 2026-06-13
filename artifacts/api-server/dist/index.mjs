@@ -36993,7 +36993,7 @@ body::before{
 }
 @keyframes cardbreath{from{opacity:.4}to{opacity:1}}
 .stat-val{
-  font-size:30px;font-weight:900;line-height:1;letter-spacing:-.04em;position:relative;
+  font-size:22px;font-weight:900;line-height:1;letter-spacing:-.03em;position:relative;
   background:linear-gradient(135deg,#ff8a80,#ce93d8,#ffab40);
   background-size:200% auto;
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
@@ -37027,12 +37027,12 @@ body::before{
 .btn:active{transform:scale(.95);opacity:.8}
 .btn svg{width:16px;height:16px;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .btn-red{
-  background:linear-gradient(135deg,var(--r0),#8b0000 50%,#7f0000);
-  background-size:200% auto;color:#fff;
-  box-shadow:0 4px 20px var(--glow),0 0 0 1px rgba(220,38,38,.3);
-  animation:btnshine 5s linear infinite;
+  background:linear-gradient(120deg,#c0392b,#e74c3c,#ff6b6b,#e74c3c,#c0392b);
+  background-size:300% auto;color:#fff;
+  box-shadow:0 2px 16px rgba(220,38,38,.45),0 0 0 1px rgba(255,120,120,.25),inset 0 1px 0 rgba(255,200,200,.2);
+  animation:btnshine 4s ease-in-out infinite;
 }
-@keyframes btnshine{from{background-position:0%}to{background-position:200%}}
+@keyframes btnshine{0%,100%{background-position:0%}50%{background-position:100%}}
 .btn-red svg{stroke:#fff}
 .btn-outline{background:var(--card2);color:var(--r3);border:1.5px solid rgba(220,38,38,.3)}
 .btn-outline svg{stroke:var(--r3)}
@@ -37373,14 +37373,21 @@ body::before{
         <div class="back-btn" onclick="showCats()" style="margin-bottom:0">
           <svg><use href="#ic-chevron-left"/></svg>Kategoriler
         </div>
-        <button class="btn btn-red btn-sm" style="margin-left:auto;width:auto;padding:8px 16px" onclick="openNewFi()">
-          <svg><use href="#ic-plus"/></svg>Yeni
+        <button onclick="openNewFi()" style="
+          margin-left:auto;display:flex;align-items:center;gap:6px;
+          background:linear-gradient(120deg,#c0392b,#e74c3c,#ff6b6b,#e74c3c,#c0392b);
+          background-size:300% auto;animation:btnshine 4s ease-in-out infinite;
+          color:#fff;border:none;border-radius:14px;padding:10px 18px;
+          font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;
+          box-shadow:0 2px 16px rgba(220,38,38,.4),inset 0 1px 0 rgba(255,200,200,.2)">
+          <svg width="15" height="15" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><use href="#ic-plus"/></svg>
+          Komut Ekle
         </button>
       </div>
       <div class="card">
         <div class="card-head">
           <div class="ci red" id="listIcon"></div>
-          <div>
+          <div style="flex:1">
             <div style="font-size:13px;font-weight:800" id="listCatName">—</div>
             <div style="font-size:11px;color:var(--muted)" id="listCatCnt"></div>
           </div>
@@ -37608,7 +37615,18 @@ function selType(t){
 }
 
 async function loadFilters(){
-  filtersData=await fetch(API+'/bot/filters-detail').then(r=>r.json());
+  try{
+    const r=await fetch(API+'/bot/filters-detail');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    filtersData=await r.json();
+  }catch(e){
+    document.getElementById('catGrid').innerHTML=
+      '<div style="grid-column:1/-1;text-align:center;padding:24px 12px;color:var(--muted);font-size:13px">'+
+      '<svg style="width:32px;height:32px;stroke:var(--border2);fill:none;stroke-width:1.5;display:block;margin:0 auto 10px" viewBox="0 0 24 24"><use href="#ic-filter"/></svg>'+
+      'Filtre verisi yüklenemedi<br><span style="color:var(--r3);font-size:11px;font-weight:700">data.json bulunamadı — Termux\'ta çalıştır</span></div>';
+    document.getElementById('totalLbl').textContent='—';
+    return;
+  }
   renderCats();
 }
 
