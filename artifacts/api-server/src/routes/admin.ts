@@ -886,6 +886,29 @@ body::before{
         </div>
       </div>
     </div>
+    <div class="card">
+      <div class="card-head">
+        <div class="ci purple"><svg><use href="#ic-link"/></svg></div>
+        <span class="card-label">GitHub Otomatik Sync</span>
+        <span id="ghSyncDot" style="margin-left:auto;font-size:10px;color:var(--muted)" title="Son sync zamanı">—</span>
+      </div>
+      <div class="card-body">
+        <div class="wh-box" style="margin-bottom:10px">
+          <div class="wh-lbl">Webhook URL</div>
+          <div id="ghWebhookUrl" class="wh-url" style="font-size:11px;word-break:break-all;user-select:all">Yükleniyor…</div>
+        </div>
+        <div class="field" style="margin-bottom:10px">
+          <label>Secret</label>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input id="ghSecret" type="password" readonly style="flex:1;font-size:11px;letter-spacing:.05em"/>
+            <button class="btn btn-ghost" style="padding:6px 10px;flex-shrink:0" onclick="toggleGhSecret()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#ic-eye"/></svg>
+            </button>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.6">GitHub repo → <strong>Settings → Webhooks → Add webhook</strong><br>Content-type: <code style="background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px">application/json</code> — Push olunca bot otomatik güncellenir &amp; yeniden başlar</div>
+      </div>
+    </div>
   </div>
 
   <!-- AYARLAR -->
@@ -1361,66 +1384,78 @@ function setMoodLed(online){
   },{passive:true});
 })();
 
-// ── EKG CANVAS ──
+// ── SPECTRUM VISUALIZER ──
 (function(){
   const cv=document.getElementById('ekg');
   if(!cv)return;
   const ctx=cv.getContext('2d');
+  const H=52;
   let botOnline=false;
   let t=0;
-  let actLevel=0;   // 0..1, decays over time
-  let actDecay=0;   // per-frame decay rate
-  let spikeQueued=false;
-  const H=52,pts=[];
+  let actLevel=0;
+  const N=44;
+  const bars=Array.from({length:N},(_,i)=>({
+    phase:Math.random()*Math.PI*2,
+    freq:0.016+Math.random()*0.05+(i<6?0.022:0),
+    val:1.5,target:1.5,
+  }));
   function resize(){cv.width=cv.offsetWidth||300;}
-  resize();window.addEventListener('resize',resize);
-  function getY(){
-    if(!botOnline){
-      // flat line with tiny noise when offline
-      return H/2 + Math.sin(t*0.04)*1.5;
-    }
-    const amp=10+actLevel*28;   // 10..38px
-    const cycle=90;
-    const phase=(t%cycle)/cycle;
-    if(phase<.08) return H/2;
-    if(phase<.13) return H/2-amp*0.5;
-    if(phase<.16) return H/2-amp;          // peak spike
-    if(phase<.19) return H/2+amp*0.55;     // dip
-    if(phase<.24) return H/2;
-    return H/2+Math.sin(t*0.25)*(2+actLevel*5);
+  resize();
+  window.addEventListener('resize',resize);
+  function musicOn(){
+    const p=document.getElementById('musicPanel');
+    return !!(p&&p.classList.contains('playing')&&p.classList.contains('open'));
   }
   function frame(){
     t++;
-    if(actLevel>0){actLevel=Math.max(0,actLevel-actDecay);}
+    if(actLevel>0)actLevel=Math.max(0,actLevel-0.012);
     resize();
     const W=cv.width;
-    pts.push(getY());
-    if(pts.length>W)pts.shift();
+    const bw=W/N;
+    const music=musicOn();
+    const baseAmp=botOnline?(music?0.90:0.30):0.05;
+    const spd=music?2.1:1.0;
+    bars.forEach((b,i)=>{
+      b.phase+=b.freq*spd;
+      let v=Math.abs(
+        Math.sin(b.phase)*0.55+
+        Math.sin(b.phase*2.3+i*0.35)*0.28+
+        Math.sin(b.phase*0.6-i*0.18)*0.17
+      );
+      if(music){
+        v+=Math.abs(Math.sin(t*0.07+i*0.65))*0.28;
+        if(i<8)v*=1.35;
+      }
+      if(actLevel>0)v+=actLevel*Math.abs(Math.sin(b.phase*3+i))*0.4;
+      b.target=Math.max(1.5,v*baseAmp*H*0.94);
+      b.val+=(b.target-b.val)*(music?0.32:0.16);
+    });
     ctx.clearRect(0,0,W,H);
-    const color=botOnline?'#00c853':'#dc2626';
-    // glow trail
-    if(botOnline&&actLevel>0.2){
-      ctx.beginPath();
-      ctx.strokeStyle='rgba(0,200,83,'+(actLevel*0.35)+')';
-      ctx.lineWidth=4;
-      ctx.shadowColor='#00c853';ctx.shadowBlur=12*actLevel;
-      for(let i=0;i<pts.length;i++){i===0?ctx.moveTo(i,pts[i]):ctx.lineTo(i,pts[i]);}
-      ctx.stroke();ctx.shadowBlur=0;
-    }
-    ctx.beginPath();
-    ctx.strokeStyle=color;
-    ctx.lineWidth=1.8;
-    ctx.shadowColor=color;ctx.shadowBlur=botOnline?6+actLevel*10:3;
-    for(let i=0;i<pts.length;i++){i===0?ctx.moveTo(i,pts[i]):ctx.lineTo(i,pts[i]);}
-    ctx.stroke();ctx.shadowBlur=0;
+    bars.forEach((b,i)=>{
+      const bh=b.val;
+      const x=i*bw;
+      const y=H-bh;
+      const g=ctx.createLinearGradient(x,y,x,H);
+      if(botOnline){
+        g.addColorStop(0,music?'rgba(255,110,40,.92)':'rgba(220,38,38,.88)');
+        g.addColorStop(0.55,'rgba(160,16,16,.65)');
+        g.addColorStop(1,'rgba(60,0,0,.35)');
+        ctx.shadowColor=music?'#ff5020':'#dc2626';
+        ctx.shadowBlur=music?9:Math.max(0,actLevel*7);
+      }else{
+        g.addColorStop(0,'rgba(70,70,70,.45)');
+        g.addColorStop(1,'rgba(20,20,20,.2)');
+        ctx.shadowBlur=0;
+      }
+      ctx.fillStyle=g;
+      ctx.fillRect(x+1,y,Math.max(1,bw-2),bh);
+    });
+    ctx.shadowBlur=0;
     requestAnimationFrame(frame);
   }
   frame();
   window.ekgSetOnline=v=>{botOnline=v;};
-  window.ekgActivity=()=>{
-    actLevel=1;
-    actDecay=0.015;  // ~67 frames to decay fully (~1s at 60fps)
-  };
+  window.ekgActivity=()=>{actLevel=1;};
 })();
 
 // ── UPTIME COUNTDOWN ──
@@ -1513,7 +1548,22 @@ function countUp(el,target,dur=800){
     if(fromI<toI)c.after(dragEl);else c.before(dragEl);
     c.classList.remove('drag-over');
     playSound('click');
+    // localStorage'a sırayı kaydet
+    const order=[...row.querySelectorAll('.stat-card')].map(el=>el.dataset.idx);
+    try{localStorage.setItem('statOrder',JSON.stringify(order));}catch(_){}
   });
+  // Kaydedilmiş sırayı geri yükle
+  try{
+    const saved=localStorage.getItem('statOrder');
+    if(saved){
+      const order=JSON.parse(saved);
+      const row=document.getElementById('statRow');
+      if(row){order.forEach(idx=>{
+        const el=row.querySelector('[data-idx="'+idx+'"]');
+        if(el)row.appendChild(el);
+      });}
+    }
+  }catch(_){}
 })();
 
 // ── SHAKE TO REFRESH ──
@@ -1983,7 +2033,24 @@ async function loadTunnelUrl(){
     }
   }catch(_){}
 }
-loadStatus();loadConfig();loadFilters();loadTunnelUrl();
+// ── GITHUB WEBHOOK ──
+async function loadGhWebhook(){
+  try{
+    const d=await fetch(API+'/github-webhook/info').then(r=>r.json());
+    if(!d.ok)return;
+    const base=window.location.origin;
+    const urlEl=document.getElementById('ghWebhookUrl');
+    const secEl=document.getElementById('ghSecret');
+    if(urlEl)urlEl.textContent=base+'/api/github-webhook';
+    if(secEl)secEl.value=d.secret||'';
+  }catch(_){}
+}
+function toggleGhSecret(){
+  const inp=document.getElementById('ghSecret');
+  if(inp)inp.type=inp.type==='password'?'text':'password';
+}
+
+loadStatus();loadConfig();loadFilters();loadTunnelUrl();loadGhWebhook();
 startLoop();
 document.addEventListener('visibilitychange',()=>{
   if(!document.hidden){loadStatus();startLoop();}

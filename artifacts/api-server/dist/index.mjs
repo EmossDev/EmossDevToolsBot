@@ -5338,10 +5338,10 @@ var require_raw_body = __commonJS({
       if (done) {
         return readStream(stream, encoding, length, limit, wrap(done));
       }
-      return new Promise(function executor(resolve4, reject) {
+      return new Promise(function executor(resolve5, reject) {
         readStream(stream, encoding, length, limit, function onRead(err, buf) {
           if (err) return reject(err);
-          resolve4(buf);
+          resolve5(buf);
         });
       });
     }
@@ -18676,7 +18676,7 @@ var require_view = __commonJS({
     var basename = path.basename;
     var extname = path.extname;
     var join = path.join;
-    var resolve4 = path.resolve;
+    var resolve5 = path.resolve;
     module.exports = View;
     function View(name, options) {
       var opts = options || {};
@@ -18710,7 +18710,7 @@ var require_view = __commonJS({
       debug7('lookup "%s"', name);
       for (var i = 0; i < roots.length && !path2; i++) {
         var root = roots[i];
-        var loc = resolve4(root, name);
+        var loc = resolve5(root, name);
         var dir = dirname(loc);
         var file = basename(loc);
         path2 = this.resolve(dir, file);
@@ -18735,7 +18735,7 @@ var require_view = __commonJS({
       });
       sync = false;
     };
-    View.prototype.resolve = function resolve5(dir, file) {
+    View.prototype.resolve = function resolve6(dir, file) {
       var ext = this.ext;
       var path2 = join(dir, file);
       var stat = tryStat(path2);
@@ -20494,27 +20494,27 @@ var require_router = __commonJS({
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var methods = METHODS.map((method) => method.toLowerCase());
-    module.exports = Router5;
+    module.exports = Router6;
     module.exports.Route = Route;
-    function Router5(options) {
-      if (!(this instanceof Router5)) {
-        return new Router5(options);
+    function Router6(options) {
+      if (!(this instanceof Router6)) {
+        return new Router6(options);
       }
       const opts = options || {};
-      function router5(req, res, next) {
-        router5.handle(req, res, next);
+      function router6(req, res, next) {
+        router6.handle(req, res, next);
       }
-      Object.setPrototypeOf(router5, this);
-      router5.caseSensitive = opts.caseSensitive;
-      router5.mergeParams = opts.mergeParams;
-      router5.params = {};
-      router5.strict = opts.strict;
-      router5.stack = [];
-      return router5;
+      Object.setPrototypeOf(router6, this);
+      router6.caseSensitive = opts.caseSensitive;
+      router6.mergeParams = opts.mergeParams;
+      router6.params = {};
+      router6.strict = opts.strict;
+      router6.stack = [];
+      return router6;
     }
-    Router5.prototype = function() {
+    Router6.prototype = function() {
     };
-    Router5.prototype.param = function param(name, fn) {
+    Router6.prototype.param = function param(name, fn) {
       if (!name) {
         throw new TypeError("argument name is required");
       }
@@ -20534,7 +20534,7 @@ var require_router = __commonJS({
       params.push(fn);
       return this;
     };
-    Router5.prototype.handle = function handle(req, res, callback) {
+    Router6.prototype.handle = function handle(req, res, callback) {
       if (!callback) {
         throw new TypeError("argument callback is required");
       }
@@ -20661,7 +20661,7 @@ var require_router = __commonJS({
         }
       }
     };
-    Router5.prototype.use = function use(handler) {
+    Router6.prototype.use = function use(handler) {
       let offset = 0;
       let path = "/";
       if (typeof handler !== "function") {
@@ -20694,7 +20694,7 @@ var require_router = __commonJS({
       }
       return this;
     };
-    Router5.prototype.route = function route(path) {
+    Router6.prototype.route = function route(path) {
       const route2 = new Route(path);
       const layer = new Layer(path, {
         sensitive: this.caseSensitive,
@@ -20709,7 +20709,7 @@ var require_router = __commonJS({
       return route2;
     };
     methods.concat("all").forEach(function(method) {
-      Router5.prototype[method] = function(path) {
+      Router6.prototype[method] = function(path) {
         const route = this.route(path);
         route[method].apply(route, slice.call(arguments, 1));
         return this;
@@ -20890,15 +20890,15 @@ var require_application = __commonJS({
     var compileETag = require_utils3().compileETag;
     var compileQueryParser = require_utils3().compileQueryParser;
     var compileTrust = require_utils3().compileTrust;
-    var resolve4 = __require("node:path").resolve;
+    var resolve5 = __require("node:path").resolve;
     var once = require_once();
-    var Router5 = require_router();
+    var Router6 = require_router();
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var app2 = exports = module.exports = {};
     var trustProxyDefaultSymbol = "@@symbol:trust_proxy_default";
     app2.init = function init() {
-      var router5 = null;
+      var router6 = null;
       this.cache = /* @__PURE__ */ Object.create(null);
       this.engines = /* @__PURE__ */ Object.create(null);
       this.settings = /* @__PURE__ */ Object.create(null);
@@ -20907,13 +20907,13 @@ var require_application = __commonJS({
         configurable: true,
         enumerable: true,
         get: function getrouter() {
-          if (router5 === null) {
-            router5 = new Router5({
+          if (router6 === null) {
+            router6 = new Router6({
               caseSensitive: this.enabled("case sensitive routing"),
               strict: this.enabled("strict routing")
             });
           }
-          return router5;
+          return router6;
         }
       });
     };
@@ -20944,7 +20944,7 @@ var require_application = __commonJS({
       this.mountpath = "/";
       this.locals.settings = this.settings;
       this.set("view", View);
-      this.set("views", resolve4("views"));
+      this.set("views", resolve5("views"));
       this.set("jsonp callback name", "callback");
       if (env === "production") {
         this.enable("view cache");
@@ -20984,15 +20984,15 @@ var require_application = __commonJS({
       if (fns.length === 0) {
         throw new TypeError("app.use() requires a middleware function");
       }
-      var router5 = this.router;
+      var router6 = this.router;
       fns.forEach(function(fn2) {
         if (!fn2 || !fn2.handle || !fn2.set) {
-          return router5.use(path, fn2);
+          return router6.use(path, fn2);
         }
         debug7(".use app under %s", path);
         fn2.mountpath = path;
         fn2.parent = this;
-        router5.use(path, function mounted_app(req, res, next) {
+        router6.use(path, function mounted_app(req, res, next) {
           var orig = req.app;
           fn2.handle(req, res, function(err) {
             Object.setPrototypeOf(req, orig.request);
@@ -22449,7 +22449,7 @@ var require_send = __commonJS({
     var extname = path.extname;
     var join = path.join;
     var normalize = path.normalize;
-    var resolve4 = path.resolve;
+    var resolve5 = path.resolve;
     var sep = path.sep;
     var BYTES_RANGE_REGEXP = /^ *bytes=/;
     var MAX_MAXAGE = 60 * 60 * 24 * 365 * 1e3;
@@ -22478,7 +22478,7 @@ var require_send = __commonJS({
       this._maxage = opts.maxAge || opts.maxage;
       this._maxage = typeof this._maxage === "string" ? ms(this._maxage) : Number(this._maxage);
       this._maxage = !isNaN(this._maxage) ? Math.min(Math.max(0, this._maxage), MAX_MAXAGE) : 0;
-      this._root = opts.root ? resolve4(opts.root) : null;
+      this._root = opts.root ? resolve5(opts.root) : null;
     }
     util2.inherits(SendStream, Stream);
     SendStream.prototype.error = function error(status, err) {
@@ -22627,7 +22627,7 @@ var require_send = __commonJS({
           return res;
         }
         parts = normalize(path2).split(sep);
-        path2 = resolve4(path2);
+        path2 = resolve5(path2);
       }
       if (containsDotFile(parts)) {
         debug7('%s dotfile "%s"', this._dotfiles, path2);
@@ -23005,7 +23005,7 @@ var require_response = __commonJS({
     var cookie = require_cookie();
     var send = require_send();
     var extname = path.extname;
-    var resolve4 = path.resolve;
+    var resolve5 = path.resolve;
     var vary = require_vary();
     var { Buffer: Buffer2 } = __require("node:buffer");
     var res = Object.create(http3.ServerResponse.prototype);
@@ -23211,7 +23211,7 @@ var require_response = __commonJS({
       }
       opts = Object.create(opts);
       opts.headers = headers;
-      var fullPath = !opts.root ? resolve4(path2) : path2;
+      var fullPath = !opts.root ? resolve5(path2) : path2;
       return this.sendFile(fullPath, opts, done);
     };
     res.contentType = res.type = function contentType(type) {
@@ -23460,7 +23460,7 @@ var require_serve_static = __commonJS({
     var encodeUrl = require_encodeurl();
     var escapeHtml = require_escape_html();
     var parseUrl = require_parseurl();
-    var resolve4 = __require("path").resolve;
+    var resolve5 = __require("path").resolve;
     var send = require_send();
     var url = __require("url");
     module.exports = serveStatic;
@@ -23479,7 +23479,7 @@ var require_serve_static = __commonJS({
         throw new TypeError("option setHeaders must be function");
       }
       opts.maxage = opts.maxage || opts.maxAge || 0;
-      opts.root = resolve4(root);
+      opts.root = resolve5(root);
       var onDirectory = redirect ? createRedirectDirectoryListener() : createNotFoundDirectoryListener();
       return function serveStatic2(req, res, next) {
         if (req.method !== "GET" && req.method !== "HEAD") {
@@ -23565,7 +23565,7 @@ var require_express = __commonJS({
     var EventEmitter2 = __require("node:events").EventEmitter;
     var mixin = require_merge_descriptors();
     var proto = require_application();
-    var Router5 = require_router();
+    var Router6 = require_router();
     var req = require_request();
     var res = require_response();
     exports = module.exports = createApplication;
@@ -23587,8 +23587,8 @@ var require_express = __commonJS({
     exports.application = proto;
     exports.request = req;
     exports.response = res;
-    exports.Route = Router5.Route;
-    exports.Router = Router5;
+    exports.Route = Router6.Route;
+    exports.Router = Router6;
     exports.json = bodyParser.json;
     exports.raw = bodyParser.raw;
     exports.static = require_serve_static();
@@ -31581,10 +31581,10 @@ var require_micromatch = __commonJS({
 });
 
 // src/app.ts
-var import_express5 = __toESM(require_express2(), 1);
+var import_express7 = __toESM(require_express2(), 1);
 var import_cors = __toESM(require_lib3(), 1);
 var import_pino_http = __toESM(require_logger(), 1);
-import { resolve as resolve3 } from "node:path";
+import { resolve as resolve4 } from "node:path";
 
 // ../../node_modules/.pnpm/httpxy@0.5.3/node_modules/httpxy/dist/index.mjs
 import http, { request } from "node:http";
@@ -32124,8 +32124,8 @@ function _createProxyFn(type, server) {
     }
     let _resolve;
     let _reject;
-    const callbackPromise = new Promise((resolve4, reject) => {
-      _resolve = resolve4;
+    const callbackPromise = new Promise((resolve5, reject) => {
+      _resolve = resolve5;
       _reject = reject;
     });
     res.on("close", () => {
@@ -32495,11 +32495,11 @@ function parsePathRewriteRules(rewriteConfig) {
 var debug4 = Debug.extend("router");
 async function getTarget(req, config) {
   let newTarget;
-  const router5 = config.router;
-  if (isPlainObject(router5)) {
-    newTarget = getTargetFromProxyTable(req, router5);
-  } else if (typeof router5 === "function") {
-    newTarget = await router5(req);
+  const router6 = config.router;
+  if (isPlainObject(router6)) {
+    newTarget = getTargetFromProxyTable(req, router6);
+  } else if (typeof router6 === "function") {
+    newTarget = await router6(req);
   }
   return newTarget;
 }
@@ -32712,7 +32712,7 @@ function createProxyMiddleware(options) {
 var debug6 = Debug.extend("response-interceptor");
 
 // src/routes/index.ts
-var import_express3 = __toESM(require_express2(), 1);
+var import_express5 = __toESM(require_express2(), 1);
 
 // src/routes/health.ts
 var import_express = __toESM(require_express2(), 1);
@@ -36808,15 +36808,90 @@ router2.delete("/bot/filters/:category/:key", (req, res) => {
 });
 var bot_default = router2;
 
-// src/routes/index.ts
+// src/routes/github-webhook.ts
+var import_express3 = __toESM(require_express2(), 1);
+var import_express4 = __toESM(require_express2(), 1);
+import { createHmac, timingSafeEqual } from "node:crypto";
+import { readFileSync as readFileSync2, writeFileSync as writeFileSync2 } from "node:fs";
+import { resolve as resolve2 } from "node:path";
+import { exec } from "node:child_process";
+var CONFIG_PATH2 = resolve2(
+  process.cwd(),
+  "telegram-bot/COMMAND_FILES/DATA_FILE/config.json"
+);
 var router3 = (0, import_express3.Router)();
-router3.use(health_default);
-router3.use(bot_default);
-var routes_default = router3;
+function readConfig2() {
+  return JSON.parse(readFileSync2(CONFIG_PATH2, "utf-8"));
+}
+function ensureSecret() {
+  const config = readConfig2();
+  if (!config.bot?.githubWebhookSecret) {
+    const secret = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+    config.bot.githubWebhookSecret = secret;
+    writeFileSync2(CONFIG_PATH2, JSON.stringify(config, null, 4), "utf-8");
+    return secret;
+  }
+  return config.bot.githubWebhookSecret;
+}
+router3.get("/github-webhook/info", (_req, res) => {
+  const secret = ensureSecret();
+  res.json({ ok: true, secret });
+});
+router3.post(
+  "/github-webhook",
+  import_express4.default.raw({ type: "*/*" }),
+  (req, res) => {
+    res.json({ ok: true });
+    try {
+      const config = readConfig2();
+      const secret = config.bot?.githubWebhookSecret ?? "";
+      const rawBody = req.body;
+      const sig = req.headers["x-hub-signature-256"] ?? "";
+      if (secret && sig) {
+        const expected = "sha256=" + createHmac("sha256", secret).update(rawBody).digest("hex");
+        try {
+          if (!timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
+            console.error("[github-webhook] Ge\xE7ersiz imza \u2014 istek reddedildi");
+            return;
+          }
+        } catch {
+          return;
+        }
+      }
+      const event = req.headers["x-github-event"];
+      if (event !== "push") return;
+      const body = JSON.parse(rawBody.toString());
+      const ref = body.ref ?? "";
+      if (!ref.endsWith("/main") && !ref.endsWith("/master")) return;
+      const root = resolve2(process.cwd());
+      exec(
+        `cd "${root}" && git fetch github && git reset --hard github/main`,
+        (err, stdout, stderr) => {
+          if (err) {
+            console.error("[github-webhook] Git pull hatas\u0131:", stderr);
+            return;
+          }
+          console.log("[github-webhook] G\xFCncellendi:", stdout.trim());
+          setTimeout(() => process.exit(0), 1500);
+        }
+      );
+    } catch (e) {
+      console.error("[github-webhook] Hata:", e);
+    }
+  }
+);
+var github_webhook_default = router3;
+
+// src/routes/index.ts
+var router4 = (0, import_express5.Router)();
+router4.use(health_default);
+router4.use(bot_default);
+router4.use(github_webhook_default);
+var routes_default = router4;
 
 // src/routes/admin.ts
-var import_express4 = __toESM(require_express2(), 1);
-import { resolve as resolve2 } from "node:path";
+var import_express6 = __toESM(require_express2(), 1);
+import { resolve as resolve3 } from "node:path";
 import { deflateSync } from "node:zlib";
 function uint32BE(n) {
   const b = Buffer.alloc(4);
@@ -36853,7 +36928,7 @@ function solidColorPNG(size, r, g, b) {
 }
 var ICON_192 = solidColorPNG(192, 220, 38, 38);
 var ICON_512 = solidColorPNG(512, 220, 38, 38);
-var router4 = (0, import_express4.Router)();
+var router5 = (0, import_express6.Router)();
 var html = String.raw`<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -37702,6 +37777,29 @@ body::before{
         </div>
       </div>
     </div>
+    <div class="card">
+      <div class="card-head">
+        <div class="ci purple"><svg><use href="#ic-link"/></svg></div>
+        <span class="card-label">GitHub Otomatik Sync</span>
+        <span id="ghSyncDot" style="margin-left:auto;font-size:10px;color:var(--muted)" title="Son sync zamanı">—</span>
+      </div>
+      <div class="card-body">
+        <div class="wh-box" style="margin-bottom:10px">
+          <div class="wh-lbl">Webhook URL</div>
+          <div id="ghWebhookUrl" class="wh-url" style="font-size:11px;word-break:break-all;user-select:all">Yükleniyor…</div>
+        </div>
+        <div class="field" style="margin-bottom:10px">
+          <label>Secret</label>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input id="ghSecret" type="password" readonly style="flex:1;font-size:11px;letter-spacing:.05em"/>
+            <button class="btn btn-ghost" style="padding:6px 10px;flex-shrink:0" onclick="toggleGhSecret()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#ic-eye"/></svg>
+            </button>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.6">GitHub repo → <strong>Settings → Webhooks → Add webhook</strong><br>Content-type: <code style="background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px">application/json</code> — Push olunca bot otomatik güncellenir &amp; yeniden başlar</div>
+      </div>
+    </div>
   </div>
 
   <!-- AYARLAR -->
@@ -38177,66 +38275,78 @@ function setMoodLed(online){
   },{passive:true});
 })();
 
-// ── EKG CANVAS ──
+// ── SPECTRUM VISUALIZER ──
 (function(){
   const cv=document.getElementById('ekg');
   if(!cv)return;
   const ctx=cv.getContext('2d');
+  const H=52;
   let botOnline=false;
   let t=0;
-  let actLevel=0;   // 0..1, decays over time
-  let actDecay=0;   // per-frame decay rate
-  let spikeQueued=false;
-  const H=52,pts=[];
+  let actLevel=0;
+  const N=44;
+  const bars=Array.from({length:N},(_,i)=>({
+    phase:Math.random()*Math.PI*2,
+    freq:0.016+Math.random()*0.05+(i<6?0.022:0),
+    val:1.5,target:1.5,
+  }));
   function resize(){cv.width=cv.offsetWidth||300;}
-  resize();window.addEventListener('resize',resize);
-  function getY(){
-    if(!botOnline){
-      // flat line with tiny noise when offline
-      return H/2 + Math.sin(t*0.04)*1.5;
-    }
-    const amp=10+actLevel*28;   // 10..38px
-    const cycle=90;
-    const phase=(t%cycle)/cycle;
-    if(phase<.08) return H/2;
-    if(phase<.13) return H/2-amp*0.5;
-    if(phase<.16) return H/2-amp;          // peak spike
-    if(phase<.19) return H/2+amp*0.55;     // dip
-    if(phase<.24) return H/2;
-    return H/2+Math.sin(t*0.25)*(2+actLevel*5);
+  resize();
+  window.addEventListener('resize',resize);
+  function musicOn(){
+    const p=document.getElementById('musicPanel');
+    return !!(p&&p.classList.contains('playing')&&p.classList.contains('open'));
   }
   function frame(){
     t++;
-    if(actLevel>0){actLevel=Math.max(0,actLevel-actDecay);}
+    if(actLevel>0)actLevel=Math.max(0,actLevel-0.012);
     resize();
     const W=cv.width;
-    pts.push(getY());
-    if(pts.length>W)pts.shift();
+    const bw=W/N;
+    const music=musicOn();
+    const baseAmp=botOnline?(music?0.90:0.30):0.05;
+    const spd=music?2.1:1.0;
+    bars.forEach((b,i)=>{
+      b.phase+=b.freq*spd;
+      let v=Math.abs(
+        Math.sin(b.phase)*0.55+
+        Math.sin(b.phase*2.3+i*0.35)*0.28+
+        Math.sin(b.phase*0.6-i*0.18)*0.17
+      );
+      if(music){
+        v+=Math.abs(Math.sin(t*0.07+i*0.65))*0.28;
+        if(i<8)v*=1.35;
+      }
+      if(actLevel>0)v+=actLevel*Math.abs(Math.sin(b.phase*3+i))*0.4;
+      b.target=Math.max(1.5,v*baseAmp*H*0.94);
+      b.val+=(b.target-b.val)*(music?0.32:0.16);
+    });
     ctx.clearRect(0,0,W,H);
-    const color=botOnline?'#00c853':'#dc2626';
-    // glow trail
-    if(botOnline&&actLevel>0.2){
-      ctx.beginPath();
-      ctx.strokeStyle='rgba(0,200,83,'+(actLevel*0.35)+')';
-      ctx.lineWidth=4;
-      ctx.shadowColor='#00c853';ctx.shadowBlur=12*actLevel;
-      for(let i=0;i<pts.length;i++){i===0?ctx.moveTo(i,pts[i]):ctx.lineTo(i,pts[i]);}
-      ctx.stroke();ctx.shadowBlur=0;
-    }
-    ctx.beginPath();
-    ctx.strokeStyle=color;
-    ctx.lineWidth=1.8;
-    ctx.shadowColor=color;ctx.shadowBlur=botOnline?6+actLevel*10:3;
-    for(let i=0;i<pts.length;i++){i===0?ctx.moveTo(i,pts[i]):ctx.lineTo(i,pts[i]);}
-    ctx.stroke();ctx.shadowBlur=0;
+    bars.forEach((b,i)=>{
+      const bh=b.val;
+      const x=i*bw;
+      const y=H-bh;
+      const g=ctx.createLinearGradient(x,y,x,H);
+      if(botOnline){
+        g.addColorStop(0,music?'rgba(255,110,40,.92)':'rgba(220,38,38,.88)');
+        g.addColorStop(0.55,'rgba(160,16,16,.65)');
+        g.addColorStop(1,'rgba(60,0,0,.35)');
+        ctx.shadowColor=music?'#ff5020':'#dc2626';
+        ctx.shadowBlur=music?9:Math.max(0,actLevel*7);
+      }else{
+        g.addColorStop(0,'rgba(70,70,70,.45)');
+        g.addColorStop(1,'rgba(20,20,20,.2)');
+        ctx.shadowBlur=0;
+      }
+      ctx.fillStyle=g;
+      ctx.fillRect(x+1,y,Math.max(1,bw-2),bh);
+    });
+    ctx.shadowBlur=0;
     requestAnimationFrame(frame);
   }
   frame();
   window.ekgSetOnline=v=>{botOnline=v;};
-  window.ekgActivity=()=>{
-    actLevel=1;
-    actDecay=0.015;  // ~67 frames to decay fully (~1s at 60fps)
-  };
+  window.ekgActivity=()=>{actLevel=1;};
 })();
 
 // ── UPTIME COUNTDOWN ──
@@ -38329,7 +38439,22 @@ function countUp(el,target,dur=800){
     if(fromI<toI)c.after(dragEl);else c.before(dragEl);
     c.classList.remove('drag-over');
     playSound('click');
+    // localStorage'a sırayı kaydet
+    const order=[...row.querySelectorAll('.stat-card')].map(el=>el.dataset.idx);
+    try{localStorage.setItem('statOrder',JSON.stringify(order));}catch(_){}
   });
+  // Kaydedilmiş sırayı geri yükle
+  try{
+    const saved=localStorage.getItem('statOrder');
+    if(saved){
+      const order=JSON.parse(saved);
+      const row=document.getElementById('statRow');
+      if(row){order.forEach(idx=>{
+        const el=row.querySelector('[data-idx="'+idx+'"]');
+        if(el)row.appendChild(el);
+      });}
+    }
+  }catch(_){}
 })();
 
 // ── SHAKE TO REFRESH ──
@@ -38799,7 +38924,24 @@ async function loadTunnelUrl(){
     }
   }catch(_){}
 }
-loadStatus();loadConfig();loadFilters();loadTunnelUrl();
+// ── GITHUB WEBHOOK ──
+async function loadGhWebhook(){
+  try{
+    const d=await fetch(API+'/github-webhook/info').then(r=>r.json());
+    if(!d.ok)return;
+    const base=window.location.origin;
+    const urlEl=document.getElementById('ghWebhookUrl');
+    const secEl=document.getElementById('ghSecret');
+    if(urlEl)urlEl.textContent=base+'/api/github-webhook';
+    if(secEl)secEl.value=d.secret||'';
+  }catch(_){}
+}
+function toggleGhSecret(){
+  const inp=document.getElementById('ghSecret');
+  if(inp)inp.type=inp.type==='password'?'text':'password';
+}
+
+loadStatus();loadConfig();loadFilters();loadTunnelUrl();loadGhWebhook();
 startLoop();
 document.addEventListener('visibilitychange',()=>{
   if(!document.hidden){loadStatus();startLoop();}
@@ -38810,26 +38952,26 @@ if('serviceWorker' in navigator){
 </script>
 </body>
 </html>`;
-router4.get("/", (_req, res) => {
+router5.get("/", (_req, res) => {
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
-router4.get("/app-icon.jpg", (_req, res) => {
-  res.sendFile(resolve2(process.cwd(), "artifacts/api-server/public/app-icon.jpg"));
+router5.get("/app-icon.jpg", (_req, res) => {
+  res.sendFile(resolve3(process.cwd(), "artifacts/api-server/public/app-icon.jpg"));
 });
-router4.get("/icon-192.png", (_req, res) => {
+router5.get("/icon-192.png", (_req, res) => {
   res.setHeader("Cache-Control", "public, max-age=86400");
-  res.sendFile(resolve2(process.cwd(), "artifacts/api-server/public/appicon.png"));
+  res.sendFile(resolve3(process.cwd(), "artifacts/api-server/public/appicon.png"));
 });
-router4.get("/icon-512.png", (_req, res) => {
+router5.get("/icon-512.png", (_req, res) => {
   res.setHeader("Cache-Control", "public, max-age=86400");
-  res.sendFile(resolve2(process.cwd(), "artifacts/api-server/public/appicon.png"));
+  res.sendFile(resolve3(process.cwd(), "artifacts/api-server/public/appicon.png"));
 });
-router4.get("/splashsc.png", (_req, res) => {
+router5.get("/splashsc.png", (_req, res) => {
   res.setHeader("Cache-Control", "public, max-age=86400");
-  res.sendFile(resolve2(process.cwd(), "artifacts/api-server/public/splashsc.png"));
+  res.sendFile(resolve3(process.cwd(), "artifacts/api-server/public/splashsc.png"));
 });
-router4.get("/sw.js", (_req, res) => {
+router5.get("/sw.js", (_req, res) => {
   res.setHeader("Content-Type", "application/javascript");
   res.setHeader("Service-Worker-Allowed", "/admin/");
   res.send(`const CACHE='emossdev-v5';
@@ -38838,7 +38980,7 @@ self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.add
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{if(res.ok){const c=res.clone();caches.open(CACHE).then(cache=>cache.put(e.request,c));}return res;})));});`);
 });
-router4.get("/manifest.json", (_req, res) => {
+router5.get("/manifest.json", (_req, res) => {
   res.json({
     id: "/admin/",
     name: "EmossDev Panel",
@@ -38857,7 +38999,7 @@ router4.get("/manifest.json", (_req, res) => {
     ]
   });
 });
-var admin_default = router4;
+var admin_default = router5;
 
 // src/lib/logger.ts
 var import_pino = __toESM(require_pino(), 1);
@@ -38878,7 +39020,7 @@ var logger = (0, import_pino.default)({
 });
 
 // src/app.ts
-var app = (0, import_express5.default)();
+var app = (0, import_express7.default)();
 app.use(
   (0, import_pino_http.default)({
     logger,
@@ -38899,9 +39041,9 @@ app.use(
   })
 );
 app.use((0, import_cors.default)());
-app.use(import_express5.default.json());
-app.use(import_express5.default.urlencoded({ extended: true }));
-app.use("/static", import_express5.default.static(resolve3(process.cwd(), "public")));
+app.use(import_express7.default.json());
+app.use(import_express7.default.urlencoded({ extended: true }));
+app.use("/static", import_express7.default.static(resolve4(process.cwd(), "public")));
 app.use("/admin", admin_default);
 app.use("/api", routes_default);
 app.get("/.well-known/assetlinks.json", (_req, res) => {
