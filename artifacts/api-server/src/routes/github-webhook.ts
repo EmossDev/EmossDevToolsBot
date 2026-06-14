@@ -35,8 +35,10 @@ router.get("/github-webhook/info", (_req, res) => {
   const secret = ensureSecret();
   const config = readConfig();
   // config.json'da bot.webhookUrl = "https://xxx.lhr.life/bot/"
+  // Sadece gerçek tünel URL'lerini kabul et (lhr.life, lhrtunnel.link, vb.)
   const stored: string = config.bot?.webhookUrl ?? "";
-  const baseUrl = stored.replace(/\/bot\/?$/, "").replace(/\/$/, "");
+  const isTunnel = /\.(lhr\.life|lhrtunnel\.link|localhost\.run|ngrok|trycloudflare|pinggy|serveo)/.test(stored);
+  const baseUrl = isTunnel ? stored.replace(/\/bot\/?$/, "").replace(/\/$/, "") : "";
   const webhookUrl = baseUrl ? `${baseUrl}/api/github-webhook` : "";
   res.json({ ok: true, secret, webhookUrl });
 });
