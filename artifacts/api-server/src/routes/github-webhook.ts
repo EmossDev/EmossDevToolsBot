@@ -7,7 +7,7 @@ import { exec } from "node:child_process";
 
 const CONFIG_PATH = resolve(
   process.cwd(),
-  "telegram-bot/COMMAND_FILES/DATA_FILE/config.json",
+  "../../telegram-bot/COMMAND_FILES/DATA_FILE/config.json",
 );
 
 const router = Router();

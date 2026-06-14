@@ -901,7 +901,7 @@ body::before{
           <label>Secret</label>
           <div style="display:flex;gap:6px;align-items:center">
             <input id="ghSecret" type="password" readonly style="flex:1;font-size:11px;letter-spacing:.05em"/>
-            <button class="btn btn-ghost" style="padding:6px 10px;flex-shrink:0" onclick="toggleGhSecret()">
+            <button class="btn btn-ghost" style="padding:6px 10px;flex-shrink:0;width:auto" onclick="toggleGhSecret()">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#ic-eye"/></svg>
             </button>
           </div>
