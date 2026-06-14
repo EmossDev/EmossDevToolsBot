@@ -1933,7 +1933,7 @@ async function doAdd(){
     if(!player)return;
     const isSpotify=parsed.type.startsWith('sp-');
     const h=isSpotify?152:200;
-    player.innerHTML=`<iframe src="${url}" height="${h}" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy" allowfullscreen></iframe>`;
+    player.innerHTML='<iframe src="'+url+'" height="'+h+'" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy" allowfullscreen></iframe>';
     if(panel)panel.classList.add('playing');
   }
 

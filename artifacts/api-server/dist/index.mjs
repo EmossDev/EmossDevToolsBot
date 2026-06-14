@@ -37363,6 +37363,52 @@ body::before{
 .music-btn.on svg{stroke:var(--r2);filter:drop-shadow(0 0 4px var(--r0));animation:musicpulse 1.2s ease-in-out infinite}
 @keyframes musicpulse{0%,100%{filter:drop-shadow(0 0 3px var(--r0))}50%{filter:drop-shadow(0 0 9px var(--r0))}}
 
+/* ── MUSIC PANEL ── */
+.music-panel{
+  position:fixed;
+  bottom:calc(var(--nav-bot) + var(--nav-h) + 10px);
+  left:12px;right:12px;z-index:55;
+  background:var(--surface-bg);
+  border:1px solid var(--border2);border-radius:20px;
+  backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);
+  padding:14px 14px 16px;
+  transform:translateY(calc(100% + 90px));opacity:0;pointer-events:none;
+  transition:transform .38s cubic-bezier(.34,1.56,.64,1),opacity .25s ease;
+  box-shadow:0 -4px 32px rgba(0,0,0,.65),0 0 0 .5px rgba(220,38,38,.12);
+}
+.music-panel.open{transform:translateY(0);opacity:1;pointer-events:auto}
+.mp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mp-title{font-size:13px;font-weight:800;color:var(--text1);display:flex;align-items:center;gap:7px}
+.mp-title-dot{width:8px;height:8px;border-radius:50%;background:var(--r0);animation:musicpulse 1.4s ease-in-out infinite}
+.music-panel.playing .mp-title-dot{background:#1db954;box-shadow:0 0 8px #1db95466}
+.mp-close-btn{width:26px;height:26px;border-radius:50%;background:var(--card2);border:1px solid var(--border2);display:grid;place-items:center;cursor:pointer;font-size:12px;color:var(--muted);line-height:1}
+.mp-presets{display:flex;gap:6px;margin-bottom:11px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.mp-presets::-webkit-scrollbar{display:none}
+.mp-preset{padding:5px 13px;border-radius:14px;font-size:11px;font-weight:700;border:1px solid var(--border2);color:var(--muted);background:var(--card2);cursor:pointer;transition:.15s;white-space:nowrap;flex-shrink:0}
+.mp-preset:active{opacity:.6}
+.mp-preset.active{border-color:var(--r0);color:var(--r3);background:rgba(220,38,38,.12)}
+.mp-input-row{display:flex;gap:6px;margin-bottom:10px}
+.mp-url-input{flex:1;background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:9px 11px;color:var(--text1);font-size:11px;font-family:'Courier New',monospace;outline:none;transition:.2s;min-width:0}
+.mp-url-input:focus{border-color:var(--r0);box-shadow:0 0 0 2px rgba(220,38,38,.15)}
+.mp-url-input::placeholder{color:var(--muted);font-family:system-ui,sans-serif;font-size:11px}
+.mp-go-btn{width:36px;height:36px;border-radius:10px;background:var(--r0);border:none;display:grid;place-items:center;cursor:pointer;flex-shrink:0;transition:.15s}
+.mp-go-btn:active{transform:scale(.9)}
+.mp-go-btn svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.mp-player{width:100%;border-radius:12px;overflow:hidden;background:var(--card2);border:1px solid var(--border2)}
+.mp-player iframe{width:100%;border:none;display:block}
+.mp-empty{font-size:12px;color:var(--muted);text-align:center;padding:22px 10px;line-height:1.6}
+
+/* ── BOT URL INPUT ── */
+.bu-input-wrap{display:flex;gap:6px;align-items:center;margin-top:6px}
+.bu-input{flex:1;background:transparent;border:none;border-bottom:1px solid var(--border2);padding:4px 2px;color:var(--text1);font-size:11px;font-family:'Courier New',monospace;outline:none;min-width:0;transition:.2s}
+.bu-input:focus{border-bottom-color:var(--r0)}
+.bu-input::placeholder{color:var(--muted);font-family:system-ui,sans-serif}
+
+/* ── STATUS IDLE (Polling mod) ── */
+.st-idle .sdot{background:var(--o1);box-shadow:0 0 6px var(--o1)}
+.st-idle .sdot-ping{color:var(--o1);animation:ping 2.5s ease-out infinite}
+.st-idle .sbadge-text{font-size:12px;font-weight:700;color:var(--o1);text-transform:uppercase;letter-spacing:.04em}
+
 /* ── UPTIME ── */
 .uptime-badge{
   display:inline-flex;align-items:center;gap:5px;
@@ -37451,6 +37497,34 @@ body::before{
 <!-- MUSIC BUTTON -->
 <div class="music-btn" id="musicBtn" onclick="toggleMusic()">
   <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+</div>
+
+<!-- MUSIC PANEL -->
+<div class="music-panel" id="musicPanel">
+  <div class="mp-head">
+    <div class="mp-title">
+      <div class="mp-title-dot"></div>
+      Müzik Çalar
+    </div>
+    <div class="mp-close-btn" onclick="toggleMusic()">✕</div>
+  </div>
+  <div class="mp-presets" id="mpPresets">
+    <div class="mp-preset" onclick="playPreset('lofi1')">🎵 Lofi Hip Hop</div>
+    <div class="mp-preset" onclick="playPreset('chill')">🌙 Chill Beats</div>
+    <div class="mp-preset" onclick="playPreset('ambient')">🌊 Ambient</div>
+    <div class="mp-preset" onclick="playPreset('jazz')">☕ Jazz Lofi</div>
+    <div class="mp-preset" onclick="playPreset('sp_lofi')">🟢 Spotify Lofi</div>
+    <div class="mp-preset" onclick="playPreset('sp_chill')">🟢 Spotify Chill</div>
+  </div>
+  <div class="mp-input-row">
+    <input type="url" id="mpUrlInput" class="mp-url-input" placeholder="YouTube veya Spotify URL yapıştır…" inputmode="url"/>
+    <button class="mp-go-btn" onclick="loadMusicUrl()">
+      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    </button>
+  </div>
+  <div class="mp-player" id="mpPlayer">
+    <div class="mp-empty">▶ Hazır bir seç veya URL yapıştır</div>
+  </div>
 </div>
 
 
@@ -37576,8 +37650,11 @@ body::before{
             <div class="bchip on-poll" id="chipPoll">Polling</div>
           </div>
           <div class="bot-url-box">
-            <div class="bu-lbl">Webhook URL (config.json)</div>
-            <div class="bu-val" id="wbActive">—</div>
+            <div class="bu-lbl">Webhook URL</div>
+            <div class="bu-input-wrap">
+              <input type="url" id="botWhUrl" class="bu-input" placeholder="https://…/bot/" inputmode="url" autocomplete="off" spellcheck="false"/>
+            </div>
+            <div style="font-size:10px;color:var(--muted);margin-top:5px;line-height:1.4">config.json'dan otomatik yüklenir — değiştirip <strong style="color:var(--r3)">Botu Aç</strong>'a basarsan güncellenir</div>
           </div>
         </div>
       </div>
@@ -37686,7 +37763,7 @@ body::before{
   </div>
   <div class="nb" id="nb-webhook" onclick="switchTab('webhook',1,event)">
     <div class="n-ic"><svg><use href="#ic-webhook"/></svg></div>
-    <span class="n-lbl">Webhook</span>
+    <span class="n-lbl">Bot</span>
   </div>
   <div class="nb" id="nb-config" onclick="switchTab('config',2,event)">
     <div class="n-ic"><svg><use href="#ic-settings"/></svg></div>
@@ -38316,11 +38393,11 @@ async function loadStatus(){
   try{
     const d=await fetch(API+'/bot/status').then(r=>r.json());
     if(d.ok&&d.me){
-      setStatus('st-online','Aktif');
       if(firstLoad){startUptime();firstLoad=false;}
       const wb=d.webhook??{};
       const pend=wb.pending_update_count??0;
       const url=wb.url||'';
+      setStatus(url?'st-online':'st-idle',url?'Aktif':'Devre Dışı');
       const elId=document.getElementById('statId');
       const elPend=document.getElementById('statPend');
       animCount(elId,prevVals.id??0,d.me.id);
@@ -38369,11 +38446,8 @@ function updateBotPower(isOn,url){
   const chipPoll=document.getElementById('chipPoll');
   if(chipWh){chipWh.className='bchip'+(isOn?' on-wh':'');}
   if(chipPoll){chipPoll.className='bchip'+(isOn?'':' on-poll');}
-  const wbEl=document.getElementById('wbActive');
-  if(wbEl){
-    wbEl.textContent=url||'— (Polling modu)';
-    wbEl.className='bu-val'+(url?' active':'');
-  }
+  const urlInp=document.getElementById('botWhUrl');
+  if(urlInp&&!urlInp.matches(':focus'))urlInp.value=url||'';
   // Header EKG'yi güncelle
   if(window.ekgSetOnline)window.ekgSetOnline(isOn);
 }
@@ -38394,6 +38468,12 @@ async function toggleBot(){
 
 // ── WEBHOOK ──
 async function doSetWebhook(){
+  const urlInp=document.getElementById('botWhUrl');
+  const newUrl=urlInp?urlInp.value.trim():'';
+  if(newUrl){
+    // Önce config.json'u güncelle (Termux URL'sini kaydet)
+    await fetch(API+'/bot/config',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({webhookUrl:newUrl})}).catch(()=>{});
+  }
   toast('🟢 Bot açılıyor…');
   const d=await fetch(API+'/bot/webhook/set',{method:'POST'}).then(r=>r.json());
   toast(d.ok?'✓ Bot aktif — Webhook kuruldu!':'✗ '+(d.description||d.error||'Hata'),d.ok);
@@ -38414,6 +38494,9 @@ async function loadConfig(){
   document.getElementById('cfg_creator').value=d.creator_id??'';
   document.getElementById('cfg_wh').value=d.webhookUrl??'';
   document.getElementById('cfg_tokMasked').value=d.token??'';
+  // Bot Kontrol URL alanını doldur
+  const bwu=document.getElementById('botWhUrl');
+  if(bwu&&!bwu.matches(':focus')&&!bwu.value)bwu.value=d.webhookUrl??'';
 }
 async function doSaveConfig(){
   const body={
@@ -38586,156 +38669,88 @@ async function doAdd(){
   }else toast('✗ '+(d.error||'Ekleme hatası'),false);
 }
 
-// ── LOFI AMBIENT MUSIC ──
+// ── MUSIC PANEL (YouTube / Spotify) ──
 (function(){
-  let on=false,ac=null,master=null,comp=null;
-  // BPM=84 → beat=0.714s → 8th note=0.357s
-  const BPM=84,BEAT=60/BPM,EIGHTH=BEAT/2;
-  let beatTime=0,beatIdx=0,schedHandle=null;
+  let panelOpen=false;
 
-  // 4-chord loop (A-minor feel): Am → F → C → G
-  // [bass, mid, high] in Hz
-  const CHORDS=[
-    [110,130.81,164.81],   // Am  A2 C3 E3
-    [87.31,110,130.81],    // F   F2 A2 C3
-    [65.41,82.41,98.00],   // C   C2 E2 G2
-    [98.00,123.47,146.83], // G   G2 B2 D3
-  ];
-  // Melody notes (A-minor scale, sparse lofi phrases)
-  const PHRASES=[
-    [164.81,196,220,196,164.81,0,146.83,0],
-    [130.81,146.83,164.81,0,196,164.81,0,0],
-    [220,0,196,164.81,146.83,0,164.81,0],
-    [196,220,0,164.81,130.81,146.83,0,0],
-  ];
+  // Hazır playlist'ler
+  const PRESETS={
+    lofi1: {type:'yt-playlist',id:'PLQkQfzsIUwRYZtP0FDKL5HBhX0RL_LmEN'},
+    chill: {type:'yt',id:'5qap5aO4i9A'},
+    ambient:{type:'yt',id:'lTRiuFIWV54'},
+    jazz:  {type:'yt',id:'Dx5qFachd3A'},
+    sp_lofi: {type:'sp-playlist',id:'37i9dQZF1DX8Uebhn9wzrS'},
+    sp_chill:{type:'sp-playlist',id:'37i9dQZF1DX4WYpdgoIcn6'},
+  };
 
-  function initAC(){
-    if(ac)return;
-    ac=new(window.AudioContext||window.webkitAudioContext)();
-    comp=ac.createDynamicsCompressor();
-    comp.threshold.value=-20;comp.ratio.value=5;comp.attack.value=0.003;comp.release.value=0.25;
-    master=ac.createGain();master.gain.value=0;
-    const lpf=ac.createBiquadFilter();lpf.type='lowpass';lpf.frequency.value=4200;lpf.Q.value=0.4;
-    // Tape warmth: gentle EQ dip
-    const eq=ac.createBiquadFilter();eq.type='peaking';eq.frequency.value=3000;eq.gain.value=-4;
-    master.connect(lpf);lpf.connect(eq);eq.connect(comp);comp.connect(ac.destination);
-  }
-
-  function osc(type,freq,t,dur,vol,detune=0){
-    const o=ac.createOscillator(),g=ac.createGain();
-    o.type=type;o.frequency.value=freq;if(detune)o.detune.value=detune;
-    g.gain.setValueAtTime(0,t);
-    g.gain.linearRampToValueAtTime(vol,t+0.05);
-    g.gain.exponentialRampToValueAtTime(0.001,t+dur);
-    o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+0.03);
-  }
-
-  function kick(t){
-    const o=ac.createOscillator(),g=ac.createGain();
-    o.type='sine';
-    o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(40,t+0.07);
-    g.gain.setValueAtTime(0.45,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.18);
-    o.connect(g);g.connect(master);o.start(t);o.stop(t+0.2);
-  }
-
-  function snare(t){
-    // Filtered noise burst
-    const buf=ac.createBuffer(1,ac.sampleRate*0.12,ac.sampleRate);
-    const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1);
-    const src=ac.createBufferSource(),hpf=ac.createBiquadFilter(),g=ac.createGain();
-    src.buffer=buf;hpf.type='bandpass';hpf.frequency.value=2200;hpf.Q.value=0.8;
-    g.gain.setValueAtTime(0.11,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.1);
-    src.connect(hpf);hpf.connect(g);g.connect(master);src.start(t);
-  }
-
-  function hat(t,vol=0.022,open=false){
-    const buf=ac.createBuffer(1,ac.sampleRate*(open?0.1:0.04),ac.sampleRate);
-    const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1);
-    const src=ac.createBufferSource(),hpf=ac.createBiquadFilter(),g=ac.createGain();
-    src.buffer=buf;hpf.type='highpass';hpf.frequency.value=7000;
-    g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.001,t+(open?0.09:0.03));
-    src.connect(hpf);hpf.connect(g);g.connect(master);src.start(t);
-  }
-
-  function chordPad(freqs,t){
-    const dur=BEAT*4.1;
-    freqs.forEach(f=>{
-      osc('sine',f,t,dur,0.028);
-      osc('triangle',f*2,t,dur*0.75,0.012,8);
-    });
-    // Sub-bass
-    osc('sine',freqs[0]*0.5,t,dur,0.06);
-  }
-
-  let phraseBar=0;
-  function scheduleBeat(){
-    if(!on||!ac)return;
-    const lookAhead=0.15;
-    while(beatTime<ac.currentTime+lookAhead){
-      const sub=beatIdx%8;           // 8th-note subdivisions per bar
-      const bar=Math.floor(beatIdx/8)%4; // which chord
-      const chord=CHORDS[bar];
-
-      // Kick: beats 1 and 3 (sub 0 and 4)
-      if(sub===0||sub===4)kick(beatTime);
-      // Snare: beats 2 and 4 (sub 2 and 6) — quiet lofi snare
-      if(sub===2||sub===6)snare(beatTime);
-      // Hi-hat: every 8th, open on beat 3
-      hat(beatTime,sub%2===0?0.025:0.015,sub===4);
-
-      // Chord pad on bar start
-      if(sub===0)chordPad(chord,beatTime);
-
-      // Melody phrase
-      const phrase=PHRASES[phraseBar%PHRASES.length];
-      const mFreq=phrase[sub];
-      if(mFreq>0){
-        osc('triangle',mFreq,beatTime,BEAT*0.55,0.045);
-        // Octave shimmer sometimes
-        if(Math.random()>0.65)osc('sine',mFreq*2,beatTime,BEAT*0.3,0.015,5);
-      }
-
-      beatTime+=EIGHTH;
-      beatIdx++;
-      if(sub===7)phraseBar++;
+  function buildEmbed(parsed){
+    if(!parsed)return null;
+    switch(parsed.type){
+      case 'yt':          return 'https://www.youtube.com/embed/'+parsed.id+'?autoplay=1&loop=1&playlist='+parsed.id;
+      case 'yt-playlist': return 'https://www.youtube.com/embed?listType=playlist&list='+parsed.id+'&autoplay=1';
+      case 'sp-track':    return 'https://open.spotify.com/embed/track/'+parsed.id+'?utm_source=generator&theme=0';
+      case 'sp-playlist': return 'https://open.spotify.com/embed/playlist/'+parsed.id+'?utm_source=generator&theme=0';
+      case 'sp-album':    return 'https://open.spotify.com/embed/album/'+parsed.id+'?utm_source=generator&theme=0';
     }
-    schedHandle=setTimeout(scheduleBeat,60);
+    return null;
   }
 
-  let droneO=null,droneG=null;
-  function startDrone(){
-    droneO=ac.createOscillator();droneG=ac.createGain();
-    droneO.type='sine';droneO.frequency.value=27.5;
-    droneG.gain.setValueAtTime(0,ac.currentTime);
-    droneG.gain.linearRampToValueAtTime(0.04,ac.currentTime+2.5);
-    droneO.connect(droneG);droneG.connect(master);droneO.start();
+  function parseUrl(raw){
+    // YouTube watch
+    let m=raw.match(/(?:youtube\.com\/watch\?.*v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    if(m)return{type:'yt',id:m[1]};
+    // YouTube playlist
+    m=raw.match(/[?&]list=([a-zA-Z0-9_-]+)/);
+    if(m&&raw.includes('youtube'))return{type:'yt-playlist',id:m[1]};
+    // Spotify
+    m=raw.match(/open\.spotify\.com\/(track|playlist|album)\/([a-zA-Z0-9]+)/);
+    if(m)return{type:'sp-'+m[1],id:m[2]};
+    return null;
   }
-  function stopDrone(){
-    if(!droneO)return;
-    droneG.gain.cancelScheduledValues(ac.currentTime);
-    droneG.gain.linearRampToValueAtTime(0,ac.currentTime+1);
-    const o=droneO;setTimeout(()=>{try{o.stop();}catch(e){}},1200);
-    droneO=null;droneG=null;
+
+  function renderPlayer(parsed){
+    const url=buildEmbed(parsed);
+    if(!url){toast('✗ Desteklenmeyen URL',false);return;}
+    const player=document.getElementById('mpPlayer');
+    const panel=document.getElementById('musicPanel');
+    if(!player)return;
+    const isSpotify=parsed.type.startsWith('sp-');
+    const h=isSpotify?152:200;
+    player.innerHTML='<iframe src="'+url+'" height="'+h+'" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy" allowfullscreen></iframe>';
+    if(panel)panel.classList.add('playing');
   }
+
+  window.playPreset=function(key,el){
+    const preset=PRESETS[key];if(!preset)return;
+    document.querySelectorAll('.mp-preset').forEach(p=>p.classList.remove('active'));
+    if(el)el.classList.add('active');
+    document.getElementById('mpUrlInput').value='';
+    renderPlayer(preset);
+  };
+
+  window.loadMusicUrl=function(){
+    const inp=document.getElementById('mpUrlInput');
+    const raw=inp?inp.value.trim():'';
+    if(!raw)return;
+    const parsed=parseUrl(raw);
+    if(!parsed){toast('✗ YouTube veya Spotify linki gir',false);return;}
+    document.querySelectorAll('.mp-preset').forEach(p=>p.classList.remove('active'));
+    renderPlayer(parsed);
+  };
 
   window.toggleMusic=function(){
-    on=!on;
+    panelOpen=!panelOpen;
+    const panel=document.getElementById('musicPanel');
     const btn=document.getElementById('musicBtn');
-    if(btn)btn.classList.toggle('on',on);
-    if(on){
-      initAC();
-      if(ac.state==='suspended')ac.resume();
-      master.gain.cancelScheduledValues(ac.currentTime);
-      master.gain.linearRampToValueAtTime(0.82,ac.currentTime+1.8);
-      beatTime=ac.currentTime+0.12;beatIdx=0;phraseBar=0;
-      startDrone();
-      scheduleBeat();
-    }else{
-      if(schedHandle)clearTimeout(schedHandle);
-      if(master){master.gain.cancelScheduledValues(ac.currentTime);master.gain.linearRampToValueAtTime(0,ac.currentTime+1.3);}
-      stopDrone();
-    }
+    if(panel)panel.classList.toggle('open',panelOpen);
+    if(btn)btn.classList.toggle('on',panelOpen);
   };
+
+  // Enter tuşuyla URL oynat
+  document.addEventListener('DOMContentLoaded',()=>{
+    const inp=document.getElementById('mpUrlInput');
+    if(inp)inp.addEventListener('keydown',e=>{if(e.key==='Enter')loadMusicUrl();});
+  });
 })();
 
 // Init
