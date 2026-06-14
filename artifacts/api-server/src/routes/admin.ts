@@ -1903,11 +1903,11 @@ async function doAdd(){
   function buildEmbed(parsed){
     if(!parsed)return null;
     switch(parsed.type){
-      case 'yt':          return`https://www.youtube.com/embed/${parsed.id}?autoplay=1&loop=1&playlist=${parsed.id}`;
-      case 'yt-playlist': return`https://www.youtube.com/embed?listType=playlist&list=${parsed.id}&autoplay=1`;
-      case 'sp-track':    return`https://open.spotify.com/embed/track/${parsed.id}?utm_source=generator&theme=0`;
-      case 'sp-playlist': return`https://open.spotify.com/embed/playlist/${parsed.id}?utm_source=generator&theme=0`;
-      case 'sp-album':    return`https://open.spotify.com/embed/album/${parsed.id}?utm_source=generator&theme=0`;
+      case 'yt':          return 'https://www.youtube.com/embed/'+parsed.id+'?autoplay=1&loop=1&playlist='+parsed.id;
+      case 'yt-playlist': return 'https://www.youtube.com/embed?listType=playlist&list='+parsed.id+'&autoplay=1';
+      case 'sp-track':    return 'https://open.spotify.com/embed/track/'+parsed.id+'?utm_source=generator&theme=0';
+      case 'sp-playlist': return 'https://open.spotify.com/embed/playlist/'+parsed.id+'?utm_source=generator&theme=0';
+      case 'sp-album':    return 'https://open.spotify.com/embed/album/'+parsed.id+'?utm_source=generator&theme=0';
     }
     return null;
   }
