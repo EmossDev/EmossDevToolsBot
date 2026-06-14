@@ -726,12 +726,13 @@ body::before{
     <div class="mp-close-btn" onclick="toggleMusic()">✕</div>
   </div>
   <div class="mp-presets" id="mpPresets">
-    <div class="mp-preset" onclick="playPreset('lofi1',this)">🎵 Lofi</div>
-    <div class="mp-preset" onclick="playPreset('chill',this)">🌙 Chill</div>
-    <div class="mp-preset" onclick="playPreset('ambient',this)">🌊 Ambient</div>
-    <div class="mp-preset" onclick="playPreset('jazz',this)">☕ Jazz</div>
-    <div class="mp-preset" onclick="playPreset('hiphop',this)">🔥 Hip-Hop</div>
-    <div class="mp-preset" onclick="playPreset('sleep',this)">😴 Sleep</div>
+    <div class="mp-preset" onclick="playPreset('yoklama',this)">🔫 Yoklama</div>
+    <div class="mp-preset" onclick="playPreset('simsek',this)">⚡ Şimşek</div>
+    <div class="mp-preset" onclick="playPreset('olay',this)">🎯 Olay</div>
+    <div class="mp-preset" onclick="playPreset('wesliye',this)">🗡️ Wesliye</div>
+    <div class="mp-preset" onclick="playPreset('gercek',this)">🖤 Gerçek</div>
+    <div class="mp-preset" onclick="playPreset('cephe',this)">🔥 Cephe</div>
+    <div class="mp-preset" onclick="playPreset('lofi',this)">🎵 Lofi</div>
   </div>
   <div class="mp-input-row">
     <input type="url" id="mpUrlInput" class="mp-url-input" placeholder="YouTube veya Spotify URL yapıştır…" inputmode="url"/>
@@ -1893,14 +1894,15 @@ async function doAdd(){
 (function(){
   let panelOpen=false;
 
-  // Hazır playlist'ler (sadece YouTube — Spotify embed premium gerektirir)
+  // Hazır playlist'ler (sadece YouTube)
   const PRESETS={
-    lofi1:  {type:'yt-playlist',id:'PLQkQfzsIUwRYZtP0FDKL5HBhX0RL_LmEN'},
-    chill:  {type:'yt',id:'5qap5aO4i9A'},
-    ambient:{type:'yt',id:'lTRiuFIWV54'},
-    jazz:   {type:'yt',id:'Dx5qFachd3A'},
-    hiphop: {type:'yt',id:'jfKfPfyJRdk'},
-    sleep:  {type:'yt',id:'1ZYbU82GVz4'},
+    yoklama:{type:'yt',id:'KGeY5ZW42-M'},
+    simsek: {type:'yt',id:'eU4hSKU2yuU'},
+    olay:   {type:'yt',id:'Df1Ew0s_e5c'},
+    wesliye:{type:'yt',id:'WTx6wElGHe4'},
+    gercek: {type:'yt',id:'tcUAi-l-h9k'},
+    cephe:  {type:'yt',id:'G7e2KlYbFa0'},
+    lofi:   {type:'yt-playlist',id:'PLQkQfzsIUwRYZtP0FDKL5HBhX0RL_LmEN'},
   };
 
   function buildEmbed(parsed){
