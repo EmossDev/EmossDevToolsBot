@@ -37115,6 +37115,47 @@ body::before{
 .empty{text-align:center;padding:32px 16px;color:var(--muted);font-size:13px}
 .empty svg{width:38px;height:38px;stroke:var(--border2);fill:none;stroke-width:1.5;margin:0 auto 10px;display:block}
 
+/* ── BOT POWER CONTROL ── */
+.bot-power-scene{display:flex;flex-direction:column;align-items:center;padding:24px 16px 16px;gap:18px}
+.bot-power-outer{position:relative;width:168px;height:168px;display:grid;place-items:center}
+.bp-ring{position:absolute;border-radius:50%;transition:border-color .5s,box-shadow .5s,opacity .5s;pointer-events:none}
+.bp-ring.r1{inset:0;border:2px solid rgba(220,38,38,.25)}
+.bp-ring.r2{inset:-16px;border:1.5px solid rgba(220,38,38,.12)}
+.bp-ring.r3{inset:-32px;border:1px solid rgba(220,38,38,.06)}
+.bot-power-scene.on .bp-ring.r1{border-color:rgba(0,200,83,.7);box-shadow:0 0 18px rgba(0,200,83,.4);animation:bpr1 1.8s ease-in-out infinite}
+.bot-power-scene.on .bp-ring.r2{border-color:rgba(0,200,83,.35);animation:bpr2 2.5s ease-in-out infinite}
+.bot-power-scene.on .bp-ring.r3{border-color:rgba(0,200,83,.15);animation:bpr3 3.2s ease-in-out infinite}
+@keyframes bpr1{0%,100%{box-shadow:0 0 14px rgba(0,200,83,.3)}50%{box-shadow:0 0 28px rgba(0,200,83,.65)}}
+@keyframes bpr2{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+@keyframes bpr3{0%,100%{opacity:.4}50%{opacity:.9}}
+.bot-power-btn{
+  width:116px;height:116px;border-radius:50%;cursor:pointer;z-index:1;
+  background:radial-gradient(circle at 38% 32%,#1c0606,#0d0000);
+  border:3px solid rgba(220,38,38,.25);
+  display:grid;place-items:center;
+  transition:all .4s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 6px 28px #0007,inset 0 1px 0 rgba(255,255,255,.04);
+  -webkit-tap-highlight-color:transparent;
+}
+.bot-power-btn:active{transform:scale(.92)!important}
+.bot-power-btn svg{width:44px;height:44px;stroke:var(--muted);fill:none;stroke-width:2.2;stroke-linecap:round;transition:.4s}
+.bot-power-scene.on .bot-power-btn{
+  border-color:#00c853;
+  background:radial-gradient(circle at 38% 32%,#002a10,#000d06);
+  box-shadow:0 0 44px rgba(0,200,83,.55),0 6px 28px #0007,inset 0 0 24px rgba(0,200,83,.15),inset 0 1px 0 rgba(255,255,255,.07);
+}
+.bot-power-scene.on .bot-power-btn svg{stroke:#00c853;filter:drop-shadow(0 0 11px #00c853)}
+.bot-power-label{font-size:18px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;transition:.4s;color:var(--r3)}
+.bot-power-scene.on .bot-power-label{color:#00c853;text-shadow:0 0 18px rgba(0,200,83,.6)}
+.bot-mode-chips{display:flex;gap:8px}
+.bchip{padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid var(--border2);color:var(--muted);background:var(--card2);transition:.4s;letter-spacing:.04em;text-transform:uppercase}
+.bchip.on-wh{background:rgba(0,200,83,.12);border-color:rgba(0,200,83,.35);color:#00c853}
+.bchip.on-poll{background:rgba(220,38,38,.12);border-color:rgba(220,38,38,.3);color:var(--r3)}
+.bot-url-box{width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:11px 14px}
+.bot-url-box .bu-lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.bot-url-box .bu-val{font-size:11px;color:var(--text2);font-family:'Courier New',monospace;word-break:break-all;line-height:1.55;min-height:16px}
+.bot-url-box .bu-val.active{color:var(--text1)}
+
 /* ── FLOATING BOTTOM NAV ── */
 .bottom-nav{
   position:fixed;bottom:var(--nav-bot);left:12px;right:12px;z-index:50;
@@ -37506,25 +37547,38 @@ body::before{
     </div>
   </div>
 
-  <!-- WEBHOOK -->
+  <!-- BOT KONTROL -->
   <div class="page" id="page-webhook">
-    <div class="banner">
-      <div class="banner-icon"><svg><use href="#ic-bulb"/></svg></div>
-      <p><strong>Webhook modu</strong> botu aktif eder — Telegram mesajları anında gelir. <strong>Polling modu</strong> webhook bağlantısını keser, bot duraklar.</p>
-    </div>
-    <div class="card">
+    <div class="card" style="overflow:visible">
       <div class="card-head">
         <div class="ci orange"><svg><use href="#ic-webhook"/></svg></div>
         <span class="card-label">Bot Kontrol</span>
-      </div>
-      <div class="card-body">
-        <div class="wh-box">
-          <div class="wh-lbl">Aktif Webhook URL</div>
-          <div class="wh-url" id="wbActive">—</div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+          <div class="info-cell" style="text-align:right;margin:0">
+            <label style="font-size:10px">Bekleyen</label>
+            <span id="wbPend" style="font-size:12px;font-weight:700">—</span>
+          </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <button class="btn btn-red" onclick="doSetWebhook()"><svg><use href="#ic-link"/></svg>🟢 Botu Aç (Webhook Modu)</button>
-          <button class="btn btn-outline" onclick="doDelWebhook()"><svg><use href="#ic-x"/></svg>🔴 Botu Kapat (Polling Modu)</button>
+      </div>
+      <div class="card-body" style="padding:0 0 4px">
+        <div class="bot-power-scene" id="botPowerScene">
+          <div class="bot-power-outer">
+            <div class="bp-ring r1"></div>
+            <div class="bp-ring r2"></div>
+            <div class="bp-ring r3"></div>
+            <div class="bot-power-btn" id="botPowerBtn" onclick="toggleBot()">
+              <svg viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+            </div>
+          </div>
+          <div class="bot-power-label" id="botPowerLabel">BOT KAPALI</div>
+          <div class="bot-mode-chips">
+            <div class="bchip" id="chipWh">Webhook</div>
+            <div class="bchip on-poll" id="chipPoll">Polling</div>
+          </div>
+          <div class="bot-url-box">
+            <div class="bu-lbl">Webhook URL (config.json)</div>
+            <div class="bu-val" id="wbActive">—</div>
+          </div>
         </div>
       </div>
     </div>
@@ -37535,8 +37589,8 @@ body::before{
       </div>
       <div class="card-body">
         <div class="info-grid">
-          <div class="info-cell"><label>Bekleyen</label><span id="wbPend">—</span></div>
           <div class="info-cell"><label>Mod</label><span id="wbMode">—</span></div>
+          <div class="info-cell"><label>Son Yenileme</label><span id="wbLastRef">—</span></div>
         </div>
       </div>
     </div>
@@ -38276,14 +38330,16 @@ async function loadStatus(){
         '<div class="info-cell"><label>Ad</label><span>'+esc(d.me.first_name)+'</span></div>'+
         '<div class="info-cell"><label>Kullanıcı Adı</label><span>@'+esc(d.me.username??'—')+'</span></div>';
       document.getElementById('wbDisp').textContent=url||'— (Polling)';
-      document.getElementById('wbActive').textContent=url||'— (Polling)';
       document.getElementById('wbPend').textContent=pend>0?'⚠ '+pend:'✓ 0';
       document.getElementById('wbMode').textContent=url?'Webhook':'Polling';
+      updateBotPower(!!url,url);
       const now=new Date();
-      document.getElementById('lastRef').textContent=
-        now.getHours().toString().padStart(2,'0')+':'+
+      const ts=now.getHours().toString().padStart(2,'0')+':'+
         now.getMinutes().toString().padStart(2,'0')+':'+
         now.getSeconds().toString().padStart(2,'0');
+      document.getElementById('lastRef').textContent=ts;
+      const wbLR=document.getElementById('wbLastRef');
+      if(wbLR)wbLR.textContent=ts;
     }else{
       setStatus('st-offline','Çevrimdışı');
       firstLoad=true;
@@ -38295,6 +38351,42 @@ async function loadStatus(){
 function startLoop(){
   clearInterval(refreshTimer);
   refreshTimer=setInterval(loadStatus,INTERVAL);
+}
+
+// ── BOT POWER ──
+let botIsOn=false;
+function updateBotPower(isOn,url){
+  botIsOn=isOn;
+  const scene=document.getElementById('botPowerScene');
+  if(!scene)return;
+  scene.classList.toggle('on',isOn);
+  const lbl=document.getElementById('botPowerLabel');
+  if(lbl)lbl.textContent=isOn?'BOT AÇIK':'BOT KAPALI';
+  const chipWh=document.getElementById('chipWh');
+  const chipPoll=document.getElementById('chipPoll');
+  if(chipWh){chipWh.className='bchip'+(isOn?' on-wh':'');}
+  if(chipPoll){chipPoll.className='bchip'+(isOn?'':' on-poll');}
+  const wbEl=document.getElementById('wbActive');
+  if(wbEl){
+    wbEl.textContent=url||'— (Polling modu)';
+    wbEl.className='bu-val'+(url?' active':'');
+  }
+  // Header EKG'yi güncelle
+  if(window.ekgSetOnline)window.ekgSetOnline(isOn);
+}
+let botBusy=false;
+async function toggleBot(){
+  if(botBusy)return;
+  botBusy=true;
+  const btn=document.getElementById('botPowerBtn');
+  if(btn)btn.style.opacity='.5';
+  try{
+    if(botIsOn) await doDelWebhook();
+    else await doSetWebhook();
+  }finally{
+    botBusy=false;
+    if(btn)btn.style.opacity='';
+  }
 }
 
 // ── WEBHOOK ──
@@ -38491,75 +38583,154 @@ async function doAdd(){
   }else toast('✗ '+(d.error||'Ekleme hatası'),false);
 }
 
-// ── AMBIENT MUSIC ──
+// ── LOFI AMBIENT MUSIC ──
 (function(){
-  let on=false,ac=null,master=null,nodes=[];
-  const SCALE=[110,130.81,146.83,164.81,196,220,261.63,293.66]; // A-minor pentatonic
-  let seq=0,nextTime=0;
+  let on=false,ac=null,master=null,comp=null;
+  // BPM=84 → beat=0.714s → 8th note=0.357s
+  const BPM=84,BEAT=60/BPM,EIGHTH=BEAT/2;
+  let beatTime=0,beatIdx=0,schedHandle=null;
+
+  // 4-chord loop (A-minor feel): Am → F → C → G
+  // [bass, mid, high] in Hz
+  const CHORDS=[
+    [110,130.81,164.81],   // Am  A2 C3 E3
+    [87.31,110,130.81],    // F   F2 A2 C3
+    [65.41,82.41,98.00],   // C   C2 E2 G2
+    [98.00,123.47,146.83], // G   G2 B2 D3
+  ];
+  // Melody notes (A-minor scale, sparse lofi phrases)
+  const PHRASES=[
+    [164.81,196,220,196,164.81,0,146.83,0],
+    [130.81,146.83,164.81,0,196,164.81,0,0],
+    [220,0,196,164.81,146.83,0,164.81,0],
+    [196,220,0,164.81,130.81,146.83,0,0],
+  ];
+
   function initAC(){
     if(ac)return;
     ac=new(window.AudioContext||window.webkitAudioContext)();
+    comp=ac.createDynamicsCompressor();
+    comp.threshold.value=-20;comp.ratio.value=5;comp.attack.value=0.003;comp.release.value=0.25;
     master=ac.createGain();master.gain.value=0;
-    const filter=ac.createBiquadFilter();
-    filter.type='lowpass';filter.frequency.value=1200;filter.Q.value=1.2;
-    const rev=ac.createDelay(0.5);rev.delayTime.value=0.22;
-    const revGain=ac.createGain();revGain.gain.value=0.25;
-    master.connect(filter);filter.connect(ac.destination);
-    filter.connect(rev);rev.connect(revGain);revGain.connect(ac.destination);
-    nodes.push(master,filter,rev,revGain);
+    const lpf=ac.createBiquadFilter();lpf.type='lowpass';lpf.frequency.value=4200;lpf.Q.value=0.4;
+    // Tape warmth: gentle EQ dip
+    const eq=ac.createBiquadFilter();eq.type='peaking';eq.frequency.value=3000;eq.gain.value=-4;
+    master.connect(lpf);lpf.connect(eq);eq.connect(comp);comp.connect(ac.destination);
   }
-  function note(freq,t,dur,vol){
-    if(!ac||!master)return;
-    const o=ac.createOscillator();
-    const g=ac.createGain();
-    o.type='triangle';o.frequency.value=freq;
+
+  function osc(type,freq,t,dur,vol,detune=0){
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.type=type;o.frequency.value=freq;if(detune)o.detune.value=detune;
     g.gain.setValueAtTime(0,t);
-    g.gain.linearRampToValueAtTime(vol,t+0.08);
+    g.gain.linearRampToValueAtTime(vol,t+0.05);
     g.gain.exponentialRampToValueAtTime(0.001,t+dur);
-    o.connect(g);g.connect(master);
-    o.start(t);o.stop(t+dur+0.05);
+    o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+0.03);
   }
-  function drone(freq,t){
-    if(!ac||!master)return;
-    const o=ac.createOscillator();const g=ac.createGain();
-    o.type='sine';o.frequency.value=freq;
-    g.gain.setValueAtTime(0.04,t);
-    o.connect(g);g.connect(master);o.start(t);
-    nodes.push(o,g);
-    return o;
+
+  function kick(t){
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.type='sine';
+    o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(40,t+0.07);
+    g.gain.setValueAtTime(0.45,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.18);
+    o.connect(g);g.connect(master);o.start(t);o.stop(t+0.2);
   }
-  let droneOsc=null;
-  function scheduleNotes(){
+
+  function snare(t){
+    // Filtered noise burst
+    const buf=ac.createBuffer(1,ac.sampleRate*0.12,ac.sampleRate);
+    const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1);
+    const src=ac.createBufferSource(),hpf=ac.createBiquadFilter(),g=ac.createGain();
+    src.buffer=buf;hpf.type='bandpass';hpf.frequency.value=2200;hpf.Q.value=0.8;
+    g.gain.setValueAtTime(0.11,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.1);
+    src.connect(hpf);hpf.connect(g);g.connect(master);src.start(t);
+  }
+
+  function hat(t,vol=0.022,open=false){
+    const buf=ac.createBuffer(1,ac.sampleRate*(open?0.1:0.04),ac.sampleRate);
+    const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1);
+    const src=ac.createBufferSource(),hpf=ac.createBiquadFilter(),g=ac.createGain();
+    src.buffer=buf;hpf.type='highpass';hpf.frequency.value=7000;
+    g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.001,t+(open?0.09:0.03));
+    src.connect(hpf);hpf.connect(g);g.connect(master);src.start(t);
+  }
+
+  function chordPad(freqs,t){
+    const dur=BEAT*4.1;
+    freqs.forEach(f=>{
+      osc('sine',f,t,dur,0.028);
+      osc('triangle',f*2,t,dur*0.75,0.012,8);
+    });
+    // Sub-bass
+    osc('sine',freqs[0]*0.5,t,dur,0.06);
+  }
+
+  let phraseBar=0;
+  function scheduleBeat(){
     if(!on||!ac)return;
-    const beat=0.55;
-    const now=ac.currentTime;
-    if(nextTime<now)nextTime=now+0.1;
-    while(nextTime<now+2){
-      const n=SCALE[seq%SCALE.length]*((seq%8<4)?1:2);
-      note(n,nextTime,beat*1.4,0.06+Math.random()*0.03);
-      if(seq%4===0)note(SCALE[0]*0.5,nextTime,beat*3.5,0.04);
-      if(seq%8===4)note(SCALE[2]*0.5,nextTime,beat*2.5,0.035);
-      nextTime+=beat*(0.9+Math.random()*0.2);
-      seq++;
+    const lookAhead=0.15;
+    while(beatTime<ac.currentTime+lookAhead){
+      const sub=beatIdx%8;           // 8th-note subdivisions per bar
+      const bar=Math.floor(beatIdx/8)%4; // which chord
+      const chord=CHORDS[bar];
+
+      // Kick: beats 1 and 3 (sub 0 and 4)
+      if(sub===0||sub===4)kick(beatTime);
+      // Snare: beats 2 and 4 (sub 2 and 6) — quiet lofi snare
+      if(sub===2||sub===6)snare(beatTime);
+      // Hi-hat: every 8th, open on beat 3
+      hat(beatTime,sub%2===0?0.025:0.015,sub===4);
+
+      // Chord pad on bar start
+      if(sub===0)chordPad(chord,beatTime);
+
+      // Melody phrase
+      const phrase=PHRASES[phraseBar%PHRASES.length];
+      const mFreq=phrase[sub];
+      if(mFreq>0){
+        osc('triangle',mFreq,beatTime,BEAT*0.55,0.045);
+        // Octave shimmer sometimes
+        if(Math.random()>0.65)osc('sine',mFreq*2,beatTime,BEAT*0.3,0.015,5);
+      }
+
+      beatTime+=EIGHTH;
+      beatIdx++;
+      if(sub===7)phraseBar++;
     }
-    setTimeout(scheduleNotes,800);
+    schedHandle=setTimeout(scheduleBeat,60);
   }
+
+  let droneO=null,droneG=null;
+  function startDrone(){
+    droneO=ac.createOscillator();droneG=ac.createGain();
+    droneO.type='sine';droneO.frequency.value=27.5;
+    droneG.gain.setValueAtTime(0,ac.currentTime);
+    droneG.gain.linearRampToValueAtTime(0.04,ac.currentTime+2.5);
+    droneO.connect(droneG);droneG.connect(master);droneO.start();
+  }
+  function stopDrone(){
+    if(!droneO)return;
+    droneG.gain.cancelScheduledValues(ac.currentTime);
+    droneG.gain.linearRampToValueAtTime(0,ac.currentTime+1);
+    const o=droneO;setTimeout(()=>{try{o.stop();}catch(e){}},1200);
+    droneO=null;droneG=null;
+  }
+
   window.toggleMusic=function(){
     on=!on;
     const btn=document.getElementById('musicBtn');
-    if(!btn)return;
-    btn.classList.toggle('on',on);
+    if(btn)btn.classList.toggle('on',on);
     if(on){
       initAC();
       if(ac.state==='suspended')ac.resume();
       master.gain.cancelScheduledValues(ac.currentTime);
-      master.gain.linearRampToValueAtTime(1,ac.currentTime+1.5);
-      if(!droneOsc)droneOsc=drone(55,ac.currentTime);
-      nextTime=ac.currentTime;seq=0;
-      scheduleNotes();
+      master.gain.linearRampToValueAtTime(0.82,ac.currentTime+1.8);
+      beatTime=ac.currentTime+0.12;beatIdx=0;phraseBar=0;
+      startDrone();
+      scheduleBeat();
     }else{
-      if(master){master.gain.linearRampToValueAtTime(0,ac.currentTime+1.2);}
-      if(droneOsc){try{droneOsc.stop(ac.currentTime+1.3);}catch(e){}droneOsc=null;}
+      if(schedHandle)clearTimeout(schedHandle);
+      if(master){master.gain.cancelScheduledValues(ac.currentTime);master.gain.linearRampToValueAtTime(0,ac.currentTime+1.3);}
+      stopDrone();
     }
   };
 })();
