@@ -30,10 +30,15 @@ function ensureSecret(): string {
   return config.bot.githubWebhookSecret as string;
 }
 
-/** GET /github-webhook/info — panele secret + URL bilgisi döndürür */
+/** GET /github-webhook/info — panele secret + webhook URL bilgisi döndürür */
 router.get("/github-webhook/info", (_req, res) => {
   const secret = ensureSecret();
-  res.json({ ok: true, secret });
+  const config = readConfig();
+  // config.json'da bot.webhookUrl = "https://xxx.lhr.life/bot/"
+  const stored: string = config.bot?.webhookUrl ?? "";
+  const baseUrl = stored.replace(/\/bot\/?$/, "").replace(/\/$/, "");
+  const webhookUrl = baseUrl ? `${baseUrl}/api/github-webhook` : "";
+  res.json({ ok: true, secret, webhookUrl });
 });
 
 /** POST /github-webhook — GitHub push event, git güncelle + node yeniden başlat */

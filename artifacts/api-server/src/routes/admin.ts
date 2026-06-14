@@ -2038,10 +2038,9 @@ async function loadGhWebhook(){
   try{
     const d=await fetch(API+'/github-webhook/info').then(r=>r.json());
     if(!d.ok)return;
-    const base=window.location.origin;
     const urlEl=document.getElementById('ghWebhookUrl');
     const secEl=document.getElementById('ghSecret');
-    if(urlEl)urlEl.textContent=base+'/api/github-webhook';
+    if(urlEl)urlEl.textContent=d.webhookUrl||'Tünel başlatılmamış — emossdevpanel çalıştır';
     if(secEl)secEl.value=d.secret||'';
   }catch(_){}
 }

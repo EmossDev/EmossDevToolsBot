@@ -36835,7 +36835,11 @@ function ensureSecret() {
 }
 router3.get("/github-webhook/info", (_req, res) => {
   const secret = ensureSecret();
-  res.json({ ok: true, secret });
+  const config = readConfig2();
+  const stored = config.bot?.webhookUrl ?? "";
+  const baseUrl = stored.replace(/\/bot\/?$/, "").replace(/\/$/, "");
+  const webhookUrl = baseUrl ? `${baseUrl}/api/github-webhook` : "";
+  res.json({ ok: true, secret, webhookUrl });
 });
 router3.post(
   "/github-webhook",
@@ -38929,10 +38933,9 @@ async function loadGhWebhook(){
   try{
     const d=await fetch(API+'/github-webhook/info').then(r=>r.json());
     if(!d.ok)return;
-    const base=window.location.origin;
     const urlEl=document.getElementById('ghWebhookUrl');
     const secEl=document.getElementById('ghSecret');
-    if(urlEl)urlEl.textContent=base+'/api/github-webhook';
+    if(urlEl)urlEl.textContent=d.webhookUrl||'Tünel başlatılmamış — emossdevpanel çalıştır';
     if(secEl)secEl.value=d.secret||'';
   }catch(_){}
 }
