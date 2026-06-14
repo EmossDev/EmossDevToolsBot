@@ -37296,6 +37296,130 @@ body::before{
 
 /* ── SHAKE HINT ── */
 @keyframes shakehint{0%,100%{transform:none}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+
+/* ── THEME OVERRIDES ── */
+/* PURPLE */
+html[data-theme="purple"] .btn-red{background:linear-gradient(120deg,#6a0080,#9c27b0,#ce93d8,#9c27b0,#6a0080)!important;box-shadow:0 2px 16px rgba(156,39,176,.45),0 0 0 1px rgba(206,147,216,.25),inset 0 1px 0 rgba(225,190,231,.2)!important}
+html[data-theme="purple"] .hdr-title{background:linear-gradient(90deg,#e1bee7,#ce93d8,#ab47bc,#ce93d8,#e1bee7)!important;background-size:300% auto!important}
+html[data-theme="purple"] .stat-val{background:linear-gradient(135deg,#e1bee7,#ce93d8,#ab47bc)!important;background-size:200% auto!important}
+html[data-theme="purple"] .refresh-fill{background:linear-gradient(90deg,#9c27b0,#ce93d8,#9c27b0)!important;background-size:200% auto!important}
+html[data-theme="purple"] .nb.active .n-ic{background:rgba(156,39,176,.14)!important}
+html[data-theme="purple"] .nav-pill{background:rgba(156,39,176,.12)!important;border-color:rgba(156,39,176,.25)!important;box-shadow:0 0 16px rgba(156,39,176,.15)!important}
+html[data-theme="purple"] .top-bar{border-color:rgba(156,39,176,.35)!important}
+html[data-theme="purple"] .bottom-nav::before{background:linear-gradient(90deg,transparent 5%,rgba(156,39,176,.55) 50%,transparent 95%)!important}
+html[data-theme="purple"] .fi-name{background:linear-gradient(90deg,#e1bee7,#ce93d8)!important}
+html[data-theme="purple"] .cat-card.sel{border-color:#9c27b0!important;box-shadow:0 0 24px rgba(156,39,176,.25),0 0 0 1px rgba(156,39,176,.3)!important}
+html[data-theme="purple"] .mtitle{background:linear-gradient(90deg,#e1bee7,#ce93d8)!important}
+html[data-theme="purple"] .modal::before{background:linear-gradient(90deg,transparent 5%,#9c27b0 30%,#ce93d8 70%,transparent 95%)!important}
+html[data-theme="purple"] .stat-card::before{background:linear-gradient(135deg,rgba(156,39,176,.12),transparent 55%,rgba(156,39,176,.06))!important}
+
+/* BLUE */
+html[data-theme="blue"] .btn-red{background:linear-gradient(120deg,#1565c0,#2979ff,#82b1ff,#2979ff,#1565c0)!important;box-shadow:0 2px 16px rgba(41,121,255,.45),0 0 0 1px rgba(130,177,255,.25),inset 0 1px 0 rgba(187,222,251,.2)!important}
+html[data-theme="blue"] .hdr-title{background:linear-gradient(90deg,#bbdefb,#82b1ff,#448aff,#82b1ff,#bbdefb)!important;background-size:300% auto!important}
+html[data-theme="blue"] .stat-val{background:linear-gradient(135deg,#bbdefb,#82b1ff,#448aff)!important;background-size:200% auto!important}
+html[data-theme="blue"] .refresh-fill{background:linear-gradient(90deg,#2979ff,#82b1ff,#2979ff)!important;background-size:200% auto!important}
+html[data-theme="blue"] .nb.active .n-ic{background:rgba(41,121,255,.14)!important}
+html[data-theme="blue"] .nav-pill{background:rgba(41,121,255,.12)!important;border-color:rgba(41,121,255,.25)!important;box-shadow:0 0 16px rgba(41,121,255,.15)!important}
+html[data-theme="blue"] .top-bar{border-color:rgba(41,121,255,.35)!important}
+html[data-theme="blue"] .bottom-nav::before{background:linear-gradient(90deg,transparent 5%,rgba(41,121,255,.55) 50%,transparent 95%)!important}
+html[data-theme="blue"] .fi-name{background:linear-gradient(90deg,#bbdefb,#82b1ff)!important}
+html[data-theme="blue"] .cat-card.sel{border-color:#2979ff!important;box-shadow:0 0 24px rgba(41,121,255,.25),0 0 0 1px rgba(41,121,255,.3)!important}
+html[data-theme="blue"] .mtitle{background:linear-gradient(90deg,#bbdefb,#82b1ff)!important}
+html[data-theme="blue"] .modal::before{background:linear-gradient(90deg,transparent 5%,#2979ff 30%,#82b1ff 70%,transparent 95%)!important}
+html[data-theme="blue"] .stat-card::before{background:linear-gradient(135deg,rgba(41,121,255,.12),transparent 55%,rgba(41,121,255,.06))!important}
+
+/* GREEN */
+html[data-theme="green"] .btn-red{background:linear-gradient(120deg,#007824,#00c853,#69f0ae,#00c853,#007824)!important;box-shadow:0 2px 16px rgba(0,200,83,.45),0 0 0 1px rgba(105,240,174,.25),inset 0 1px 0 rgba(185,246,202,.2)!important}
+html[data-theme="green"] .hdr-title{background:linear-gradient(90deg,#b9f6ca,#69f0ae,#00e676,#69f0ae,#b9f6ca)!important;background-size:300% auto!important}
+html[data-theme="green"] .stat-val{background:linear-gradient(135deg,#b9f6ca,#69f0ae,#00c853)!important;background-size:200% auto!important}
+html[data-theme="green"] .refresh-fill{background:linear-gradient(90deg,#00c853,#69f0ae,#00c853)!important;background-size:200% auto!important}
+html[data-theme="green"] .nb.active .n-ic{background:rgba(0,200,83,.14)!important}
+html[data-theme="green"] .nav-pill{background:rgba(0,200,83,.12)!important;border-color:rgba(0,200,83,.25)!important;box-shadow:0 0 16px rgba(0,200,83,.15)!important}
+html[data-theme="green"] .top-bar{border-color:rgba(0,200,83,.35)!important}
+html[data-theme="green"] .bottom-nav::before{background:linear-gradient(90deg,transparent 5%,rgba(0,200,83,.55) 50%,transparent 95%)!important}
+html[data-theme="green"] .fi-name{background:linear-gradient(90deg,#b9f6ca,#69f0ae)!important}
+html[data-theme="green"] .cat-card.sel{border-color:#00c853!important;box-shadow:0 0 24px rgba(0,200,83,.25),0 0 0 1px rgba(0,200,83,.3)!important}
+html[data-theme="green"] .mtitle{background:linear-gradient(90deg,#b9f6ca,#69f0ae)!important}
+html[data-theme="green"] .modal::before{background:linear-gradient(90deg,transparent 5%,#00c853 30%,#69f0ae 70%,transparent 95%)!important}
+html[data-theme="green"] .stat-card::before{background:linear-gradient(135deg,rgba(0,200,83,.12),transparent 55%,rgba(0,200,83,.06))!important}
+
+/* ── FAB (Floating Action Button) ── */
+.fab{
+  position:fixed;right:14px;
+  bottom:calc(var(--nav-bot) + var(--nav-h) + 14px);
+  z-index:70;
+}
+.fab-main{
+  width:48px;height:48px;border-radius:50%;
+  background:linear-gradient(135deg,var(--r0),var(--r1));
+  border:none;cursor:pointer;display:grid;place-items:center;
+  box-shadow:0 4px 20px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.1);
+  transition:.3s cubic-bezier(.34,1.56,.64,1);position:relative;z-index:2;
+}
+.fab-main svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:.3s}
+.fab.open .fab-main{transform:rotate(45deg);background:linear-gradient(135deg,#444,#222)}
+.fab-items{
+  position:absolute;bottom:56px;right:0;
+  display:flex;flex-direction:column;gap:8px;align-items:flex-end;
+  pointer-events:none;
+}
+.fab-item{
+  display:flex;align-items:center;gap:8px;
+  opacity:0;transform:translateY(12px) scale(.8);
+  transition:.2s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;
+}
+.fab.open .fab-item{opacity:1;transform:none;pointer-events:auto}
+.fab.open .fab-item:nth-child(1){transition-delay:.04s}
+.fab.open .fab-item:nth-child(2){transition-delay:.08s}
+.fab.open .fab-item:nth-child(3){transition-delay:.12s}
+.fab-lbl{
+  background:rgba(16,1,24,.9);border:1px solid rgba(180,80,255,.2);
+  backdrop-filter:blur(8px);border-radius:10px;
+  padding:5px 10px;font-size:12px;font-weight:700;color:var(--text2);
+  white-space:nowrap;
+}
+.fab-btn{
+  width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;
+  display:grid;place-items:center;
+  background:rgba(16,1,24,.9);border:1px solid rgba(180,80,255,.25);
+  backdrop-filter:blur(12px);box-shadow:0 2px 12px #0005;
+}
+.fab-btn svg{width:18px;height:18px;fill:none;stroke:var(--text2);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── CONFETTI ── */
+#confettiCv{position:fixed;inset:0;z-index:500;pointer-events:none}
+
+/* ── CRT SCANLINES ── */
+#crt{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);
+  opacity:0;transition:opacity .4s;
+}
+#crt.on{opacity:1}
+
+/* ── PULL TO REFRESH ── */
+.ptr-indicator{
+  position:fixed;top:calc(var(--hdr-top) + var(--hdr-h) + 6px);
+  left:50%;transform:translateX(-50%) translateY(-60px);
+  background:rgba(16,1,24,.9);border:1px solid var(--border2);
+  border-radius:20px;padding:6px 14px;
+  font-size:12px;font-weight:700;color:var(--muted);
+  z-index:60;transition:.25s;white-space:nowrap;
+  backdrop-filter:blur(8px);
+}
+.ptr-indicator.show{transform:translateX(-50%) translateY(0)}
+
+/* ── PAGE SLIDE ── */
+.page{transform:translateX(0);transition:none}
+.page.slide-out-left{animation:slideOutLeft .18s ease forwards}
+.page.slide-in-right{animation:slideInRight .18s ease forwards}
+.page.slide-out-right{animation:slideOutRight .18s ease forwards}
+.page.slide-in-left{animation:slideInLeft .18s ease forwards}
+@keyframes slideOutLeft{to{opacity:0;transform:translateX(-24px)}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideOutRight{to{opacity:0;transform:translateX(24px)}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:translateX(0)}}
 </style>
 </head>
 <body>
@@ -37314,6 +37438,42 @@ body::before{
 <!-- SOUND BUTTON -->
 <div class="sound-btn" id="soundBtn" onclick="toggleSound()">
   <svg id="soundIc" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+</div>
+
+<!-- CRT OVERLAY -->
+<div id="crt"></div>
+
+<!-- CONFETTI CANVAS -->
+<canvas id="confettiCv"></canvas>
+
+<!-- PULL TO REFRESH -->
+<div class="ptr-indicator" id="ptrInd">↓ Yenilemek için çek</div>
+
+<!-- FAB -->
+<div class="fab" id="fab">
+  <div class="fab-items">
+    <div class="fab-item">
+      <span class="fab-lbl">Yenile</span>
+      <div class="fab-btn" onclick="fabRefresh()">
+        <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+      </div>
+    </div>
+    <div class="fab-item">
+      <span class="fab-lbl">CRT Efekti</span>
+      <div class="fab-btn" onclick="toggleCRT()">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </div>
+    </div>
+    <div class="fab-item">
+      <span class="fab-lbl">Konfeti!</span>
+      <div class="fab-btn" onclick="launchConfetti();closeFab()">
+        <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+      </div>
+    </div>
+  </div>
+  <button class="fab-main" onclick="toggleFab()">
+    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </button>
 </div>
 
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
@@ -37611,10 +37771,10 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 
 // ── THEME ──
 const THEMES={
-  red:  {r0:'#dc2626',r1:'#e53935',r2:'#ff5252',r3:'#ff8a80',glow:'#dc262640',pill:'rgba(220,38,38,.1)'},
-  purple:{r0:'#9c27b0',r1:'#ab47bc',r2:'#ce93d8',r3:'#e1bee7',glow:'#9c27b040',pill:'rgba(156,39,176,.1)'},
-  blue: {r0:'#2979ff',r1:'#448aff',r2:'#82b1ff',r3:'#bbdefb',glow:'#2979ff40',pill:'rgba(41,121,255,.1)'},
-  green:{r0:'#00c853',r1:'#00e676',r2:'#69f0ae',r3:'#b9f6ca',glow:'#00c85340',pill:'rgba(0,200,83,.1)'},
+  red:  {r0:'#dc2626',r1:'#e53935',r2:'#ff5252',r3:'#ff8a80',glow:'#dc262640'},
+  purple:{r0:'#9c27b0',r1:'#ab47bc',r2:'#ce93d8',r3:'#e1bee7',glow:'#9c27b040'},
+  blue: {r0:'#2979ff',r1:'#448aff',r2:'#82b1ff',r3:'#bbdefb',glow:'#2979ff40'},
+  green:{r0:'#00c853',r1:'#00e676',r2:'#69f0ae',r3:'#b9f6ca',glow:'#00c85340'},
 };
 let curTheme='red';
 function setTheme(name){
@@ -37624,13 +37784,28 @@ function setTheme(name){
   s.setProperty('--r0',t.r0);s.setProperty('--r1',t.r1);
   s.setProperty('--r2',t.r2);s.setProperty('--r3',t.r3);
   s.setProperty('--glow',t.glow);
+  document.documentElement.setAttribute('data-theme',name);
   document.querySelectorAll('.theme-dot').forEach(d=>{
     d.classList.toggle('active',d.dataset.theme===name);
   });
   playSound('click');
   localStorage.setItem('emoss-theme',name);
 }
-(function(){const saved=localStorage.getItem('emoss-theme');if(saved&&THEMES[saved])setTheme(saved);})();
+(function(){
+  const saved=localStorage.getItem('emoss-theme');
+  if(saved&&THEMES[saved]){
+    curTheme=saved;
+    const t=THEMES[saved];
+    const s=document.documentElement.style;
+    s.setProperty('--r0',t.r0);s.setProperty('--r1',t.r1);
+    s.setProperty('--r2',t.r2);s.setProperty('--r3',t.r3);
+    s.setProperty('--glow',t.glow);
+    document.documentElement.setAttribute('data-theme',saved);
+    document.querySelectorAll('.theme-dot').forEach(d=>{
+      d.classList.toggle('active',d.dataset.theme===saved);
+    });
+  }
+})();
 
 // ── SOUND ──
 let soundOn=true;
@@ -37937,12 +38112,113 @@ function movePill(idx){
   pill.style.transform='translateX('+(idx*slotW)+'px)';
 }
 
+// ── CONFETTI ──
+function launchConfetti(){
+  const cv=document.getElementById('confettiCv');
+  cv.width=window.innerWidth;cv.height=window.innerHeight;
+  const ctx=cv.getContext('2d');
+  const colors=['#dc2626','#ff8a80','#9c27b0','#ce93d8','#ffab40','#00c853','#2979ff','#fff'];
+  const pieces=[];
+  for(let i=0;i<120;i++){
+    pieces.push({
+      x:Math.random()*cv.width,y:-10-Math.random()*200,
+      r:Math.random()*6+3,
+      c:colors[Math.floor(Math.random()*colors.length)],
+      vx:(Math.random()-0.5)*6,vy:Math.random()*4+3,
+      rot:Math.random()*360,vr:(Math.random()-0.5)*8,
+      life:1
+    });
+  }
+  let frame=0;
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    pieces.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;p.vy+=0.1;
+      if(frame>90)p.life-=0.015;
+      ctx.save();ctx.globalAlpha=p.life;
+      ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.c;ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r);
+      ctx.restore();
+    });
+    frame++;
+    if(frame<180)requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,cv.width,cv.height);
+  }
+  draw();
+  playSound('notify');
+}
+
+// ── FAB ──
+let fabOpen=false;
+function toggleFab(){fabOpen?closeFab():openFab();}
+function openFab(){
+  fabOpen=true;
+  document.getElementById('fab').classList.add('open');
+  playSound('click');
+}
+function closeFab(){
+  fabOpen=false;
+  document.getElementById('fab').classList.remove('open');
+}
+function fabRefresh(){loadStatus();closeFab();toast('Yenileniyor…');}
+document.addEventListener('click',e=>{
+  if(fabOpen&&!e.target.closest('.fab'))closeFab();
+});
+
+// ── CRT SCANLINES ──
+let crtOn=false;
+function toggleCRT(){
+  crtOn=!crtOn;
+  document.getElementById('crt').classList.toggle('on',crtOn);
+  toast(crtOn?'📺 CRT efekti açık':'📺 CRT efekti kapalı');
+  closeFab();
+}
+
+// ── PULL TO REFRESH ──
+(function(){
+  const area=document.getElementById('scrollArea');
+  const ind=document.getElementById('ptrInd');
+  let startY=0,pulling=false;
+  area.addEventListener('touchstart',e=>{
+    if(area.scrollTop===0)startY=e.touches[0].clientY;
+  },{passive:true});
+  area.addEventListener('touchmove',e=>{
+    if(!startY)return;
+    const dy=e.touches[0].clientY-startY;
+    if(dy>40&&area.scrollTop===0){
+      pulling=true;
+      ind.classList.add('show');
+      ind.textContent=dy>80?'↑ Bırak, yenile!':'↓ Daha fazla çek…';
+    }
+  },{passive:true});
+  area.addEventListener('touchend',()=>{
+    if(pulling){loadStatus();toast('🔄 Yenileniyor…');}
+    pulling=false;startY=0;
+    ind.classList.remove('show');
+    ind.textContent='↓ Yenilemek için çek';
+  },{passive:true});
+})();
+
 // ── TABS ──
+let curTabIdx=0;
 function switchTab(tab,idx=0,e){
+  const prev=curTabIdx;
+  const goRight=idx>prev;
   TABS.forEach(t=>{
-    document.getElementById('page-'+t).classList.toggle('active',t===tab);
-    document.getElementById('nb-'+t).classList.toggle('active',t===tab);
+    const pg=document.getElementById('page-'+t);
+    const isNext=t===tab;
+    const isCur=pg.classList.contains('active');
+    if(isCur&&!isNext){
+      pg.classList.add(goRight?'slide-out-left':'slide-out-right');
+      setTimeout(()=>{pg.classList.remove('active','slide-out-left','slide-out-right');},180);
+    }
+    if(isNext){
+      pg.classList.add('active',goRight?'slide-in-right':'slide-in-left');
+      setTimeout(()=>pg.classList.remove('slide-in-right','slide-in-left'),220);
+    }
+    document.getElementById('nb-'+t).classList.toggle('active',isNext);
   });
+  curTabIdx=idx;
   movePill(idx);
   document.getElementById('scrollArea').scrollTop=0;
   playSound('click');
