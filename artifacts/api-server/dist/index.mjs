@@ -36660,14 +36660,14 @@ router2.get("/bot/status", async (_req, res) => {
 });
 router2.get("/bot/tunnel-url", (_req, res) => {
   const url = readTunnelUrl();
-  res.json({ ok: !!url, tunnelUrl: url ? url + "/bot/" : null });
+  res.json({ ok: !!url, tunnelUrl: url ?? null });
 });
 router2.post("/bot/webhook/set", async (req, res) => {
   try {
     const config = readConfig();
     const token = config.bot.token;
     const tunnelBase = readTunnelUrl();
-    const webhookUrl = (tunnelBase ? tunnelBase + "/bot/" : null) ?? req.body?.webhookUrl ?? config.bot.webhookUrl;
+    const webhookUrl = tunnelBase ?? req.body?.webhookUrl ?? config.bot.webhookUrl;
     if (!webhookUrl) {
       res.status(400).json({ ok: false, error: "Webhook URL bulunamad\u0131 \u2014 t\xFCnel \xE7al\u0131\u015F\u0131yor mu?" });
       return;
