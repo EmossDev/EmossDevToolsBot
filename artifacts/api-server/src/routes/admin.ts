@@ -336,13 +336,14 @@ body::before{
 .bottom-nav{
   position:fixed;bottom:var(--nav-bot);left:12px;right:12px;z-index:50;
   height:var(--nav-h);
-  background:rgba(16,1,24,.88);
+  background:var(--surface-bg);
   backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);
   border-radius:26px;
   border:1px solid rgba(220,38,38,.18);
   box-shadow:0 4px 32px rgba(0,0,0,.7),0 0 0 .5px rgba(220,38,38,.12),inset 0 1px 0 rgba(255,255,255,.05);
   display:grid;grid-template-columns:repeat(4,1fr);
   overflow:hidden;
+  transition:background .4s;
 }
 .bottom-nav::before{
   content:'';position:absolute;top:0;left:0;right:0;height:1px;
@@ -521,18 +522,22 @@ body::before{
 .tc-check{margin-left:auto;opacity:0;color:var(--r3);font-size:16px;transition:.2s}
 .tc.sel .tc-check{opacity:1}
 
-/* ── SOUND TOGGLE ── */
-.sound-btn{
-  position:fixed;top:calc(var(--hdr-top) + var(--hdr-h) + 14px);right:14px;
+/* ── SOUND / MUSIC TOGGLE ── */
+.sound-btn,.music-btn{
+  position:fixed;right:14px;
   width:36px;height:36px;border-radius:50%;
   background:var(--surface-bg);border:1px solid var(--border2);
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   display:grid;place-items:center;cursor:pointer;z-index:60;
   box-shadow:0 2px 12px #0004;transition:.2s;
 }
-.sound-btn:active{transform:scale(.88)}
-.sound-btn svg{width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:.2s}
+.sound-btn{top:calc(var(--hdr-top) + var(--hdr-h) + 14px)}
+.music-btn{top:calc(var(--hdr-top) + var(--hdr-h) + 58px)}
+.sound-btn:active,.music-btn:active{transform:scale(.88)}
+.sound-btn svg,.music-btn svg{width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:.2s}
 .sound-btn.on svg{stroke:var(--g1);filter:drop-shadow(0 0 4px var(--g1))}
+.music-btn.on svg{stroke:var(--r2);filter:drop-shadow(0 0 4px var(--r0));animation:musicpulse 1.2s ease-in-out infinite}
+@keyframes musicpulse{0%,100%{filter:drop-shadow(0 0 3px var(--r0))}50%{filter:drop-shadow(0 0 9px var(--r0))}}
 
 /* ── UPTIME ── */
 .uptime-badge{
@@ -616,8 +621,12 @@ body::before{
 </div>
 
 <!-- SOUND BUTTON -->
-<div class="sound-btn" id="soundBtn" onclick="toggleSound()">
+<div class="sound-btn on" id="soundBtn" onclick="toggleSound()">
   <svg id="soundIc" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+</div>
+<!-- MUSIC BUTTON -->
+<div class="music-btn" id="musicBtn" onclick="toggleMusic()">
+  <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
 </div>
 
 
@@ -718,21 +727,21 @@ body::before{
   <div class="page" id="page-webhook">
     <div class="banner">
       <div class="banner-icon"><svg><use href="#ic-bulb"/></svg></div>
-      <p><strong>Ayarlar</strong>'dan URL'i değiştir, sonra <strong>Webhook Kur</strong>'a bas.</p>
+      <p><strong>Webhook modu</strong> botu aktif eder — Telegram mesajları anında gelir. <strong>Polling modu</strong> webhook bağlantısını keser, bot duraklar.</p>
     </div>
     <div class="card">
       <div class="card-head">
         <div class="ci orange"><svg><use href="#ic-webhook"/></svg></div>
-        <span class="card-label">İşlemler</span>
+        <span class="card-label">Bot Kontrol</span>
       </div>
       <div class="card-body">
         <div class="wh-box">
-          <div class="wh-lbl">Kayıtlı URL</div>
+          <div class="wh-lbl">Aktif Webhook URL</div>
           <div class="wh-url" id="wbActive">—</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px">
-          <button class="btn btn-red" onclick="doSetWebhook()"><svg><use href="#ic-link"/></svg>Webhook Kur / Güncelle</button>
-          <button class="btn btn-outline" onclick="doDelWebhook()"><svg><use href="#ic-x"/></svg>Webhook Sil (Polling)</button>
+          <button class="btn btn-red" onclick="doSetWebhook()"><svg><use href="#ic-link"/></svg>🟢 Botu Aç (Webhook Modu)</button>
+          <button class="btn btn-outline" onclick="doDelWebhook()"><svg><use href="#ic-x"/></svg>🔴 Botu Kapat (Polling Modu)</button>
         </div>
       </div>
     </div>
@@ -1507,15 +1516,15 @@ function startLoop(){
 
 // ── WEBHOOK ──
 async function doSetWebhook(){
-  toast('Webhook kuruluyor…');
+  toast('🟢 Bot açılıyor…');
   const d=await fetch(API+'/bot/webhook/set',{method:'POST'}).then(r=>r.json());
-  toast(d.ok?'✓ Webhook kuruldu!':'✗ '+d.description,d.ok);
-  if(d.ok)loadStatus();
+  toast(d.ok?'✓ Bot aktif — Webhook kuruldu!':'✗ '+(d.description||d.error||'Hata'),d.ok);
+  if(d.ok){loadStatus();if(window.ekgActivity)window.ekgActivity();}
 }
 async function doDelWebhook(){
-  if(!confirm('Webhook silinsin mi?'))return;
+  toast('🔴 Bot kapatılıyor…');
   const d=await fetch(API+'/bot/webhook',{method:'DELETE'}).then(r=>r.json());
-  toast(d.ok?'✓ Webhook silindi':'✗ '+d.description,d.ok);
+  toast(d.ok?'✓ Bot durduruldu — Polling modunda':'✗ '+(d.description||d.error||'Hata'),d.ok);
   if(d.ok)loadStatus();
 }
 
@@ -1699,10 +1708,86 @@ async function doAdd(){
   }else toast('✗ '+(d.error||'Ekleme hatası'),false);
 }
 
+// ── AMBIENT MUSIC ──
+(function(){
+  let on=false,ac=null,master=null,nodes=[];
+  const SCALE=[110,130.81,146.83,164.81,196,220,261.63,293.66]; // A-minor pentatonic
+  let seq=0,nextTime=0;
+  function initAC(){
+    if(ac)return;
+    ac=new(window.AudioContext||window.webkitAudioContext)();
+    master=ac.createGain();master.gain.value=0;
+    const filter=ac.createBiquadFilter();
+    filter.type='lowpass';filter.frequency.value=1200;filter.Q.value=1.2;
+    const rev=ac.createDelay(0.5);rev.delayTime.value=0.22;
+    const revGain=ac.createGain();revGain.gain.value=0.25;
+    master.connect(filter);filter.connect(ac.destination);
+    filter.connect(rev);rev.connect(revGain);revGain.connect(ac.destination);
+    nodes.push(master,filter,rev,revGain);
+  }
+  function note(freq,t,dur,vol){
+    if(!ac||!master)return;
+    const o=ac.createOscillator();
+    const g=ac.createGain();
+    o.type='triangle';o.frequency.value=freq;
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(vol,t+0.08);
+    g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+    o.connect(g);g.connect(master);
+    o.start(t);o.stop(t+dur+0.05);
+  }
+  function drone(freq,t){
+    if(!ac||!master)return;
+    const o=ac.createOscillator();const g=ac.createGain();
+    o.type='sine';o.frequency.value=freq;
+    g.gain.setValueAtTime(0.04,t);
+    o.connect(g);g.connect(master);o.start(t);
+    nodes.push(o,g);
+    return o;
+  }
+  let droneOsc=null;
+  function scheduleNotes(){
+    if(!on||!ac)return;
+    const beat=0.55;
+    const now=ac.currentTime;
+    if(nextTime<now)nextTime=now+0.1;
+    while(nextTime<now+2){
+      const n=SCALE[seq%SCALE.length]*((seq%8<4)?1:2);
+      note(n,nextTime,beat*1.4,0.06+Math.random()*0.03);
+      if(seq%4===0)note(SCALE[0]*0.5,nextTime,beat*3.5,0.04);
+      if(seq%8===4)note(SCALE[2]*0.5,nextTime,beat*2.5,0.035);
+      nextTime+=beat*(0.9+Math.random()*0.2);
+      seq++;
+    }
+    setTimeout(scheduleNotes,800);
+  }
+  window.toggleMusic=function(){
+    on=!on;
+    const btn=document.getElementById('musicBtn');
+    if(!btn)return;
+    btn.classList.toggle('on',on);
+    if(on){
+      initAC();
+      if(ac.state==='suspended')ac.resume();
+      master.gain.cancelScheduledValues(ac.currentTime);
+      master.gain.linearRampToValueAtTime(1,ac.currentTime+1.5);
+      if(!droneOsc)droneOsc=drone(55,ac.currentTime);
+      nextTime=ac.currentTime;seq=0;
+      scheduleNotes();
+    }else{
+      if(master){master.gain.linearRampToValueAtTime(0,ac.currentTime+1.2);}
+      if(droneOsc){try{droneOsc.stop(ac.currentTime+1.3);}catch(e){}droneOsc=null;}
+    }
+  };
+})();
+
 // Init
 setStatus('st-checking','…');
 loadStatus();loadConfig();loadFilters();
 startLoop();
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden){loadStatus();startLoop();}
+});
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/admin/sw.js',{scope:'/admin/'}).catch(()=>{});
 }
