@@ -36882,10 +36882,10 @@ body::before{
 .hdr-info{flex:1;min-width:0}
 .hdr-title{
   font-size:15px;font-weight:900;letter-spacing:-.02em;
-  background:linear-gradient(90deg,#ff8a80,#ff5252,#ce93d8,#ffab40,#ff5252,#ff8a80);
-  background-size:300% auto;
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  animation:titleflow 5s linear infinite;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  color:var(--r3);
+  text-shadow:0 0 14px var(--r0),0 0 28px var(--glow);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:color .4s,text-shadow .4s;
 }
 @keyframes titleflow{from{background-position:0%}to{background-position:300%}}
 .hdr-sub{font-size:10px;color:var(--muted);margin-top:1px;font-weight:500}
@@ -37124,7 +37124,7 @@ body::before{
   background:rgba(16,1,24,.88);
   backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);
   border-radius:26px;
-  border:1px solid rgba(180,80,255,.18);
+  border:1px solid rgba(220,38,38,.18);
   box-shadow:0 4px 32px rgba(0,0,0,.7),0 0 0 .5px rgba(220,38,38,.12),inset 0 1px 0 rgba(255,255,255,.05);
   display:grid;grid-template-columns:repeat(4,1fr);
   overflow:hidden;
@@ -37292,7 +37292,7 @@ body::before{
 /* ── THEME OVERRIDES ── */
 /* PURPLE */
 html[data-theme="purple"] .btn-red{background:linear-gradient(120deg,#6a0080,#9c27b0,#ce93d8,#9c27b0,#6a0080)!important;box-shadow:0 2px 16px rgba(156,39,176,.45),0 0 0 1px rgba(206,147,216,.25),inset 0 1px 0 rgba(225,190,231,.2)!important}
-html[data-theme="purple"] .hdr-title{background:linear-gradient(90deg,#e1bee7,#ce93d8,#ab47bc,#ce93d8,#e1bee7)!important;background-size:300% auto!important}
+html[data-theme="purple"] .hdr-title{color:#e1bee7!important;text-shadow:0 0 14px #9c27b0,0 0 28px #9c27b040!important}
 html[data-theme="purple"] .stat-val{color:#e1bee7!important;text-shadow:0 0 18px #9c27b0,0 0 32px #9c27b040!important}
 html[data-theme="purple"] .stat-card::before{background:linear-gradient(135deg,rgba(156,39,176,.07),transparent 60%)!important}
 html[data-theme="purple"] .refresh-fill{background:linear-gradient(90deg,#9c27b0,#ce93d8,#9c27b0)!important;background-size:200% auto!important}
@@ -37308,7 +37308,7 @@ html[data-theme="purple"] .stat-card::before{background:linear-gradient(135deg,r
 
 /* BLUE */
 html[data-theme="blue"] .btn-red{background:linear-gradient(120deg,#1565c0,#2979ff,#82b1ff,#2979ff,#1565c0)!important;box-shadow:0 2px 16px rgba(41,121,255,.45),0 0 0 1px rgba(130,177,255,.25),inset 0 1px 0 rgba(187,222,251,.2)!important}
-html[data-theme="blue"] .hdr-title{background:linear-gradient(90deg,#bbdefb,#82b1ff,#448aff,#82b1ff,#bbdefb)!important;background-size:300% auto!important}
+html[data-theme="blue"] .hdr-title{color:#bbdefb!important;text-shadow:0 0 14px #2979ff,0 0 28px #2979ff40!important}
 html[data-theme="blue"] .stat-val{color:#bbdefb!important;text-shadow:0 0 18px #2979ff,0 0 32px #2979ff40!important}
 html[data-theme="blue"] .stat-card::before{background:linear-gradient(135deg,rgba(41,121,255,.07),transparent 60%)!important}
 html[data-theme="blue"] .refresh-fill{background:linear-gradient(90deg,#2979ff,#82b1ff,#2979ff)!important;background-size:200% auto!important}
@@ -37324,7 +37324,7 @@ html[data-theme="blue"] .stat-card::before{background:linear-gradient(135deg,rgb
 
 /* GREEN */
 html[data-theme="green"] .btn-red{background:linear-gradient(120deg,#007824,#00c853,#69f0ae,#00c853,#007824)!important;box-shadow:0 2px 16px rgba(0,200,83,.45),0 0 0 1px rgba(105,240,174,.25),inset 0 1px 0 rgba(185,246,202,.2)!important}
-html[data-theme="green"] .hdr-title{background:linear-gradient(90deg,#b9f6ca,#69f0ae,#00e676,#69f0ae,#b9f6ca)!important;background-size:300% auto!important}
+html[data-theme="green"] .hdr-title{color:#b9f6ca!important;text-shadow:0 0 14px #00c853,0 0 28px #00c85340!important}
 html[data-theme="green"] .stat-val{color:#b9f6ca!important;text-shadow:0 0 18px #00c853,0 0 32px #00c85340!important}
 html[data-theme="green"] .stat-card::before{background:linear-gradient(135deg,rgba(0,200,83,.07),transparent 60%)!important}
 html[data-theme="green"] .refresh-fill{background:linear-gradient(90deg,#00c853,#69f0ae,#00c853)!important;background-size:200% auto!important}
@@ -37337,6 +37337,34 @@ html[data-theme="green"] .cat-card.sel{border-color:#00c853!important;box-shadow
 html[data-theme="green"] .mtitle{background:linear-gradient(90deg,#b9f6ca,#69f0ae)!important}
 html[data-theme="green"] .modal::before{background:linear-gradient(90deg,transparent 5%,#00c853 30%,#69f0ae 70%,transparent 95%)!important}
 html[data-theme="green"] .stat-card::before{background:linear-gradient(135deg,rgba(0,200,83,.12),transparent 55%,rgba(0,200,83,.06))!important}
+
+/* ── PING BADGE ── */
+.ping-badge{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);
+  border-radius:20px;padding:3px 9px;font-size:10px;font-weight:700;
+  color:var(--muted);cursor:default;
+}
+.ping-dot{width:5px;height:5px;border-radius:50%;background:var(--g0);flex-shrink:0;
+  box-shadow:0 0 6px var(--g0);animation:pingpulse 2s ease-in-out infinite;}
+@keyframes pingpulse{0%,100%{opacity:1}50%{opacity:.3}}
+.ping-badge.slow .ping-dot{background:#ffab40;box-shadow:0 0 6px #ffab40;}
+.ping-badge.bad  .ping-dot{background:var(--r2);box-shadow:0 0 6px var(--r2);}
+
+/* ── SPARKLINE ── */
+.sparkline-wrap{margin-top:8px;display:flex;align-items:flex-end;gap:0}
+.sparkline-bar{
+  flex:1;border-radius:3px 3px 0 0;min-height:3px;
+  background:var(--r0);opacity:.5;
+  transition:height .3s ease,opacity .2s;
+}
+.sparkline-bar:hover{opacity:1}
+.sparkline-label{font-size:9px;color:var(--muted);font-weight:700;margin-top:4px;
+  display:flex;justify-content:space-between;padding:0 1px}
+
+/* ── STAT COUNTER ANIMATION ── */
+@keyframes countpop{0%{transform:scale(1.3);opacity:.6}100%{transform:scale(1);opacity:1}}
+.stat-val.pop{animation:countpop .3s cubic-bezier(.34,1.56,.64,1)}
 
 /* ── PAGE SLIDE ── */
 .page{transform:translateX(0);transition:none}
@@ -37409,6 +37437,10 @@ html[data-theme="green"] .stat-card::before{background:linear-gradient(135deg,rg
     </div>
     <span class="sbadge-text" id="sbadgeText">…</span>
   </div>
+  <div class="ping-badge" id="pingBadge" title="API gecikme süresi">
+    <div class="ping-dot"></div>
+    <span id="pingMs">—</span>
+  </div>
 </div>
 
 <!-- SCROLL AREA -->
@@ -37417,8 +37449,16 @@ html[data-theme="green"] .stat-card::before{background:linear-gradient(135deg,rg
   <!-- DURUM -->
   <div class="page active" id="page-status">
     <div class="stat-row" id="statRow">
-      <div class="stat-card" draggable="true" data-idx="0"><div class="stat-val" id="statId">—</div><div class="stat-lbl">Bot ID</div></div>
-      <div class="stat-card" draggable="true" data-idx="1"><div class="stat-val" id="statPend">—</div><div class="stat-lbl">Bekleyen</div></div>
+      <div class="stat-card" draggable="true" data-idx="0">
+        <div class="stat-val" id="statId">—</div>
+        <div class="stat-lbl">Bot ID</div>
+        <div class="sparkline-wrap" id="spkId"></div>
+      </div>
+      <div class="stat-card" draggable="true" data-idx="1">
+        <div class="stat-val" id="statPend">—</div>
+        <div class="stat-lbl">Bekleyen</div>
+        <div class="sparkline-wrap" id="spkPend"></div>
+      </div>
     </div>
     <div class="card">
       <div class="card-head">
@@ -37726,6 +37766,54 @@ function toggleSound(){
   const btn=document.getElementById('soundBtn');
   btn.classList.toggle('on',soundOn);
   if(soundOn)playSound('notify');
+}
+
+// ── PING MS ──
+const pingHistory=[];
+async function measurePing(){
+  const t0=performance.now();
+  try{
+    await fetch(API+'/bot/status',{method:'HEAD',cache:'no-store'}).catch(()=>{});
+    const ms=Math.round(performance.now()-t0);
+    pingHistory.push(ms);
+    if(pingHistory.length>20)pingHistory.shift();
+    const el=document.getElementById('pingMs');
+    const badge=document.getElementById('pingBadge');
+    el.textContent=ms+'ms';
+    badge.className='ping-badge'+(ms>500?' bad':ms>200?' slow':'');
+  }catch{}
+}
+setInterval(measurePing,4000);
+measurePing();
+
+// ── SPARKLINE ──
+const sparkData={id:[],pend:[]};
+function updateSparkline(id,val){
+  const arr=sparkData[id];
+  arr.push(val);
+  if(arr.length>10)arr.shift();
+  const wrap=document.getElementById('spk'+id.charAt(0).toUpperCase()+id.slice(1));
+  if(!wrap)return;
+  const max=Math.max(...arr,1);
+  const H=28;
+  wrap.innerHTML=arr.map((v,i)=>{
+    const pct=Math.round((v/max)*100);
+    const h=Math.max(3,Math.round((pct/100)*H));
+    const opacity=0.3+0.7*(i/arr.length);
+    return '<div class="sparkline-bar" style="height:'+h+'px;opacity:'+opacity+';background:var(--r0)"></div>';
+  }).join('');
+}
+
+// ── ANIMATED COUNTER ──
+function animCount(el,from,to){
+  if(from===to){el.textContent=to;return;}
+  const dur=600,steps=20,step=(to-from)/steps;
+  let cur=from,n=0;
+  const t=setInterval(()=>{
+    n++;cur+=step;
+    el.textContent=Math.round(n>=steps?to:cur);
+    if(n>=steps){clearInterval(t);el.textContent=to;el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');}
+  },dur/steps);
 }
 
 // ── AURORA ──
@@ -38049,6 +38137,7 @@ function resetBar(){
 
 // ── LOAD STATUS ──
 let firstLoad=true;
+const prevVals={id:null,pend:null};
 async function loadStatus(){
   try{
     const d=await fetch(API+'/bot/status').then(r=>r.json());
@@ -38058,8 +38147,13 @@ async function loadStatus(){
       const wb=d.webhook??{};
       const pend=wb.pending_update_count??0;
       const url=wb.url||'';
-      countUp(document.getElementById('statId'),d.me.id);
-      countUp(document.getElementById('statPend'),pend);
+      const elId=document.getElementById('statId');
+      const elPend=document.getElementById('statPend');
+      animCount(elId,prevVals.id??0,d.me.id);
+      animCount(elPend,prevVals.pend??0,pend);
+      updateSparkline('id',d.me.id);
+      updateSparkline('pend',pend);
+      prevVals.id=d.me.id;prevVals.pend=pend;
       document.getElementById('infoGrid').innerHTML=
         '<div class="info-cell"><label>Ad</label><span>'+esc(d.me.first_name)+'</span></div>'+
         '<div class="info-cell"><label>Kullanıcı Adı</label><span>@'+esc(d.me.username??'—')+'</span></div>';
