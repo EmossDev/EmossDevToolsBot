@@ -37648,9 +37648,6 @@ body::before{
           <div class="wh-lbl">Aktif URL</div>
           <div class="wh-url" id="wbDisp">Yükleniyor…</div>
         </div>
-        <button class="btn btn-red" onclick="switchTab('webhook')">
-          <svg><use href="#ic-link"/></svg>Webhook Yönet
-        </button>
       </div>
     </div>
   </div>
