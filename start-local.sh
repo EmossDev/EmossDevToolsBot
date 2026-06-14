@@ -280,8 +280,8 @@ _update_webhook() {
   CONFIG_FILE="$ROOT/telegram-bot/COMMAND_FILES/DATA_FILE/config.json"
   BOT_TOKEN=$(python3 -c "import json; d=json.load(open('$CONFIG_FILE')); print(d['bot']['token'])" 2>/dev/null || true)
   [ -z "$BOT_TOKEN" ] && return
-  RESP=$(curl -sf "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${new_url}/bot/" 2>/dev/null || true)
-  echo "$RESP" | grep -q '"ok":true' && echo "[OK] Webhook guncellendi: ${new_url}/bot/"
+  RESP=$(curl -sf "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${new_url}/" 2>/dev/null || true)
+  echo "$RESP" | grep -q '"ok":true' && echo "[OK] Webhook guncellendi: ${new_url}/"
 }
 
 while kill -0 "$PHP_PID" 2>/dev/null && kill -0 "$NODE_PID" 2>/dev/null; do
