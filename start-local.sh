@@ -211,83 +211,7 @@ if ! kill -0 "$NODE_PID" 2>/dev/null; then
 fi
 echo "[OK] Admin Panel çalışıyor (PID: $NODE_PID)"
 
-# ── localhost.run tüneli ───────────────────────────────────────────────────
-TUNNEL_LOG="$LOGDIR/emoss-tunnel.log"
-TUNNEL_PID=""
-TUNNEL_URL=""
-
-if command -v ssh &>/dev/null; then
-  echo "[*] localhost.run tüneli başlatılıyor..."
-  ssh -o StrictHostKeyChecking=no \
-      -o ServerAliveInterval=30 \
-      -o ServerAliveCountMax=3 \
-      -R "80:localhost:$PORT" localhost.run \
-      > "$TUNNEL_LOG" 2>&1 &
-  TUNNEL_PID=$!
-
-  # URL'nin gelmesini bekle (max 20 saniye)
-  for i in $(seq 1 40); do
-    sleep 0.5
-    TUNNEL_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.(lhr\.life|lhrtunnel\.link)' "$TUNNEL_LOG" 2>/dev/null | tail -1 || true)
-    [ -n "$TUNNEL_URL" ] && break
-  done
-
-  if [ -n "$TUNNEL_URL" ]; then
-    echo "[OK] Tünel: $TUNNEL_URL"
-    _setup_github_webhook "$TUNNEL_URL"
-
-    # Webhook'u otomatik Telegram'a kaydet
-    CONFIG_FILE="$ROOT/telegram-bot/COMMAND_FILES/DATA_FILE/config.json"
-    BOT_TOKEN=""
-    if command -v python3 &>/dev/null; then
-      BOT_TOKEN=$(python3 -c "import json,sys; d=json.load(open('$CONFIG_FILE')); print(d['bot']['token'])" 2>/dev/null || true)
-    fi
-    if [ -n "$BOT_TOKEN" ]; then
-      WEBHOOK_RESP=$(curl -sf "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${TUNNEL_URL}/bot/" 2>/dev/null || true)
-      if echo "$WEBHOOK_RESP" | grep -q '"ok":true'; then
-        echo "[OK] Webhook güncellendi: ${TUNNEL_URL}/bot/"
-      else
-        echo "[!] Webhook güncellenemedi: $WEBHOOK_RESP"
-      fi
-    else
-      echo "[!] Bot token okunamadı, webhook elle güncelle."
-    fi
-  else
-    echo "[!] Tünel URL'si alınamadı — log: $TUNNEL_LOG"
-  fi
-else
-  echo "[!] ssh bulunamadı, tünel atlandı. Manuel: ssh -R 80:localhost:$PORT nokey@localhost.run"
-fi
-
-echo ""
-echo "========================================"
-echo "  Admin Panel : http://localhost:$PORT/admin"
-echo "  Bot Webhook  : ${TUNNEL_URL:-<tünel-url>}/bot/"
-echo ""
-echo "  Loglar:"
-echo "    tail -f $NODE_LOG"
-echo "    tail -f $PHP_LOG"
-echo "    tail -f $TUNNEL_LOG"
-echo ""
-echo "  Durdurmak için: Ctrl+C"
-echo "========================================"
-echo ""
-
-cleanup() {
-  echo ""
-  echo "[*] Durduruluyor..."
-  kill "$PHP_PID" "$NODE_PID" 2>/dev/null
-  [ -n "$TUNNEL_PID" ] && kill "$TUNNEL_PID" 2>/dev/null
-  FPM_PID_FILE="$ROOT/telegram-bot/.tmp/php-fpm.pid"
-  if [ -f "$FPM_PID_FILE" ]; then
-    kill "$(cat "$FPM_PID_FILE")" 2>/dev/null || true
-  fi
-  exit 0
-}
-trap cleanup INT TERM
-
-# ── Tünel URL izleyici: değişince webhook'u otomatik güncelle ─────────────
-_LAST_URL="$TUNNEL_URL"
+# ── GitHub webhook yardımcı fonksiyonları ────────────────────────────────
 GH_REPO="EmossDev/EmossDevToolsBot"
 GH_HOOK_ID_FILE="${TMPDIR:-/tmp}/emoss-gh-hook-id"
 _CF="$ROOT/telegram-bot/COMMAND_FILES/DATA_FILE/config.json"
@@ -372,6 +296,84 @@ except: pass
     echo "[!] GitHub webhook oluşturulamadı — GITHUB_TOKEN yetkisini kontrol et"
   fi
 }
+
+# ── localhost.run tüneli ───────────────────────────────────────────────────
+TUNNEL_LOG="$LOGDIR/emoss-tunnel.log"
+TUNNEL_PID=""
+TUNNEL_URL=""
+
+if command -v ssh &>/dev/null; then
+  echo "[*] localhost.run tüneli başlatılıyor..."
+  ssh -o StrictHostKeyChecking=no \
+      -o ServerAliveInterval=30 \
+      -o ServerAliveCountMax=3 \
+      -R "80:localhost:$PORT" localhost.run \
+      > "$TUNNEL_LOG" 2>&1 &
+  TUNNEL_PID=$!
+
+  # URL'nin gelmesini bekle (max 20 saniye)
+  for i in $(seq 1 40); do
+    sleep 0.5
+    TUNNEL_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.(lhr\.life|lhrtunnel\.link)' "$TUNNEL_LOG" 2>/dev/null | tail -1 || true)
+    [ -n "$TUNNEL_URL" ] && break
+  done
+
+  if [ -n "$TUNNEL_URL" ]; then
+    echo "[OK] Tünel: $TUNNEL_URL"
+    _setup_github_webhook "$TUNNEL_URL"
+
+    # Webhook'u otomatik Telegram'a kaydet
+    CONFIG_FILE="$ROOT/telegram-bot/COMMAND_FILES/DATA_FILE/config.json"
+    BOT_TOKEN=""
+    if command -v python3 &>/dev/null; then
+      BOT_TOKEN=$(python3 -c "import json,sys; d=json.load(open('$CONFIG_FILE')); print(d['bot']['token'])" 2>/dev/null || true)
+    fi
+    if [ -n "$BOT_TOKEN" ]; then
+      WEBHOOK_RESP=$(curl -sf "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${TUNNEL_URL}/bot/" 2>/dev/null || true)
+      if echo "$WEBHOOK_RESP" | grep -q '"ok":true'; then
+        echo "[OK] Webhook güncellendi: ${TUNNEL_URL}/bot/"
+      else
+        echo "[!] Webhook güncellenemedi: $WEBHOOK_RESP"
+      fi
+    else
+      echo "[!] Bot token okunamadı, webhook elle güncelle."
+    fi
+  else
+    echo "[!] Tünel URL'si alınamadı — log: $TUNNEL_LOG"
+  fi
+else
+  echo "[!] ssh bulunamadı, tünel atlandı. Manuel: ssh -R 80:localhost:$PORT nokey@localhost.run"
+fi
+
+echo ""
+echo "========================================"
+echo "  Admin Panel : http://localhost:$PORT/admin"
+echo "  Bot Webhook  : ${TUNNEL_URL:-<tünel-url>}/bot/"
+echo ""
+echo "  Loglar:"
+echo "    tail -f $NODE_LOG"
+echo "    tail -f $PHP_LOG"
+echo "    tail -f $TUNNEL_LOG"
+echo ""
+echo "  Durdurmak için: Ctrl+C"
+echo "========================================"
+echo ""
+
+cleanup() {
+  echo ""
+  echo "[*] Durduruluyor..."
+  kill "$PHP_PID" "$NODE_PID" 2>/dev/null
+  [ -n "$TUNNEL_PID" ] && kill "$TUNNEL_PID" 2>/dev/null
+  FPM_PID_FILE="$ROOT/telegram-bot/.tmp/php-fpm.pid"
+  if [ -f "$FPM_PID_FILE" ]; then
+    kill "$(cat "$FPM_PID_FILE")" 2>/dev/null || true
+  fi
+  exit 0
+}
+trap cleanup INT TERM
+
+# ── Tünel URL izleyici: değişince webhook'u otomatik güncelle ─────────────
+_LAST_URL="$TUNNEL_URL"
 
 _update_webhook() {
   local new_url="$1"
