@@ -38346,11 +38346,14 @@ async function loadStatus(){
     }
   }catch{setStatus('st-offline','Hata');firstLoad=true;}
   resetBar();
+  // Kendini yeniden planla — setInterval yerine self-scheduling setTimeout
+  clearTimeout(refreshTimer);
+  refreshTimer=setTimeout(loadStatus,INTERVAL);
 }
 
 function startLoop(){
-  clearInterval(refreshTimer);
-  refreshTimer=setInterval(loadStatus,INTERVAL);
+  clearTimeout(refreshTimer);
+  refreshTimer=setTimeout(loadStatus,INTERVAL);
 }
 
 // ── BOT POWER ──
