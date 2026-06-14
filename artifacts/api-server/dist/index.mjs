@@ -37202,6 +37202,15 @@ body::before{
 /* ── PARTICLE CANVAS ── */
 #px{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55}
 
+/* ── AURORA CANVAS ── */
+#aurora{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.35}
+
+/* ── MOOD LED ── */
+#moodLed{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  transition:background 3s ease;
+}
+
 /* ── LIVE CLOCK ── */
 .hdr-clock{font-size:11px;font-weight:700;font-family:'Courier New',monospace;
   color:rgba(255,138,128,.6);letter-spacing:.06em;margin-top:2px}
@@ -37238,10 +37247,74 @@ body::before{
   pointer-events:none;
 }
 @keyframes rippleout{to{transform:scale(4);opacity:0}}
+
+/* ── LOGO 3D HOVER ── */
+.logo{transform-style:preserve-3d;transition:transform .15s ease,box-shadow .15s ease;cursor:pointer}
+.logo:hover{box-shadow:0 0 0 1.5px rgba(220,38,38,.6),0 0 32px #dc262660,0 4px 20px #00000080!important}
+
+/* ── THEME PICKER ── */
+.theme-bar{
+  position:fixed;bottom:calc(var(--nav-bot) + var(--nav-h) + 14px);right:14px;
+  display:flex;flex-direction:column;gap:6px;z-index:60;
+}
+.theme-dot{
+  width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.15);
+  cursor:pointer;transition:.2s;box-shadow:0 2px 8px #0006;
+}
+.theme-dot.active{transform:scale(1.25);border-color:rgba(255,255,255,.6)}
+.theme-dot:active{transform:scale(.9)}
+
+/* ── SOUND TOGGLE ── */
+.sound-btn{
+  position:fixed;top:calc(var(--hdr-top) + var(--hdr-h) + 14px);right:14px;
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(16,1,24,.85);border:1px solid rgba(180,80,255,.2);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  display:grid;place-items:center;cursor:pointer;z-index:60;
+  box-shadow:0 2px 12px #0004;transition:.2s;
+}
+.sound-btn:active{transform:scale(.88)}
+.sound-btn svg{width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:.2s}
+.sound-btn.on svg{stroke:var(--g1);filter:drop-shadow(0 0 4px var(--g1))}
+
+/* ── UPTIME ── */
+.uptime-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(0,200,83,.08);border:1px solid rgba(0,200,83,.2);
+  border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;
+  font-family:'Courier New',monospace;color:var(--g1);margin-top:8px;
+}
+.uptime-badge::before{content:'⏱';font-size:10px}
+
+/* ── EKG CANVAS ── */
+#ekg{width:100%;height:52px;border-radius:10px;margin-top:8px;display:block}
+
+/* ── DRAG HANDLE ── */
+.stat-card{cursor:grab;user-select:none;touch-action:none}
+.stat-card.dragging{opacity:.5;cursor:grabbing;transform:scale(.96)}
+.stat-card.drag-over{outline:2px dashed rgba(220,38,38,.5);outline-offset:2px}
+
+/* ── SHAKE HINT ── */
+@keyframes shakehint{0%,100%{transform:none}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
 </style>
 </head>
 <body>
+<div id="moodLed"></div>
+<canvas id="aurora"></canvas>
 <canvas id="px"></canvas>
+
+<!-- THEME BAR -->
+<div class="theme-bar">
+  <div class="theme-dot active" style="background:#dc2626" data-theme="red" onclick="setTheme('red')" title="Kırmızı"></div>
+  <div class="theme-dot" style="background:#9c27b0" data-theme="purple" onclick="setTheme('purple')" title="Mor"></div>
+  <div class="theme-dot" style="background:#2979ff" data-theme="blue" onclick="setTheme('blue')" title="Mavi"></div>
+  <div class="theme-dot" style="background:#00c853" data-theme="green" onclick="setTheme('green')" title="Yeşil"></div>
+</div>
+
+<!-- SOUND BUTTON -->
+<div class="sound-btn" id="soundBtn" onclick="toggleSound()">
+  <svg id="soundIc" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+</div>
 
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
   <symbol id="ic-bot" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="3"/><path d="M12 8V5"/><circle cx="12" cy="4" r="1"/><path d="M7 13h0m10 0h0M9 17h6"/><path d="M3 14H2m20 0h1"/></symbol>
@@ -37290,9 +37363,9 @@ body::before{
 
   <!-- DURUM -->
   <div class="page active" id="page-status">
-    <div class="stat-row">
-      <div class="stat-card"><div class="stat-val" id="statId">—</div><div class="stat-lbl">Bot ID</div></div>
-      <div class="stat-card"><div class="stat-val" id="statPend">—</div><div class="stat-lbl">Bekleyen</div></div>
+    <div class="stat-row" id="statRow">
+      <div class="stat-card" draggable="true" data-idx="0"><div class="stat-val" id="statId">—</div><div class="stat-lbl">Bot ID</div></div>
+      <div class="stat-card" draggable="true" data-idx="1"><div class="stat-val" id="statPend">—</div><div class="stat-lbl">Bekleyen</div></div>
     </div>
     <div class="card">
       <div class="card-head">
@@ -37301,6 +37374,8 @@ body::before{
         <span style="margin-left:auto;font-size:10px;color:var(--muted);font-weight:600" id="lastRef"></span>
       </div>
       <div class="card-body">
+        <div class="uptime-badge" id="uptimeBadge">00:00:00</div>
+        <canvas id="ekg"></canvas>
         <div class="info-grid" id="infoGrid">
           <div class="info-cell"><label>Ad</label><span style="color:var(--muted)">—</span></div>
           <div class="info-cell"><label>Kullanıcı Adı</label><span style="color:var(--muted)">—</span></div>
@@ -37534,31 +37609,109 @@ const T_CLS={0:'tb-0',1:'tb-1',2:'tb-2',3:'tb-3'};
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
+// ── THEME ──
+const THEMES={
+  red:  {r0:'#dc2626',r1:'#e53935',r2:'#ff5252',r3:'#ff8a80',glow:'#dc262640',pill:'rgba(220,38,38,.1)'},
+  purple:{r0:'#9c27b0',r1:'#ab47bc',r2:'#ce93d8',r3:'#e1bee7',glow:'#9c27b040',pill:'rgba(156,39,176,.1)'},
+  blue: {r0:'#2979ff',r1:'#448aff',r2:'#82b1ff',r3:'#bbdefb',glow:'#2979ff40',pill:'rgba(41,121,255,.1)'},
+  green:{r0:'#00c853',r1:'#00e676',r2:'#69f0ae',r3:'#b9f6ca',glow:'#00c85340',pill:'rgba(0,200,83,.1)'},
+};
+let curTheme='red';
+function setTheme(name){
+  const t=THEMES[name];if(!t)return;
+  curTheme=name;
+  const s=document.documentElement.style;
+  s.setProperty('--r0',t.r0);s.setProperty('--r1',t.r1);
+  s.setProperty('--r2',t.r2);s.setProperty('--r3',t.r3);
+  s.setProperty('--glow',t.glow);
+  document.querySelectorAll('.theme-dot').forEach(d=>{
+    d.classList.toggle('active',d.dataset.theme===name);
+  });
+  playSound('click');
+  localStorage.setItem('emoss-theme',name);
+}
+(function(){const saved=localStorage.getItem('emoss-theme');if(saved&&THEMES[saved])setTheme(saved);})();
+
+// ── SOUND ──
+let soundOn=true;
+const AC=window.AudioContext||window.webkitAudioContext;
+let ac=null;
+function getAC(){if(!ac&&AC){try{ac=new AC();}catch(e){}}return ac;}
+function beep(freq=440,dur=0.06,vol=0.08,type='sine'){
+  const a=getAC();if(!a||!soundOn)return;
+  const o=a.createOscillator();const g=a.createGain();
+  o.connect(g);g.connect(a.destination);
+  o.type=type;o.frequency.value=freq;
+  g.gain.setValueAtTime(vol,a.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+dur);
+  o.start();o.stop(a.currentTime+dur);
+}
+function playSound(type){
+  if(!soundOn)return;
+  if(type==='click')beep(600,0.05,0.06,'sine');
+  else if(type==='ok')beep(880,0.08,0.08,'sine');
+  else if(type==='err'){beep(200,0.1,0.1,'sawtooth');}
+  else if(type==='notify'){beep(1000,0.04,0.06,'sine');setTimeout(()=>beep(1300,0.04,0.06,'sine'),80);}
+}
+function toggleSound(){
+  soundOn=!soundOn;
+  const btn=document.getElementById('soundBtn');
+  btn.classList.toggle('on',soundOn);
+  if(soundOn)playSound('notify');
+}
+
+// ── AURORA ──
+(function(){
+  const cv=document.getElementById('aurora');
+  const ctx=cv.getContext('2d');
+  let W,H,t=0;
+  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  const blobs=[
+    {x:.2,y:.3,r:.5,c:'rgba(220,38,38,',spd:.0007},
+    {x:.8,y:.7,r:.45,c:'rgba(156,39,176,',spd:.0011},
+    {x:.5,y:.5,r:.4,c:'rgba(255,109,0,',spd:.0009},
+    {x:.1,y:.8,r:.35,c:'rgba(41,121,255,',spd:.0013},
+  ];
+  function frame(){
+    t+=1;
+    ctx.clearRect(0,0,W,H);
+    blobs.forEach(b=>{
+      const px=(b.x+Math.sin(t*b.spd)*0.18)*W;
+      const py=(b.y+Math.cos(t*b.spd*1.3)*0.15)*H;
+      const rr=b.r*Math.min(W,H);
+      const grad=ctx.createRadialGradient(px,py,0,px,py,rr);
+      grad.addColorStop(0,b.c+'0.18)');
+      grad.addColorStop(.5,b.c+'0.08)');
+      grad.addColorStop(1,b.c+'0)');
+      ctx.beginPath();ctx.arc(px,py,rr,0,Math.PI*2);
+      ctx.fillStyle=grad;ctx.fill();
+    });
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
 // ── PARTICLES ──
 (function(){
   const cv=document.getElementById('px');
   const ctx=cv.getContext('2d');
   let W,H,pts=[];
-  function resize(){
-    W=cv.width=window.innerWidth;
-    H=cv.height=window.innerHeight;
-  }
+  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
   resize();window.addEventListener('resize',resize);
   const N=55;
   const COLORS=['rgba(220,38,38,','rgba(156,39,176,','rgba(255,109,0,'];
   for(let i=0;i<N;i++)pts.push({
     x:Math.random()*1200,y:Math.random()*900,
     vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,
-    r:Math.random()*1.8+.6,
-    c:COLORS[Math.floor(Math.random()*COLORS.length)]
+    r:Math.random()*1.8+.6,c:COLORS[Math.floor(Math.random()*COLORS.length)]
   });
   const MAX=120;
   function frame(){
     ctx.clearRect(0,0,W,H);
     for(const p of pts){
       p.x+=p.vx;p.y+=p.vy;
-      if(p.x<0||p.x>W)p.vx*=-1;
-      if(p.y<0||p.y>H)p.vy*=-1;
+      if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
     }
     for(let i=0;i<pts.length;i++){
       for(let j=i+1;j<pts.length;j++){
@@ -37566,23 +37719,102 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
         const d=Math.sqrt(dx*dx+dy*dy);
         if(d<MAX){
           const a=(1-d/MAX)*.4;
-          ctx.beginPath();
-          ctx.strokeStyle=pts[i].c+a+')';
-          ctx.lineWidth=.7;
-          ctx.moveTo(pts[i].x,pts[i].y);
-          ctx.lineTo(pts[j].x,pts[j].y);
-          ctx.stroke();
+          ctx.beginPath();ctx.strokeStyle=pts[i].c+a+')';ctx.lineWidth=.7;
+          ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.stroke();
         }
       }
-      ctx.beginPath();
-      ctx.arc(pts[i].x,pts[i].y,pts[i].r,0,Math.PI*2);
-      ctx.fillStyle=pts[i].c+'.7)';
-      ctx.fill();
+      ctx.beginPath();ctx.arc(pts[i].x,pts[i].y,pts[i].r,0,Math.PI*2);
+      ctx.fillStyle=pts[i].c+'.7)';ctx.fill();
     }
     requestAnimationFrame(frame);
   }
   frame();
 })();
+
+// ── MOOD LED ──
+function setMoodLed(online){
+  const led=document.getElementById('moodLed');
+  if(online){
+    led.style.background='radial-gradient(ellipse 60% 40% at 50% 100%,rgba(0,200,83,.07) 0%,transparent 70%)';
+  }else{
+    led.style.background='radial-gradient(ellipse 60% 40% at 50% 100%,rgba(220,38,38,.09) 0%,transparent 70%)';
+  }
+}
+
+// ── LOGO 3D HOVER ──
+(function(){
+  const logo=document.querySelector('.logo');
+  if(!logo)return;
+  logo.addEventListener('mousemove',e=>{
+    const r=logo.getBoundingClientRect();
+    const x=((e.clientX-r.left)/r.width-.5)*30;
+    const y=((e.clientY-r.top)/r.height-.5)*-30;
+    logo.style.transform='perspective(200px) rotateX('+y+'deg) rotateY('+x+'deg) scale(1.08)';
+  });
+  logo.addEventListener('mouseleave',()=>{logo.style.transform='';});
+  logo.addEventListener('touchstart',()=>{
+    logo.style.transform='perspective(200px) rotateX(-8deg) rotateY(8deg) scale(1.1)';
+    setTimeout(()=>logo.style.transform='',400);
+  },{passive:true});
+})();
+
+// ── EKG CANVAS ──
+(function(){
+  const cv=document.getElementById('ekg');
+  if(!cv)return;
+  const ctx=cv.getContext('2d');
+  let botOnline=false;
+  let t=0;
+  const H=52,pts=[];
+  function resize(){cv.width=cv.offsetWidth||300;}
+  resize();window.addEventListener('resize',resize);
+  function getY(){
+    if(!botOnline){
+      return H/2+Math.sin(t*0.05)*2;
+    }
+    const phase=(t%80)/80;
+    if(phase<.1)return H/2;
+    if(phase<.15)return H/2-18;
+    if(phase<.2)return H/2+10;
+    if(phase<.25)return H/2;
+    return H/2+Math.sin(t*0.3)*3;
+  }
+  function frame(){
+    t++;
+    resize();
+    const W=cv.width;
+    pts.push(getY());
+    if(pts.length>W)pts.shift();
+    ctx.clearRect(0,0,W,H);
+    ctx.beginPath();
+    const color=botOnline?'#00c853':'#dc2626';
+    ctx.strokeStyle=color;
+    ctx.lineWidth=1.8;
+    ctx.shadowColor=color;ctx.shadowBlur=botOnline?8:4;
+    for(let i=0;i<pts.length;i++){
+      i===0?ctx.moveTo(i,pts[i]):ctx.lineTo(i,pts[i]);
+    }
+    ctx.stroke();
+    ctx.shadowBlur=0;
+    requestAnimationFrame(frame);
+  }
+  frame();
+  window.ekgSetOnline=v=>{botOnline=v;};
+})();
+
+// ── UPTIME COUNTDOWN ──
+let uptimeStart=null;
+function startUptime(){uptimeStart=Date.now();}
+function tickUptime(){
+  if(!uptimeStart)return;
+  const s=Math.floor((Date.now()-uptimeStart)/1000);
+  const h=String(Math.floor(s/3600)).padStart(2,'0');
+  const m=String(Math.floor((s%3600)/60)).padStart(2,'0');
+  const sc=String(s%60).padStart(2,'0');
+  const el=document.getElementById('uptimeBadge');
+  if(el)el.textContent=h+':'+m+':'+sc;
+}
+setInterval(tickUptime,1000);
 
 // ── CLOCK ──
 function tickClock(){
@@ -37611,6 +37843,7 @@ function ripple(e){
   r.style.cssText='width:'+size+'px;height:'+size+'px;left:'+(e.clientX-rect.left-size/2)+'px;top:'+(e.clientY-rect.top-size/2)+'px';
   btn.appendChild(r);
   setTimeout(()=>r.remove(),500);
+  playSound('click');
 }
 document.querySelectorAll('.btn').forEach(b=>b.addEventListener('click',ripple));
 
@@ -37629,11 +37862,69 @@ function countUp(el,target,dur=800){
   requestAnimationFrame(tick);
 }
 
+// ── DRAG SORT WIDGETS ──
+(function(){
+  let dragEl=null;
+  document.addEventListener('dragstart',e=>{
+    const c=e.target.closest('.stat-card');if(!c)return;
+    dragEl=c;c.classList.add('dragging');
+  });
+  document.addEventListener('dragend',e=>{
+    const c=e.target.closest('.stat-card');if(!c)return;
+    c.classList.remove('dragging');
+    document.querySelectorAll('.stat-card').forEach(x=>x.classList.remove('drag-over'));
+    dragEl=null;
+  });
+  document.addEventListener('dragover',e=>{
+    e.preventDefault();
+    const c=e.target.closest('.stat-card');
+    if(!c||!dragEl||c===dragEl)return;
+    document.querySelectorAll('.stat-card').forEach(x=>x.classList.remove('drag-over'));
+    c.classList.add('drag-over');
+  });
+  document.addEventListener('drop',e=>{
+    e.preventDefault();
+    const c=e.target.closest('.stat-card');
+    if(!c||!dragEl||c===dragEl)return;
+    const row=document.getElementById('statRow');
+    const children=[...row.querySelectorAll('.stat-card')];
+    const fromI=children.indexOf(dragEl),toI=children.indexOf(c);
+    if(fromI<toI)c.after(dragEl);else c.before(dragEl);
+    c.classList.remove('drag-over');
+    playSound('click');
+  });
+})();
+
+// ── SHAKE TO REFRESH ──
+(function(){
+  let lastX=null,lastY=null,lastZ=null,lastShake=0;
+  window.addEventListener('devicemotion',e=>{
+    const a=e.accelerationIncludingGravity;
+    if(!a)return;
+    if(lastX===null){lastX=a.x;lastY=a.y;lastZ=a.z;return;}
+    const dx=Math.abs(a.x-lastX),dy=Math.abs(a.y-lastY),dz=Math.abs(a.z-lastZ);
+    lastX=a.x;lastY=a.y;lastZ=a.z;
+    if(dx+dy+dz>35){
+      const now=Date.now();
+      if(now-lastShake>2000){
+        lastShake=now;
+        toast('📳 Sallama algılandı — yenileniyor…');
+        loadStatus();
+        document.querySelector('.scroll-area').style.animation='shakehint .3s ease';
+        setTimeout(()=>document.querySelector('.scroll-area').style.animation='',400);
+      }
+    }
+  },{passive:true});
+})();
+
 // ── STATUS ──
 function setStatus(state,label){
   const badge=document.getElementById('statusBadge');
   badge.className='status-badge '+state;
   document.getElementById('sbadgeText').textContent=label;
+  const online=state==='st-online';
+  setMoodLed(online);
+  if(window.ekgSetOnline)window.ekgSetOnline(online);
 }
 
 // ── NAV PILL ──
@@ -37654,6 +37945,7 @@ function switchTab(tab,idx=0,e){
   });
   movePill(idx);
   document.getElementById('scrollArea').scrollTop=0;
+  playSound('click');
 }
 
 // ── TOAST ──
@@ -37661,6 +37953,7 @@ function toast(msg,ok=true){
   const t=document.getElementById('toast');
   t.textContent=msg;t.className='toast show '+(ok?'ok':'err');
   clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2800);
+  playSound(ok?'notify':'err');
 }
 
 // ── REFRESH BAR ──
@@ -37673,11 +37966,13 @@ function resetBar(){
 }
 
 // ── LOAD STATUS ──
+let firstLoad=true;
 async function loadStatus(){
   try{
     const d=await fetch(API+'/bot/status').then(r=>r.json());
     if(d.ok&&d.me){
       setStatus('st-online','Aktif');
+      if(firstLoad){startUptime();firstLoad=false;}
       const wb=d.webhook??{};
       const pend=wb.pending_update_count??0;
       const url=wb.url||'';
@@ -37697,8 +37992,9 @@ async function loadStatus(){
         now.getSeconds().toString().padStart(2,'0');
     }else{
       setStatus('st-offline','Çevrimdışı');
+      firstLoad=true;
     }
-  }catch{setStatus('st-offline','Hata');}
+  }catch{setStatus('st-offline','Hata');firstLoad=true;}
   resetBar();
 }
 
