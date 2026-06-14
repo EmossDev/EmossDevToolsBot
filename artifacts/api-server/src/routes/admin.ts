@@ -726,12 +726,12 @@ body::before{
     <div class="mp-close-btn" onclick="toggleMusic()">✕</div>
   </div>
   <div class="mp-presets" id="mpPresets">
-    <div class="mp-preset" onclick="playPreset('lofi1')">🎵 Lofi Hip Hop</div>
-    <div class="mp-preset" onclick="playPreset('chill')">🌙 Chill Beats</div>
-    <div class="mp-preset" onclick="playPreset('ambient')">🌊 Ambient</div>
-    <div class="mp-preset" onclick="playPreset('jazz')">☕ Jazz Lofi</div>
-    <div class="mp-preset" onclick="playPreset('sp_lofi')">🟢 Spotify Lofi</div>
-    <div class="mp-preset" onclick="playPreset('sp_chill')">🟢 Spotify Chill</div>
+    <div class="mp-preset" onclick="playPreset('lofi1',this)">🎵 Lofi</div>
+    <div class="mp-preset" onclick="playPreset('chill',this)">🌙 Chill</div>
+    <div class="mp-preset" onclick="playPreset('ambient',this)">🌊 Ambient</div>
+    <div class="mp-preset" onclick="playPreset('jazz',this)">☕ Jazz</div>
+    <div class="mp-preset" onclick="playPreset('hiphop',this)">🔥 Hip-Hop</div>
+    <div class="mp-preset" onclick="playPreset('sleep',this)">😴 Sleep</div>
   </div>
   <div class="mp-input-row">
     <input type="url" id="mpUrlInput" class="mp-url-input" placeholder="YouTube veya Spotify URL yapıştır…" inputmode="url"/>
@@ -1685,15 +1685,18 @@ async function toggleBot(){
 
 // ── WEBHOOK ──
 async function doSetWebhook(){
-  const urlInp=document.getElementById('botWhUrl');
-  const newUrl=urlInp?urlInp.value.trim():'';
-  if(newUrl){
-    // Önce config.json'u güncelle (Termux URL'sini kaydet)
-    await fetch(API+'/bot/config',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({webhookUrl:newUrl})}).catch(()=>{});
-  }
   toast('🟢 Bot açılıyor…');
-  const d=await fetch(API+'/bot/webhook/set',{method:'POST'}).then(r=>r.json());
-  toast(d.ok?'✓ Bot aktif — Webhook kuruldu!':'✗ '+(d.description||d.error||'Hata'),d.ok);
+  // Sunucu kendi tünel log'undan URL'yi alıyor; fallback olarak input'taki değer body'e eklenir
+  const urlInp=document.getElementById('botWhUrl');
+  const manualUrl=urlInp?urlInp.value.trim():'';
+  const body=manualUrl?JSON.stringify({webhookUrl:manualUrl}):'{}';
+  const d=await fetch(API+'/bot/webhook/set',{method:'POST',headers:{'Content-Type':'application/json'},body}).then(r=>r.json());
+  if(d.ok&&d.webhookUrl){
+    // Sunucudan gelen gerçek URL'yi input'a yaz
+    const inp=document.getElementById('botWhUrl');
+    if(inp&&!inp.matches(':focus'))inp.value=d.webhookUrl;
+  }
+  toast(d.ok?'✓ Bot aktif — '+d.webhookUrl:'✗ '+(d.description||d.error||'Hata'),d.ok);
   if(d.ok){loadStatus();if(window.ekgActivity)window.ekgActivity();}
 }
 async function doDelWebhook(){
@@ -1890,14 +1893,14 @@ async function doAdd(){
 (function(){
   let panelOpen=false;
 
-  // Hazır playlist'ler
+  // Hazır playlist'ler (sadece YouTube — Spotify embed premium gerektirir)
   const PRESETS={
-    lofi1: {type:'yt-playlist',id:'PLQkQfzsIUwRYZtP0FDKL5HBhX0RL_LmEN'},
-    chill: {type:'yt',id:'5qap5aO4i9A'},
+    lofi1:  {type:'yt-playlist',id:'PLQkQfzsIUwRYZtP0FDKL5HBhX0RL_LmEN'},
+    chill:  {type:'yt',id:'5qap5aO4i9A'},
     ambient:{type:'yt',id:'lTRiuFIWV54'},
-    jazz:  {type:'yt',id:'Dx5qFachd3A'},
-    sp_lofi: {type:'sp-playlist',id:'37i9dQZF1DX8Uebhn9wzrS'},
-    sp_chill:{type:'sp-playlist',id:'37i9dQZF1DX4WYpdgoIcn6'},
+    jazz:   {type:'yt',id:'Dx5qFachd3A'},
+    hiphop: {type:'yt',id:'jfKfPfyJRdk'},
+    sleep:  {type:'yt',id:'1ZYbU82GVz4'},
   };
 
   function buildEmbed(parsed){
@@ -1972,7 +1975,16 @@ async function doAdd(){
 
 // Init
 setStatus('st-checking','…');
-loadStatus();loadConfig();loadFilters();
+async function loadTunnelUrl(){
+  try{
+    const d=await fetch(API+'/bot/tunnel-url').then(r=>r.json());
+    if(d.ok&&d.tunnelUrl){
+      const inp=document.getElementById('botWhUrl');
+      if(inp&&!inp.matches(':focus'))inp.value=d.tunnelUrl;
+    }
+  }catch(_){}
+}
+loadStatus();loadConfig();loadFilters();loadTunnelUrl();
 startLoop();
 document.addEventListener('visibilitychange',()=>{
   if(!document.hidden){loadStatus();startLoop();}
