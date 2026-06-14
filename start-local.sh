@@ -329,9 +329,9 @@ if command -v ssh &>/dev/null; then
       BOT_TOKEN=$(python3 -c "import json,sys; d=json.load(open('$CONFIG_FILE')); print(d['bot']['token'])" 2>/dev/null || true)
     fi
     if [ -n "$BOT_TOKEN" ]; then
-      WEBHOOK_RESP=$(curl -sf "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${TUNNEL_URL}/bot/" 2>/dev/null || true)
+      WEBHOOK_RESP=$(curl -sf "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${TUNNEL_URL}" 2>/dev/null || true)
       if echo "$WEBHOOK_RESP" | grep -q '"ok":true'; then
-        echo "[OK] Webhook güncellendi: ${TUNNEL_URL}/bot/"
+        echo "[OK] Webhook güncellendi: ${TUNNEL_URL}"
       else
         echo "[!] Webhook güncellenemedi: $WEBHOOK_RESP"
       fi
@@ -348,7 +348,7 @@ fi
 echo ""
 echo "========================================"
 echo "  Admin Panel : http://localhost:$PORT/admin"
-echo "  Bot Webhook  : ${TUNNEL_URL:-<tünel-url>}/bot/"
+echo "  Bot Webhook  : ${TUNNEL_URL:-<tünel-url>}"
 echo ""
 echo "  Loglar:"
 echo "    tail -f $NODE_LOG"
@@ -384,12 +384,12 @@ _update_webhook() {
   fi
   if [ -z "$BOT_TOKEN" ]; then return; fi
 
-  WEBHOOK_RESP=$(curl -sf "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${new_url}/bot/" 2>/dev/null || true)
+  WEBHOOK_RESP=$(curl -sf "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${new_url}" 2>/dev/null || true)
   if echo "$WEBHOOK_RESP" | grep -q '"ok":true'; then
-    echo "[OK] Webhook otomatik güncellendi: ${new_url}/bot/"
+    echo "[OK] Webhook otomatik güncellendi: ${new_url}"
     # config.json'daki webhookUrl'i de güncelle
     if command -v python3 &>/dev/null; then
-      python3 - "$CONFIG_FILE" "${new_url}/bot/" <<'PYEOF'
+      python3 - "$CONFIG_FILE" "${new_url}" <<'PYEOF'
 import json, sys
 path, url = sys.argv[1], sys.argv[2]
 d = json.load(open(path))
