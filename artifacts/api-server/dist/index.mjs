@@ -37531,8 +37531,12 @@ body::before{
 }
 .uptime-badge::before{content:'⏱';font-size:10px}
 
-/* ── EKG CANVAS ── */
-#ekg{width:100%;height:52px;border-radius:10px;margin-top:8px;display:block}
+/* ── AUDIO VISUALIZER ── */
+#ekg{width:100%;height:52px;border-radius:10px;display:block}
+#micBtn:hover{background:rgba(40,10,10,.6)!important;border-color:rgba(220,38,38,.35)!important}
+#micBtn.on{border-color:rgba(220,38,38,.75)!important;background:rgba(140,8,8,.38)!important;box-shadow:0 0 10px rgba(220,38,38,.35)!important}
+#micBtn.on #micSvg{stroke:#f87171!important}
+#micBtn.on #micLbl{color:#f87171!important}
 
 /* ── DRAG HANDLE ── */
 .stat-card{cursor:grab;user-select:none;touch-action:none}
@@ -37710,7 +37714,13 @@ body::before{
       </div>
       <div class="card-body">
         <div class="uptime-badge" id="uptimeBadge">00:00:00</div>
-        <canvas id="ekg"></canvas>
+        <div style="position:relative;margin-top:8px">
+          <canvas id="ekg"></canvas>
+          <button id="micBtn" onclick="toggleMic()" title="Mikrofon ile ses görselleştir" style="position:absolute;top:5px;right:5px;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:3px 7px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .2s">
+            <svg id="micSvg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 19v3"/></svg>
+            <span id="micLbl" style="font-size:8px;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.38)">MİK</span>
+          </button>
+        </div>
         <div class="info-grid" id="infoGrid">
           <div class="info-cell"><label>Ad</label><span style="color:var(--muted)">—</span></div>
           <div class="info-cell"><label>Kullanıcı Adı</label><span style="color:var(--muted)">—</span></div>
@@ -38280,78 +38290,110 @@ function setMoodLed(online){
   },{passive:true});
 })();
 
-// ── SPECTRUM VISUALIZER ──
+// ── AUDIO VISUALIZER ──
 (function(){
   const cv=document.getElementById('ekg');
   if(!cv)return;
-  const ctx=cv.getContext('2d');
+  const cx=cv.getContext('2d');
   const H=52;
-  let botOnline=false;
-  let t=0;
-  let actLevel=0;
-  const N=44;
-  const bars=Array.from({length:N},(_,i)=>({
-    phase:Math.random()*Math.PI*2,
-    freq:0.016+Math.random()*0.05+(i<6?0.022:0),
-    val:1.5,target:1.5,
-  }));
+  let botOnline=false,t=0,actLevel=0;
+  const BARS=44;
+  const bars=Array.from({length:BARS},function(_,i){
+    return{phase:Math.random()*Math.PI*2,freq:0.016+Math.random()*0.05+(i<6?0.022:0),val:1.5,target:1.5};
+  });
+
+  // ── Web Audio API ──────────────────────────────
+  let _actx=null,_an=null,_ms=null,_md=null,_on=false;
+  window.toggleMic=async function(){
+    const btn=document.getElementById('micBtn');
+    if(_on){
+      _on=false;
+      if(_ms)_ms.getTracks().forEach(function(tr){tr.stop();});
+      if(_actx)_actx.close();
+      _actx=null;_an=null;_ms=null;_md=null;
+      if(btn)btn.classList.remove('on');
+      return;
+    }
+    try{
+      _ms=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:true},video:false});
+      _actx=new(window.AudioContext||window.webkitAudioContext)();
+      _an=_actx.createAnalyser();
+      _an.fftSize=256;
+      _an.smoothingTimeConstant=0.82;
+      _actx.createMediaStreamSource(_ms).connect(_an);
+      _md=new Uint8Array(_an.frequencyBinCount);
+      _on=true;
+      if(btn)btn.classList.add('on');
+    }catch(e){console.warn('Mic:',e);}
+  };
+  // ──────────────────────────────────────────────
+
   function resize(){cv.width=cv.offsetWidth||300;}
   resize();
   window.addEventListener('resize',resize);
-  function musicOn(){
-    const p=document.getElementById('musicPanel');
-    return !!(p&&p.classList.contains('playing')&&p.classList.contains('open'));
-  }
+
   function frame(){
     t++;
     if(actLevel>0)actLevel=Math.max(0,actLevel-0.012);
     resize();
     const W=cv.width;
-    const bw=W/N;
-    const music=musicOn();
-    const baseAmp=botOnline?(music?0.90:0.30):0.05;
-    const spd=music?2.1:1.0;
-    bars.forEach((b,i)=>{
-      b.phase+=b.freq*spd;
-      let v=Math.abs(
-        Math.sin(b.phase)*0.55+
-        Math.sin(b.phase*2.3+i*0.35)*0.28+
-        Math.sin(b.phase*0.6-i*0.18)*0.17
-      );
-      if(music){
-        v+=Math.abs(Math.sin(t*0.07+i*0.65))*0.28;
-        if(i<8)v*=1.35;
-      }
-      if(actLevel>0)v+=actLevel*Math.abs(Math.sin(b.phase*3+i))*0.4;
-      b.target=Math.max(1.5,v*baseAmp*H*0.94);
-      b.val+=(b.target-b.val)*(music?0.32:0.16);
-    });
-    ctx.clearRect(0,0,W,H);
-    bars.forEach((b,i)=>{
-      const bh=b.val;
-      const x=i*bw;
-      const y=H-bh;
-      const g=ctx.createLinearGradient(x,y,x,H);
-      if(botOnline){
-        g.addColorStop(0,music?'rgba(255,110,40,.92)':'rgba(220,38,38,.88)');
+    const bw=W/BARS;
+
+    if(_on&&_an&&_md){
+      // ── Gerçek ses modü ──
+      _an.getByteFrequencyData(_md);
+      const bins=_md.length;
+      bars.forEach(function(b,i){
+        var p=Math.pow(i/(BARS-1),0.62);
+        var bin=Math.min(bins-1,Math.floor(p*(bins*0.78)));
+        var raw=_md[bin]/255;
+        b.target=Math.max(1.5,raw*H*1.18+actLevel*H*0.1);
+        b.val+=(b.target-b.val)*0.40;
+      });
+    }else{
+      // ── Simülasyon modu ──
+      var baseAmp=botOnline?0.30:0.05;
+      bars.forEach(function(b,i){
+        b.phase+=b.freq;
+        var v=Math.abs(Math.sin(b.phase)*0.55+Math.sin(b.phase*2.3+i*0.35)*0.28+Math.sin(b.phase*0.6-i*0.18)*0.17);
+        if(actLevel>0)v+=actLevel*Math.abs(Math.sin(b.phase*3+i))*0.4;
+        b.target=Math.max(1.5,v*baseAmp*H*0.94);
+        b.val+=(b.target-b.val)*0.16;
+      });
+    }
+
+    cx.clearRect(0,0,W,H);
+    bars.forEach(function(b,i){
+      var bh=b.val,x=i*bw,y=H-bh;
+      var g=cx.createLinearGradient(x,y,x,H);
+      if(_on){
+        var iv=bh/H;
+        var rr=Math.round(160+95*iv),gg=Math.round(55-45*iv),bb=Math.round(25+45*iv);
+        g.addColorStop(0,'rgba('+rr+','+gg+','+bb+',.96)');
+        g.addColorStop(0.5,'rgba(210,32,32,.72)');
+        g.addColorStop(1,'rgba(60,0,0,.28)');
+        cx.shadowColor=bh>H*0.5?'#ff4820':'#dc2626';
+        cx.shadowBlur=bh>H*0.3?10+iv*8:3;
+      }else if(botOnline){
+        g.addColorStop(0,'rgba(220,38,38,.88)');
         g.addColorStop(0.55,'rgba(160,16,16,.65)');
         g.addColorStop(1,'rgba(60,0,0,.35)');
-        ctx.shadowColor=music?'#ff5020':'#dc2626';
-        ctx.shadowBlur=music?9:Math.max(0,actLevel*7);
+        cx.shadowColor='#dc2626';
+        cx.shadowBlur=Math.max(0,actLevel*7);
       }else{
         g.addColorStop(0,'rgba(70,70,70,.45)');
         g.addColorStop(1,'rgba(20,20,20,.2)');
-        ctx.shadowBlur=0;
+        cx.shadowBlur=0;
       }
-      ctx.fillStyle=g;
-      ctx.fillRect(x+1,y,Math.max(1,bw-2),bh);
+      cx.fillStyle=g;
+      cx.fillRect(x+1,y,Math.max(1,bw-2),bh);
     });
-    ctx.shadowBlur=0;
+    cx.shadowBlur=0;
     requestAnimationFrame(frame);
   }
   frame();
-  window.ekgSetOnline=v=>{botOnline=v;};
-  window.ekgActivity=()=>{actLevel=1;};
+  window.ekgSetOnline=function(v){botOnline=v;};
+  window.ekgActivity=function(){actLevel=1;};
 })();
 
 // ── UPTIME COUNTDOWN ──

@@ -7,26 +7,34 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT"
 
 # ── ANSI renkleri ─────────────────────────────────────────────────────────
-R='\033[0;31m'; BR='\033[1;31m'
-G='\033[0;32m'; BG='\033[1;32m'
-Y='\033[1;33m'; C='\033[0;36m'
-W='\033[1;37m'; D='\033[2m'; N='\033[0m'
+R='\033[0;31m';  BR='\033[1;31m'
+G='\033[0;32m';  BG='\033[1;32m'
+Y='\033[1;33m';  C='\033[0;36m'
+W='\033[1;37m';  D='\033[2m';  N='\033[0m'
+DM='\033[2;37m'; BW='\033[1;37m'
 
-OK_PFX="${BG}  ✓${N}"; INF_PFX="${C}  →${N}"; ERR_PFX="${BR}  ✗${N}"; WRN_PFX="${Y}  !${N}"
+_OK="$(printf "  ${BG}✓${N}")"
+_INF="$(printf "  ${C}◆${N}")"
+_WRN="$(printf "  ${Y}⚠${N}")"
+_ERR="$(printf "  ${BR}✗${N}")"
 
+# ── Başlangıç Ekranı ───────────────────────────────────────────────────────
 clear 2>/dev/null || true
-printf "${BR}"
-printf '  ╔══════════════════════════════╗\n'
-printf '  ║                              ║\n'
-printf '  ║   EmossDev  Tools  Bot       ║\n'
-printf '  ║   Admin Panel  v2.0          ║\n'
-printf '  ║                              ║\n'
-printf '  ╚══════════════════════════════╝\n'
-printf "${N}\n"
+printf "\n"
+
+sleep 0.04; printf "  ${BR}╔══════════════════════════════════════╗${N}\n"
+sleep 0.03; printf "  ${BR}║${N}                                      ${BR}║${N}\n"
+sleep 0.03; printf "  ${BR}║${N}  ${BW}▌${N}${W} EmossDev${N}  ${DM}·${N}  ${BW}Tools Bot${N}  ${DM}· v2.0${N}   ${BR}║${N}\n"
+sleep 0.03; printf "  ${BR}║${N}  ${R}────────────────────────────────────${N}  ${BR}║${N}\n"
+sleep 0.03; printf "  ${BR}║${N}  ${DM}Admin Panel${N}                          ${BR}║${N}\n"
+sleep 0.03; printf "  ${BR}║${N}                                      ${BR}║${N}\n"
+sleep 0.04; printf "  ${BR}╚══════════════════════════════════════╝${N}\n"
+printf "\n"
+printf "  ${DM}─────────────────────────────────────────${N}\n\n"
 
 # .env dosyası varsa yükle
 if [ -f "$ROOT/.env" ]; then
-  echo "[*] .env dosyası yükleniyor..."
+  echo "$_INF .env dosyası yükleniyor..."
   set -a
   # shellcheck disable=SC1091
   source "$ROOT/.env"
@@ -36,14 +44,14 @@ fi
 # Termux mu normal Linux mu?
 if [ -d "/data/data/com.termux" ]; then
   TERMUX=true
-  echo "[*] Ortam: Termux (Android)"
+  echo "$_INF Ortam: Termux (Android)"
 else
   TERMUX=false
-  echo "[*] Ortam: Linux"
+  echo "$_INF Ortam: Linux"
 fi
 
 # ── Eski process'leri temizle ─────────────────────────────────────────────
-echo "[*] Eski process'ler temizleniyor..."
+echo "$_INF Eski process'ler temizleniyor..."
 pkill -f "php-server.php"    2>/dev/null || true
 pkill -f "php-fpm-bridge"    2>/dev/null || true
 pkill -f "php-cgi"           2>/dev/null || true
@@ -52,22 +60,22 @@ pkill -f "dist/index.mjs"    2>/dev/null || true
 fuser -k 8000/tcp 2>/dev/null || true
 fuser -k 3000/tcp 2>/dev/null || true
 sleep 2
-echo "[OK] Temizlik tamamlandı"
+echo "$_OK Temizlik tamamlandı"
 
 # ---- PHP kontrolü ----
 if ! command -v php &>/dev/null; then
-  echo "[*] PHP bulunamadı, kuruluyor..."
+  echo "$_INF PHP bulunamadı, kuruluyor..."
   if [ "$TERMUX" = true ]; then
     pkg install php -y
   else
     sudo apt-get install -y php-cli
   fi
 fi
-echo "[OK] PHP: $(php -r 'echo PHP_VERSION;')"
+echo "$_OK PHP: $(php -r 'echo PHP_VERSION;')"
 
 # ---- Node.js kontrolü ----
 if ! command -v node &>/dev/null; then
-  echo "[*] Node.js bulunamadı, kuruluyor..."
+  echo "$_INF Node.js bulunamadı, kuruluyor..."
   if [ "$TERMUX" = true ]; then
     pkg install nodejs -y
   else
@@ -75,27 +83,27 @@ if ! command -v node &>/dev/null; then
     sudo apt-get install -y nodejs
   fi
 fi
-echo "[OK] Node.js: $(node -v)"
+echo "$_OK Node.js: $(node -v)"
 
 # ---- pnpm kontrolü ----
 if ! command -v pnpm &>/dev/null; then
-  echo "[*] pnpm kuruluyor..."
+  echo "$_INF pnpm kuruluyor..."
   npm install -g pnpm
 fi
-echo "[OK] pnpm: $(pnpm -v)"
+echo "$_OK pnpm: $(pnpm -v)"
 
 # ---- Build kontrolü ----
 DIST="$ROOT/artifacts/api-server/dist/index.mjs"
 if [ -f "$DIST" ]; then
-  echo "[OK] Derlenmiş panel hazır, build atlanıyor."
+  echo "$_OK Derlenmiş panel hazır, build atlanıyor."
 else
-  echo "[*] dist bulunamadı, derleniyor..."
+  echo "$_INF dist bulunamadı, derleniyor..."
   if [ ! -d "$ROOT/node_modules" ]; then
-    echo "[*] Bağımlılıklar yükleniyor..."
+    echo "$_INF Bağımlılıklar yükleniyor..."
     pnpm install --no-frozen-lockfile
   fi
   pnpm --filter @workspace/api-server run build
-  echo "[OK] Build tamamlandı."
+  echo "$_OK Build tamamlandı."
 fi
 
 # ---- Port ayarları ----
@@ -111,7 +119,7 @@ PHP_LOG="$LOGDIR/emoss-php.log"
 NODE_LOG="$LOGDIR/emoss-node.log"
 
 # ── PHP Bot başlatma ───────────────────────────────────────────────────────
-echo "[*] PHP Bot başlatılıyor (port 8000)..."
+echo "$_INF PHP Bot başlatılıyor (port 8000)..."
 
 PHP_PID=""
 
@@ -122,7 +130,7 @@ if [ "$TERMUX" = true ]; then
     || ls /data/data/com.termux/files/usr/sbin/php-fpm* 2>/dev/null | head -1 \
     || true)"
   if [ -n "$FPM_BIN" ]; then
-    echo "[*] php-fpm bulundu — FastCGI modu (hızlı)..."
+    echo "$_INF php-fpm bulundu — FastCGI modu (hızlı)..."
     FPM_CONF="$ROOT/telegram-bot/.tmp/php-fpm.conf"
     FPM_PID_FILE="$ROOT/telegram-bot/.tmp/php-fpm.pid"
     FPM_SOCK_PORT=9000
@@ -153,16 +161,16 @@ FPMCONF
     sleep 1
 
     if [ -f "$FPM_PID_FILE" ] && kill -0 "$(cat "$FPM_PID_FILE")" 2>/dev/null; then
-      echo "[OK] php-fpm çalışıyor (PID: $(cat "$FPM_PID_FILE"))"
+      echo "$_OK php-fpm çalışıyor (PID: $(cat "$FPM_PID_FILE"))"
       FPM_PORT=$FPM_SOCK_PORT PORT=8000 node "$ROOT/telegram-bot/php-fpm-bridge.mjs" > "$PHP_LOG" 2>&1 &
       PHP_PID=$!
       USE_FPM=true
     else
-      echo "[!] php-fpm başlatılamadı, fallback: spawn köprüsü..."
+      echo "$_WRN php-fpm başlatılamadı, fallback: spawn köprüsü..."
       USE_FPM=false
     fi
   else
-    echo "[*] php-fpm yok — spawn köprüsü kullanılıyor..."
+    echo "$_INF php-fpm yok — spawn köprüsü kullanılıyor..."
     USE_FPM=false
   fi
 
@@ -172,24 +180,24 @@ FPMCONF
       || ls /data/data/com.termux/files/usr/bin/php-cgi* 2>/dev/null | head -1 \
       || true)"
     if [ -n "$CGI_BIN" ]; then
-      echo "[*] php-cgi FastCGI modu kullanılıyor (port 9001)..."
+      echo "$_INF php-cgi FastCGI modu kullanılıyor (port 9001)..."
       "$CGI_BIN" -b 127.0.0.1:9001 >> "$LOGDIR/php-cgi.log" 2>&1 &
       CGI_PID=$!
       sleep 1
       if kill -0 "$CGI_PID" 2>/dev/null; then
-        echo "[OK] php-cgi FastCGI çalışıyor (PID: $CGI_PID)"
+        echo "$_OK php-cgi FastCGI çalışıyor (PID: $CGI_PID)"
         FPM_PORT=9001 PORT=8000 node "$ROOT/telegram-bot/php-fpm-bridge.mjs" > "$PHP_LOG" 2>&1 &
         PHP_PID=$!
         USE_FPM=true
       else
-        echo "[!] php-cgi de başlatılamadı, spawn köprüsüne geçiliyor..."
+        echo "$_WRN php-cgi de başlatılamadı, spawn köprüsüne geçiliyor..."
       fi
     fi
   fi
 
   if [ "$USE_FPM" != true ]; then
     # Son seçenek: lock-free PHP socket sunucusu (socket_*() flock gerektirmez)
-    echo "[*] Lock-free PHP socket sunucusu kullanılıyor..."
+    echo "$_INF Lock-free PHP socket sunucusu kullanılıyor..."
     export PHP_BIN="$(command -v php)"
     PORT=8000 PHP_BIN="$PHP_BIN" php "$ROOT/telegram-bot/php-server.php" > "$PHP_LOG" 2>&1 &
     PHP_PID=$!
@@ -204,25 +212,25 @@ fi
 sleep 1
 
 if ! kill -0 "$PHP_PID" 2>/dev/null; then
-  echo "[HATA] PHP bot başlatılamadı! Log:"
+  echo "$_ERR PHP bot başlatılamadı! Log:"
   cat "$PHP_LOG"
   exit 1
 fi
-echo "[OK] PHP Bot çalışıyor (PID: $PHP_PID)"
+echo "$_OK PHP Bot çalışıyor (PID: $PHP_PID)"
 
-echo "[*] Admin Panel başlatılıyor (port $PORT)..."
+echo "$_INF Admin Panel başlatılıyor (port $PORT)..."
 node --enable-source-maps "$ROOT/artifacts/api-server/dist/index.mjs" > "$NODE_LOG" 2>&1 &
 NODE_PID=$!
 
 sleep 1
 
 if ! kill -0 "$NODE_PID" 2>/dev/null; then
-  echo "[HATA] Admin panel başlatılamadı! Log:"
+  echo "$_ERR Admin panel başlatılamadı! Log:"
   cat "$NODE_LOG"
   kill "$PHP_PID" 2>/dev/null
   exit 1
 fi
-echo "[OK] Admin Panel çalışıyor (PID: $NODE_PID)"
+echo "$_OK Admin Panel çalışıyor (PID: $NODE_PID)"
 
 # ── GitHub webhook yardımcı fonksiyonları ────────────────────────────────
 GH_REPO="EmossDev/EmossDevToolsBot"
@@ -258,7 +266,7 @@ _setup_github_webhook(){
       -d "{\"config\":{\"url\":\"$wh_url\",\"content_type\":\"json\",\"secret\":\"$secret\",\"insecure_ssl\":\"0\"}}" \
       "https://api.github.com/repos/$GH_REPO/hooks/$hook_id" 2>/dev/null || true)
     if echo "$pr" | grep -q '"id"'; then
-      echo "[OK] GitHub webhook güncellendi → $wh_url"
+      echo "$_OK GitHub webhook güncellendi → $wh_url"
       return
     fi
     rm -f "$GH_HOOK_ID_FILE"; hook_id=""
@@ -285,7 +293,7 @@ except: pass
       -H "Content-Type: application/json" \
       -d "{\"config\":{\"url\":\"$wh_url\",\"content_type\":\"json\",\"secret\":\"$secret\",\"insecure_ssl\":\"0\"}}" \
       "https://api.github.com/repos/$GH_REPO/hooks/$hook_id" > /dev/null 2>&1 || true
-    echo "[OK] GitHub webhook güncellendi (mevcut) → $wh_url"
+    echo "$_OK GitHub webhook güncellendi (mevcut) → $wh_url"
     return
   fi
 
@@ -304,9 +312,9 @@ except: pass
 " 2>/dev/null || true)
   if [ -n "$nid" ]; then
     echo "$nid" > "$GH_HOOK_ID_FILE"
-    echo "[OK] GitHub webhook oluşturuldu (ID: $nid) → $wh_url"
+    echo "$_OK GitHub webhook oluşturuldu (ID: $nid) → $wh_url"
   else
-    echo "[!] GitHub webhook oluşturulamadı — GITHUB_TOKEN yetkisini kontrol et"
+    echo "$_WRN GitHub webhook oluşturulamadı — GITHUB_TOKEN yetkisini kontrol et"
   fi
 }
 
@@ -316,7 +324,7 @@ TUNNEL_PID=""
 TUNNEL_URL=""
 
 if command -v ssh &>/dev/null; then
-  echo "[*] localhost.run tüneli başlatılıyor..."
+  echo "$_INF localhost.run tüneli başlatılıyor..."
   ssh -o StrictHostKeyChecking=no \
       -o ServerAliveInterval=30 \
       -o ServerAliveCountMax=3 \
@@ -325,14 +333,19 @@ if command -v ssh &>/dev/null; then
   TUNNEL_PID=$!
 
   # URL'nin gelmesini bekle (max 20 saniye)
+  _SP=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+  _si=0
   for i in $(seq 1 40); do
     sleep 0.5
     TUNNEL_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.(lhr\.life|lhrtunnel\.link)' "$TUNNEL_LOG" 2>/dev/null | tail -1 || true)
     [ -n "$TUNNEL_URL" ] && break
+    printf "\r  ${C}${_SP[$((_si % 10))]}${N}  Tünel bağlanıyor... [%ds]" "$(( i / 2 + 1 ))"
+    _si=$(( _si + 1 ))
   done
+  printf "\r%-56s\r" ""
 
   if [ -n "$TUNNEL_URL" ]; then
-    echo "[OK] Tünel: $TUNNEL_URL"
+    echo "$_OK Tünel: $TUNNEL_URL"
     _setup_github_webhook "$TUNNEL_URL"
 
     # Webhook'u otomatik Telegram'a kaydet
@@ -344,18 +357,18 @@ if command -v ssh &>/dev/null; then
     if [ -n "$BOT_TOKEN" ]; then
       WEBHOOK_RESP=$(curl -sf "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${TUNNEL_URL}" 2>/dev/null || true)
       if echo "$WEBHOOK_RESP" | grep -q '"ok":true'; then
-        echo "[OK] Webhook güncellendi: ${TUNNEL_URL}"
+        echo "$_OK Webhook güncellendi: ${TUNNEL_URL}"
       else
-        echo "[!] Webhook güncellenemedi: $WEBHOOK_RESP"
+        echo "$_WRN Webhook güncellenemedi: $WEBHOOK_RESP"
       fi
     else
-      echo "[!] Bot token okunamadı, webhook elle güncelle."
+      echo "$_WRN Bot token okunamadı, webhook elle güncelle."
     fi
   else
-    echo "[!] Tünel URL'si alınamadı — log: $TUNNEL_LOG"
+    echo "$_WRN Tünel URL'si alınamadı — log: $TUNNEL_LOG"
   fi
 else
-  echo "[!] ssh bulunamadı, tünel atlandı. Manuel: ssh -R 80:localhost:$PORT nokey@localhost.run"
+  echo "$_WRN ssh bulunamadı, tünel atlandı. Manuel: ssh -R 80:localhost:$PORT nokey@localhost.run"
 fi
 
 printf "\n${BG}"
@@ -378,7 +391,7 @@ printf "${BG}  ╚════════════════════�
 
 cleanup() {
   echo ""
-  echo "[*] Durduruluyor..."
+  echo "$_INF Durduruluyor..."
   kill "$PHP_PID" "$NODE_PID" 2>/dev/null
   [ -n "$TUNNEL_PID" ] && kill "$TUNNEL_PID" 2>/dev/null
   FPM_PID_FILE="$ROOT/telegram-bot/.tmp/php-fpm.pid"
@@ -403,7 +416,7 @@ _update_webhook() {
 
   WEBHOOK_RESP=$(curl -sf "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${new_url}" 2>/dev/null || true)
   if echo "$WEBHOOK_RESP" | grep -q '"ok":true'; then
-    echo "[OK] Webhook otomatik güncellendi: ${new_url}"
+    echo "$_OK Webhook otomatik güncellendi: ${new_url}"
     # config.json'daki webhookUrl'i de güncelle
     if command -v python3 &>/dev/null; then
       python3 - "$CONFIG_FILE" "${new_url}" <<'PYEOF'
@@ -415,12 +428,12 @@ open(path, 'w').write(json.dumps(d, indent=4, ensure_ascii=False))
 PYEOF
     fi
   else
-    echo "[!] Webhook güncellenemedi: $WEBHOOK_RESP"
+    echo "$_WRN Webhook güncellenemedi: $WEBHOOK_RESP"
   fi
 }
 
 _restart_php(){
-  echo "[*] PHP Bot yeniden başlatılıyor..."
+  echo "$_INF PHP Bot yeniden başlatılıyor..."
   pkill -f "php-server.php" 2>/dev/null || true
   sleep 1
   export PHP_BIN="$(command -v php)"
@@ -428,22 +441,22 @@ _restart_php(){
   PHP_PID=$!
   sleep 1
   if kill -0 "$PHP_PID" 2>/dev/null; then
-    echo "[OK] PHP Bot yeniden başlatıldı (PID: $PHP_PID)"
+    echo "$_OK PHP Bot yeniden başlatıldı (PID: $PHP_PID)"
   else
-    echo "[!] PHP Bot yeniden başlatılamadı"
+    echo "$_WRN PHP Bot yeniden başlatılamadı"
   fi
 }
 
 _restart_node(){
-  echo "[*] Admin Panel yeniden başlatılıyor..."
+  echo "$_INF Admin Panel yeniden başlatılıyor..."
   sleep 1
   node --enable-source-maps "$ROOT/artifacts/api-server/dist/index.mjs" > "$NODE_LOG" 2>&1 &
   NODE_PID=$!
   sleep 1
   if kill -0 "$NODE_PID" 2>/dev/null; then
-    echo "[OK] Admin Panel yeniden başlatıldı (PID: $NODE_PID)"
+    echo "$_OK Admin Panel yeniden başlatıldı (PID: $NODE_PID)"
   else
-    echo "[!] Admin Panel yeniden başlatılamadı"
+    echo "$_WRN Admin Panel yeniden başlatılamadı"
   fi
 }
 
@@ -454,7 +467,7 @@ while true; do
   if [ -n "$TUNNEL_PID" ] && [ -f "$TUNNEL_LOG" ]; then
     NEW_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.(lhr\.life|lhrtunnel\.link)' "$TUNNEL_LOG" 2>/dev/null | tail -1 || true)
     if [ -n "$NEW_URL" ] && [ "$NEW_URL" != "$_LAST_URL" ]; then
-      echo "[*] Tünel URL'si değişti: $NEW_URL"
+      echo "$_INF Tünel URL'si değişti: $NEW_URL"
       _LAST_URL="$NEW_URL"
       _update_webhook "$NEW_URL"
       _setup_github_webhook "$NEW_URL"
@@ -463,13 +476,13 @@ while true; do
 
   # ── PHP Watchdog ─────────────────────────────────────────────────────────
   if ! kill -0 "$PHP_PID" 2>/dev/null; then
-    echo "[!] PHP Bot kapandı — watchdog devreye girdi"
+    echo "$_WRN PHP Bot kapandı — watchdog devreye girdi"
     _restart_php
   fi
 
   # ── Node Watchdog ────────────────────────────────────────────────────────
   if ! kill -0 "$NODE_PID" 2>/dev/null; then
-    echo "[!] Admin Panel kapandı — watchdog devreye girdi"
+    echo "$_WRN Admin Panel kapandı — watchdog devreye girdi"
     _restart_node
   fi
 done
