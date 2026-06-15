@@ -423,7 +423,7 @@ if command -v ssh &>/dev/null; then
   printf "\r%-56s\r" ""
 
   if [ -n "$TUNNEL_URL" ]; then
-    _scan "NET " "tunnel established" "${TUNNEL_URL##https://}" "$BG"
+    _info "tunnel"  "${TUNNEL_URL##https://}" "$C"
     _setup_github_webhook "$TUNNEL_URL"
     CONFIG_FILE="$ROOT/telegram-bot/COMMAND_FILES/DATA_FILE/config.json"
     BOT_TOKEN=""
@@ -433,18 +433,18 @@ if command -v ssh &>/dev/null; then
     if [ -n "$BOT_TOKEN" ]; then
       WEBHOOK_RESP=$(curl -sf "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${TUNNEL_URL}" 2>/dev/null || true)
       if echo "$WEBHOOK_RESP" | grep -q '"ok":true'; then
-        _scan "HOOK" "Telegram webhook set" "PASS" "$BG"
+        _info "webhook" "set" "$BG"
       else
-        _scan "HOOK" "webhook update failed" "WARN" "$Y"
+        _info "webhook" "update failed" "$Y"
       fi
     else
-      _scan "HOOK" "token not found" "SKIP" "$DM"
+      _info "webhook" "token not found" "$DM"
     fi
   else
-    _scan "NET " "tunnel URL timeout" "WARN" "$Y"
+    _info "tunnel"  "timeout — not connected" "$Y"
   fi
 else
-  _scan "NET " "ssh not found, tunnel skipped" "SKIP" "$DM"
+  _info "tunnel"  "ssh not found, skipped" "$DM"
 fi
 
 # ── ONLINE kartı ───────────────────────────────────────────────────────────
