@@ -121,8 +121,8 @@ _resolve "  ███████╗██║ ╚═╝ ██║╚████
 _resolve "  ╚══════╝╚═╝     ╚═╝ ╚═════╝ ╚══════╝╚══════╝" "$R"
 
 printf "\n"
-_type "D E V   T O O L S   B O T   v 2 . 0" 0.022
-printf "  ${DM}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${N}\n\n"
+_type "  D E V   T O O L S   B O T   v 2 . 0" 0.022
+printf "    ${DM}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${N}\n\n"
 
 # ── Sistem kontrolleri ─────────────────────────────────────────────────────
 printf "  ${DM}⟳  starting...${N}"
@@ -450,20 +450,22 @@ fi
 # ── ONLINE kartı ───────────────────────────────────────────────────────────
 printf "\n"
 # ONLINE kart — satır satır belir
+LOG_DISP="$(basename "$LOGDIR")/emoss-{node,php}.log"
+
 sleep 0.06
 printf "  ${BG}╔═══════════════════════════════════════════╗${N}\n"
 sleep 0.05; printf "  ${BG}║${N}  ${BG}●${N} ${W}ONLINE${N}                  ${DM}EmossDev v2.0${N}  ${BG}║${N}\n"
 sleep 0.04; printf "  ${BG}╠═══════════════════════════════════════════╣${N}\n"
-sleep 0.04; printf "  ${BG}║${N}  ${DM}PANEL${N}   ${BC}http://localhost:${PORT}/admin${N}\n"
+sleep 0.04; printf "  ${BG}║${N}  ${DM}%-8s${N}  ${BC}%-31s${N}${BG}║${N}\n" "PANEL" "http://localhost:${PORT}/admin"
 if [ -n "$TUNNEL_URL" ]; then
-  sleep 0.03; printf "  ${BG}║${N}  ${DM}TUNNEL${N}  ${Y}%s${N}\n" "$TUNNEL_URL"
+  sleep 0.03; printf "  ${BG}║${N}  ${DM}%-8s${N}  ${Y}%-31s${N}${BG}║${N}\n" "TUNNEL" "$TUNNEL_URL"
 else
-  sleep 0.03; printf "  ${BG}║${N}  ${DM}TUNNEL${N}  ${R}not connected${N}\n"
+  sleep 0.03; printf "  ${BG}║${N}  ${DM}%-8s${N}  ${R}%-31s${N}${BG}║${N}\n" "TUNNEL" "not connected"
 fi
 sleep 0.04; printf "  ${BG}╠═══════════════════════════════════════════╣${N}\n"
-sleep 0.03; printf "  ${BG}║${N}  ${DM}logs${N}    ${DM}${LOGDIR}/emoss-{node,php}.log${N}\n"
+sleep 0.03; printf "  ${BG}║${N}  ${DM}%-8s${N}  ${DM}%-31s${N}${BG}║${N}\n" "logs" "$LOG_DISP"
 sleep 0.04; printf "  ${BG}╠═══════════════════════════════════════════╣${N}\n"
-sleep 0.03; printf "  ${BG}║${N}  ${DM}started ${START_TIME}${N}      ${DM}Ctrl+C → stop${N}\n"
+sleep 0.03; printf "  ${BG}║${N}  ${DM}%-8s${N}  ${W}%s${N}   ${DM}│   Ctrl+C → stop   ${N}${BG}║${N}\n" "started" "$START_TIME"
 sleep 0.06; printf "  ${BG}╚═══════════════════════════════════════════╝${N}\n"
 printf "\n"
 
