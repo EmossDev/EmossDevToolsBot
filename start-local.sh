@@ -11,7 +11,7 @@ R='\033[0;31m';  BR='\033[1;31m'
 G='\033[0;32m';  BG='\033[1;32m'
 Y='\033[1;33m';  C='\033[0;36m'
 W='\033[1;37m';  D='\033[2m';  N='\033[0m'
-DM='\033[2;37m'; BW='\033[1;37m'
+DM='\033[2;37m'; BW='\033[1;37m'; BC='\033[1;36m'
 
 _OK="$(printf "  ${BG}✓${N}")"; _INF="$(printf "  ${C}◆${N}")"
 _WRN="$(printf "  ${Y}⚠${N}")"; _ERR="$(printf "  ${BR}✗${N}")"
@@ -61,6 +61,9 @@ _countbar(){
   done
   printf "  ${BG}✓${N}\n"
 }
+
+START_TIME="$(date +"%H:%M:%S")"
+START_DATE="$(date +"%d.%m.%Y")"
 
 # ── Boot Sequence ──────────────────────────────────────────────────────────
 clear 2>/dev/null || true
@@ -164,9 +167,18 @@ else
   _scan "OS  " "Linux" "OK" "$BG"
 fi
 
-# Boot bar
+# ── Versiyon özet tablosu ─────────────────────────────────────────────────
+PNPM_VER="$(pnpm -v 2>/dev/null || echo '?')"
+DIST_ST="cached"; [ ! -f "$DIST" ] && DIST_ST="built"
 printf "\n"
-sleep 0.1
+printf "  ${DM}┌──────────────────────┬───────────────────────┐${N}\n"
+printf "  ${DM}│${N}  ${DM}PHP    ${N}${W}%-11s${N}  ${DM}│${N}  ${DM}Node.js  ${N}${W}%-10s${N}  ${DM}│${N}\n" "$PHP_VER" "$NODE_VER"
+printf "  ${DM}│${N}  ${DM}pnpm   ${N}${W}%-11s${N}  ${DM}│${N}  ${DM}dist     ${N}${W}%-10s${N}  ${DM}│${N}\n" "$PNPM_VER" "$DIST_ST"
+printf "  ${DM}└──────────────────────┴───────────────────────┘${N}\n"
+
+# ── Boot bar ───────────────────────────────────────────────────────────────
+printf "\n"
+sleep 0.15
 _countbar "LOADING" 24 0.038
 printf "\n"
 
@@ -426,40 +438,57 @@ printf "\n"
 sleep 0.08
 printf "  ${BG}╔═══════════════════════════════════════════╗${N}\n"
 sleep 0.04
-printf "  ${BG}║${N}  ${BG}●${N} ${W}ONLINE${N}                   ${DM}EmossDev v2.0${N}  ${BG}║${N}\n"
+printf "  ${BG}║${N}  ${BG}●${N} ${W}ONLINE${N}                  ${DM}EmossDev v2.0${N}  ${BG}║${N}\n"
+sleep 0.03
+printf "  ${BG}╟${DM}───────────────────────────────────────────${BG}╢${N}\n"
+sleep 0.02
+printf "  ${BG}║${N}  ${DM}PHP Bot${N}   ${BG}▶${N} ${W}:${BOT_PORT}${N}      ${DM}·${N}      ${DM}Admin Panel${N}  ${BG}▶${N} ${W}:${PORT}/admin${N}\n"
 sleep 0.03
 printf "  ${BG}╠═══════════════════════════════════════════╣${N}\n"
 sleep 0.03
-printf "  ${BG}║${N}  ${DM}PANEL${N}   ${C}http://localhost:${PORT}/admin${N}\n"
+printf "  ${BG}║${N}  ${DM}PANEL${N}    ${BC}http://localhost:${PORT}/admin${N}\n"
 if [ -n "$TUNNEL_URL" ]; then
-  sleep 0.03
-  printf "  ${BG}║${N}  ${DM}TUNNEL${N}  ${Y}%s${N}\n" "$TUNNEL_URL"
+  sleep 0.02
+  printf "  ${BG}║${N}  ${DM}TUNNEL${N}   ${Y}%s${N}\n" "$TUNNEL_URL"
 else
-  sleep 0.03
-  printf "  ${BG}║${N}  ${DM}TUNNEL${N}  ${R}not connected${N}\n"
+  sleep 0.02
+  printf "  ${BG}║${N}  ${DM}TUNNEL${N}   ${R}not connected${N}\n"
 fi
 sleep 0.03
 printf "  ${BG}╠═══════════════════════════════════════════╣${N}\n"
 sleep 0.02
-printf "  ${BG}║${N}  ${DM}node  ${NODE_LOG}${N}\n"
-sleep 0.02
-printf "  ${BG}║${N}  ${DM}php   ${PHP_LOG}${N}\n"
+printf "  ${BG}║${N}  ${DM}logs${N}     ${DM}${LOGDIR}/emoss-{node,php}.log${N}\n"
 sleep 0.03
-printf "  ${BG}╠═══════════════════════════════════════════╣${N}\n"
+printf "  ${BG}╟${DM}───────────────────────────────────────────${BG}╢${N}\n"
 sleep 0.02
-printf "  ${BG}║${N}  ${DM}Ctrl+C${N} ${W}→ shutdown${N}\n"
+printf "  ${BG}║${N}  ${DM}started at${N} ${W}${START_TIME}${N}      ${DM}Ctrl+C → stop${N}  ${BG}║${N}\n"
 sleep 0.06
 printf "  ${BG}╚═══════════════════════════════════════════╝${N}\n\n"
 
 cleanup() {
-  echo ""
-  echo "$_INF Durduruluyor..."
+  printf "\n\n"
+  # Yanıp sönen shutdown göstergesi
+  local i=0
+  while [ $i -lt 3 ]; do
+    printf "\r  ${BR}●${N} ${W}SHUTTING DOWN...${N}"; sleep 0.22
+    printf "\r  ${R}○${N} ${DM}SHUTTING DOWN...${N}"; sleep 0.22
+    i=$((i+1))
+  done
+  printf "\r%-42s\r" ""
+  printf "\n"
+  printf "  ${BR}╔═══════════════════════════════════╗${N}\n"
+  printf "  ${BR}║${N}  ${BR}●${N} ${W}SHUTDOWN${N}           ${DM}EmossDev v2.0${N}  ${BR}║${N}\n"
+  printf "  ${BR}╟${R}───────────────────────────────────${BR}╢${N}\n"
+  printf "  ${BR}║${N}  ${DM}uptime  ${N}$(date +"%H:%M:%S")${DM}  ·  started ${START_TIME}${N}\n"
+  printf "  ${BR}╚═══════════════════════════════════╝${N}\n\n"
+  printf "  ${DM}stopping services...${N}\n"
   kill "$PHP_PID" "$NODE_PID" 2>/dev/null
   [ -n "$TUNNEL_PID" ] && kill "$TUNNEL_PID" 2>/dev/null
   FPM_PID_FILE="$ROOT/telegram-bot/.tmp/php-fpm.pid"
   if [ -f "$FPM_PID_FILE" ]; then
     kill "$(cat "$FPM_PID_FILE")" 2>/dev/null || true
   fi
+  printf "  ${BG}✓${N}  ${DM}clean exit — bye!${N}\n\n"
   exit 0
 }
 trap cleanup INT TERM
