@@ -38,7 +38,7 @@ _type(){
 _scan(){
   local tag="$1" lbl="$2" ok="${3:-PASS}" col="${4:-$BG}"
   printf "  ${DM}[%-4s]${N}  ${DM}%-26s${N}" "$tag" "$lbl"
-  local i=0; while [ $i -lt 5 ]; do printf "${DM}.${N}"; sleep 0.08; i=$((i+1)); done
+  local i=0; while [ $i -lt 4 ]; do printf "${DM}.${N}"; sleep 0.07; i=$((i+1)); done
   printf "  ${col}%s${N}\n" "$ok"
 }
 
@@ -62,18 +62,54 @@ _countbar(){
   printf "  ${BG}✓${N}\n"
 }
 
+# Matrix yağmuru: n satır rastgele hex/blok karakter, sonra temizle
+_rain(){
+  local rows="${1:-7}" cols="${2:-44}"
+  local rc='0123456789ABCDEFabcdef#!|:.~^*%@?<>'
+  local rclen=${#rc}
+  local i=0 j ci
+  while [ $i -lt $rows ]; do
+    printf "  ${R}"
+    j=0; while [ $j -lt $cols ]; do
+      ci=$((RANDOM % rclen))
+      printf '%s' "${rc:$ci:1}"
+      j=$((j+1))
+    done
+    printf "${N}\n"
+    sleep 0.038
+    i=$((i+1))
+  done
+  sleep 0.1
+  # Yukarı çık ve satırları sil
+  printf "\033[${rows}A"
+  i=0; while [ $i -lt $rows ]; do
+    printf "\033[2K\n"
+    i=$((i+1))
+  done
+  printf "\033[${rows}A"
+}
+
+# Sinyal çubukları: büyüyen ▁▃▅▇█  READY
+_sigbars(){
+  local lbl="$1"
+  printf "  ${DM}%-14s${N}  " "$lbl"
+  sleep 0.20; printf "${DM}▁${N}"
+  sleep 0.16; printf "${R}▃${N}"
+  sleep 0.13; printf "${Y}▅${N}"
+  sleep 0.10; printf "${BG}▇${N}"
+  sleep 0.08; printf "${BG}█${N}"
+  printf "  ${BG}SIGNAL READY${N}\n"
+}
+
 START_TIME="$(date +"%H:%M:%S")"
 START_DATE="$(date +"%d.%m.%Y")"
 
 # ── Boot Sequence ──────────────────────────────────────────────────────────
 clear 2>/dev/null || true
 
-# Glitch intro: iki satır rastgele char flaş, sonra sil
-sleep 0.06
-printf "${R}  ▓░▒▓▄▀■░▒▓░▄▀▓▒░▓█▒░▓▒░▓▒░▄▀■░▒▓░▒▓▄▀■\n"
-printf "  ░▒▓█▀▄■▒░▓▒▄█░▒▓▀▄■░▒░▓▒▀▄░▒▓█▀▄■▒░▓▒▄█${N}\n"
-sleep 0.13
-clear 2>/dev/null || true
+# Matrix yağmuru: rastgele char sütunları düşüyor, sonra siliniyor
+sleep 0.05
+_rain 7 44
 printf "\n"
 
 # EMOSS ASCII art — CRT warmup
@@ -167,19 +203,10 @@ else
   _scan "OS  " "Linux" "OK" "$BG"
 fi
 
-# ── Versiyon özet tablosu ─────────────────────────────────────────────────
-PNPM_VER="$(pnpm -v 2>/dev/null || echo '?')"
-DIST_ST="cached"; [ ! -f "$DIST" ] && DIST_ST="built"
+# ── Boot bar (yükleme animasyonu) ─────────────────────────────────────────
 printf "\n"
-printf "  ${DM}┌──────────────────────┬───────────────────────┐${N}\n"
-printf "  ${DM}│${N}  ${DM}PHP    ${N}${W}%-11s${N}  ${DM}│${N}  ${DM}Node.js  ${N}${W}%-10s${N}  ${DM}│${N}\n" "$PHP_VER" "$NODE_VER"
-printf "  ${DM}│${N}  ${DM}pnpm   ${N}${W}%-11s${N}  ${DM}│${N}  ${DM}dist     ${N}${W}%-10s${N}  ${DM}│${N}\n" "$PNPM_VER" "$DIST_ST"
-printf "  ${DM}└──────────────────────┴───────────────────────┘${N}\n"
-
-# ── Boot bar ───────────────────────────────────────────────────────────────
-printf "\n"
-sleep 0.15
-_countbar "LOADING" 24 0.038
+sleep 0.12
+_countbar "LOADING" 28 0.033
 printf "\n"
 
 LOGDIR="${TMPDIR:-$ROOT/.tmp}"
@@ -281,7 +308,7 @@ else
   PHP_PID=$!
 fi
 
-_countbar "PHP Bot" 18 0.065
+_sigbars "PHP Bot"
 if ! kill -0 "$PHP_PID" 2>/dev/null; then
   printf "\r  ${BR}[SVC ]  PHP Bot başlatılamadı!${N}\n"; cat "$PHP_LOG"; exit 1
 fi
@@ -290,7 +317,7 @@ printf "         ${DM}↳ PID %s${N}\n" "$PHP_PID"
 node --enable-source-maps "$ROOT/artifacts/api-server/dist/index.mjs" > "$NODE_LOG" 2>&1 &
 NODE_PID=$!
 
-_countbar "Admin Panel" 18 0.065
+_sigbars "Admin Panel"
 if ! kill -0 "$NODE_PID" 2>/dev/null; then
   printf "\r  ${BR}[SVC ]  Admin panel başlatılamadı!${N}\n"; cat "$NODE_LOG"; kill "$PHP_PID" 2>/dev/null; exit 1
 fi
@@ -435,60 +462,68 @@ fi
 
 # ── ONLINE kartı ───────────────────────────────────────────────────────────
 printf "\n"
-sleep 0.08
-printf "  ${BG}╔═══════════════════════════════════════════╗${N}\n"
-sleep 0.04
-printf "  ${BG}║${N}  ${BG}●${N} ${W}ONLINE${N}                  ${DM}EmossDev v2.0${N}  ${BG}║${N}\n"
-sleep 0.03
-printf "  ${BG}╟${DM}───────────────────────────────────────────${BG}╢${N}\n"
-sleep 0.02
-printf "  ${BG}║${N}  ${DM}PHP Bot${N}   ${BG}▶${N} ${W}:${BOT_PORT}${N}      ${DM}·${N}      ${DM}Admin Panel${N}  ${BG}▶${N} ${W}:${PORT}/admin${N}\n"
-sleep 0.03
-printf "  ${BG}╠═══════════════════════════════════════════╣${N}\n"
-sleep 0.03
-printf "  ${BG}║${N}  ${DM}PANEL${N}    ${BC}http://localhost:${PORT}/admin${N}\n"
-if [ -n "$TUNNEL_URL" ]; then
-  sleep 0.02
-  printf "  ${BG}║${N}  ${DM}TUNNEL${N}   ${Y}%s${N}\n" "$TUNNEL_URL"
-else
-  sleep 0.02
-  printf "  ${BG}║${N}  ${DM}TUNNEL${N}   ${R}not connected${N}\n"
-fi
-sleep 0.03
-printf "  ${BG}╠═══════════════════════════════════════════╣${N}\n"
-sleep 0.02
-printf "  ${BG}║${N}  ${DM}logs${N}     ${DM}${LOGDIR}/emoss-{node,php}.log${N}\n"
-sleep 0.03
-printf "  ${BG}╟${DM}───────────────────────────────────────────${BG}╢${N}\n"
-sleep 0.02
-printf "  ${BG}║${N}  ${DM}started at${N} ${W}${START_TIME}${N}      ${DM}Ctrl+C → stop${N}  ${BG}║${N}\n"
+# ONLINE kart — satır satır belir
 sleep 0.06
-printf "  ${BG}╚═══════════════════════════════════════════╝${N}\n\n"
+printf "  ${BG}╔═══════════════════════════════════════════╗${N}\n"
+sleep 0.05; printf "  ${BG}║${N}  ${BG}●${N} ${W}ONLINE${N}                  ${DM}EmossDev v2.0${N}  ${BG}║${N}\n"
+sleep 0.04; printf "  ${BG}╠═══════════════════════════════════════════╣${N}\n"
+sleep 0.04; printf "  ${BG}║${N}  ${DM}PANEL${N}   ${BC}http://localhost:${PORT}/admin${N}\n"
+if [ -n "$TUNNEL_URL" ]; then
+  sleep 0.03; printf "  ${BG}║${N}  ${DM}TUNNEL${N}  ${Y}%s${N}\n" "$TUNNEL_URL"
+else
+  sleep 0.03; printf "  ${BG}║${N}  ${DM}TUNNEL${N}  ${R}not connected${N}\n"
+fi
+sleep 0.04; printf "  ${BG}╠═══════════════════════════════════════════╣${N}\n"
+sleep 0.03; printf "  ${BG}║${N}  ${DM}logs${N}    ${DM}${LOGDIR}/emoss-{node,php}.log${N}\n"
+sleep 0.04; printf "  ${BG}╠═══════════════════════════════════════════╣${N}\n"
+sleep 0.03; printf "  ${BG}║${N}  ${DM}started ${START_TIME}${N}      ${DM}Ctrl+C → stop${N}\n"
+sleep 0.06; printf "  ${BG}╚═══════════════════════════════════════════╝${N}\n"
+printf "\n"
+
+# ── Canlı uptime ticker ────────────────────────────────────────────────────
+_BOOT_TS=$(date +%s)
+(
+  while true; do
+    sleep 1
+    _NOW=$(date +%s)
+    _UP=$(( _NOW - _BOOT_TS ))
+    _H=$(( _UP / 3600 ))
+    _M=$(( (_UP % 3600) / 60 ))
+    _S=$(( _UP % 60 ))
+    printf "\r  ${BG}●${N} ${DM}running${N}  ${W}%02d:%02d:%02d${N}  ${DM}│${N}  node:${NODE_PID}  php:${PHP_PID}  ${DM}│${N}  ${DM}Ctrl+C → stop${N}   " \
+      "$_H" "$_M" "$_S"
+  done
+) &
+_TICKER_PID=$!
 
 cleanup() {
+  # Ticker'ı durdur ve satırı temizle
+  kill "$_TICKER_PID" 2>/dev/null || true
+  printf "\r%-60s\r" ""
   printf "\n\n"
-  # Yanıp sönen shutdown göstergesi
+  # Yanıp sönen shutdown animasyonu
   local i=0
-  while [ $i -lt 3 ]; do
-    printf "\r  ${BR}●${N} ${W}SHUTTING DOWN...${N}"; sleep 0.22
-    printf "\r  ${R}○${N} ${DM}SHUTTING DOWN...${N}"; sleep 0.22
+  while [ $i -lt 4 ]; do
+    printf "\r  ${BR}●${N} ${W}SHUTTING DOWN${N}"; sleep 0.18
+    printf "\r  ${R}○${N} ${DM}SHUTTING DOWN${N}"; sleep 0.18
     i=$((i+1))
   done
-  printf "\r%-42s\r" ""
+  printf "\r%-40s\r" ""
+  # Uptime hesapla
+  local _NOW _UP _H _M _S
+  _NOW=$(date +%s); _UP=$(( _NOW - _BOOT_TS ))
+  _H=$(( _UP / 3600 )); _M=$(( (_UP % 3600) / 60 )); _S=$(( _UP % 60 ))
   printf "\n"
-  printf "  ${BR}╔═══════════════════════════════════╗${N}\n"
-  printf "  ${BR}║${N}  ${BR}●${N} ${W}SHUTDOWN${N}           ${DM}EmossDev v2.0${N}  ${BR}║${N}\n"
-  printf "  ${BR}╟${R}───────────────────────────────────${BR}╢${N}\n"
-  printf "  ${BR}║${N}  ${DM}uptime  ${N}$(date +"%H:%M:%S")${DM}  ·  started ${START_TIME}${N}\n"
-  printf "  ${BR}╚═══════════════════════════════════╝${N}\n\n"
-  printf "  ${DM}stopping services...${N}\n"
+  printf "  ${BR}╔════════════════════════════════════╗${N}\n"
+  printf "  ${BR}║${N}  ${BR}●${N} ${W}OFFLINE${N}            ${DM}EmossDev v2.0${N}  ${BR}║${N}\n"
+  printf "  ${BR}╠════════════════════════════════════╣${N}\n"
+  printf "  ${BR}║${N}  ${DM}uptime   ${W}%02d:%02d:%02d${N}\n" "$_H" "$_M" "$_S"
+  printf "  ${BR}╚════════════════════════════════════╝${N}\n\n"
   kill "$PHP_PID" "$NODE_PID" 2>/dev/null
   [ -n "$TUNNEL_PID" ] && kill "$TUNNEL_PID" 2>/dev/null
   FPM_PID_FILE="$ROOT/telegram-bot/.tmp/php-fpm.pid"
-  if [ -f "$FPM_PID_FILE" ]; then
-    kill "$(cat "$FPM_PID_FILE")" 2>/dev/null || true
-  fi
-  printf "  ${BG}✓${N}  ${DM}clean exit — bye!${N}\n\n"
+  [ -f "$FPM_PID_FILE" ] && kill "$(cat "$FPM_PID_FILE")" 2>/dev/null || true
+  printf "  ${BG}✓${N}  ${DM}bye!${N}\n\n"
   exit 0
 }
 trap cleanup INT TERM
