@@ -13,24 +13,46 @@ Y='\033[1;33m';  C='\033[0;36m'
 W='\033[1;37m';  D='\033[2m';  N='\033[0m'
 DM='\033[2;37m'; BW='\033[1;37m'
 
-_OK="$(printf "  ${BG}✓${N}")"
-_INF="$(printf "  ${C}◆${N}")"
-_WRN="$(printf "  ${Y}⚠${N}")"
-_ERR="$(printf "  ${BR}✗${N}")"
+_OK="$(printf "  ${BG}✓${N}")"; _INF="$(printf "  ${C}◆${N}")"
+_WRN="$(printf "  ${Y}⚠${N}")"; _ERR="$(printf "  ${BR}✗${N}")"
+_DOTS='................................................'
+
+_hdr(){
+  local t="$1" i=0 dashes=""
+  local n=$(( 28 - ${#t} )); [ $n -lt 2 ] && n=2
+  while [ $i -lt $n ]; do dashes="${dashes}─"; i=$((i+1)); done
+  printf "\n  ${BR}──${N} ${W}${t}${N} ${BR}${dashes}${N}\n\n"
+}
+_item(){
+  local lbl="$1" val="$2" st="${3:-ok}"
+  local ndots=$(( 19 - ${#lbl} )); [ $ndots -lt 1 ] && ndots=1
+  local dots="${_DOTS:0:$ndots}"
+  local sym="${BG}✓${N}"; [ "$st" = "warn" ] && sym="${Y}⚠${N}"; [ "$st" = "err" ] && sym="${BR}✗${N}"
+  printf "  ${DM}%s%s${N} ${W}%-14s${N}${sym}\n" "$lbl" "$dots" "$val"
+}
+_pbar(){
+  local lbl="$1" n="${2:-18}" dt="${3:-0.058}"
+  printf "  ${DM}%-14s${N}${BR}[${N}" "$lbl"
+  local i=0; while [ $i -lt "$n" ]; do printf "${BR}█${N}"; sleep "$dt"; i=$((i+1)); done
+  printf "${BR}]${N}"
+}
+_pbar_ok(){  printf " ${BG}✓${N} %s\n" "$1"; }
+_pbar_err(){ printf " ${BR}✗${N} HATA\n"; }
 
 # ── Başlangıç Ekranı ───────────────────────────────────────────────────────
 clear 2>/dev/null || true
 printf "\n"
-
-sleep 0.04; printf "  ${BR}╔══════════════════════════════════════╗${N}\n"
+sleep 0.05; printf "  ${BR}╔══════════════════════════════════════╗${N}\n"
+sleep 0.04; printf "  ${BR}║${N}                                      ${BR}║${N}\n"
+sleep 0.04; printf "  ${BR}║${N}  ${BR}██████╗  ██████╗ ████████╗${N}           ${BR}║${N}\n"
+sleep 0.04; printf "  ${BR}║${N}  ${BR}██╔══██╗██╔═══██╗╚══██╔══╝${N}          ${BR}║${N}\n"
+sleep 0.04; printf "  ${BR}║${N}  ${BR}██████╔╝██║   ██║   ██║${N}              ${BR}║${N}\n"
+sleep 0.04; printf "  ${BR}║${N}  ${BR}██╔══██╗██║   ██║   ██║${N}              ${BR}║${N}\n"
+sleep 0.04; printf "  ${BR}║${N}  ${BR}██████╔╝╚██████╔╝   ██║${N}              ${BR}║${N}\n"
+sleep 0.04; printf "  ${BR}║${N}  ${BR}╚═════╝  ╚═════╝    ╚═╝${N}              ${BR}║${N}\n"
 sleep 0.03; printf "  ${BR}║${N}                                      ${BR}║${N}\n"
-sleep 0.03; printf "  ${BR}║${N}  ${BW}▌${N}${W} EmossDev${N}  ${DM}·${N}  ${BW}Tools Bot${N}  ${DM}· v2.0${N}   ${BR}║${N}\n"
-sleep 0.03; printf "  ${BR}║${N}  ${R}────────────────────────────────────${N}  ${BR}║${N}\n"
-sleep 0.03; printf "  ${BR}║${N}  ${DM}Admin Panel${N}                          ${BR}║${N}\n"
-sleep 0.03; printf "  ${BR}║${N}                                      ${BR}║${N}\n"
-sleep 0.04; printf "  ${BR}╚══════════════════════════════════════╝${N}\n"
-printf "\n"
-printf "  ${DM}─────────────────────────────────────────${N}\n\n"
+sleep 0.03; printf "  ${BR}║${N}  ${W}EmossDev${N} ${DM}·${N} ${W}Tools Bot${N} ${DM}·${N} ${DM}Admin Panel v2.0${N}  ${BR}║${N}\n"
+sleep 0.05; printf "  ${BR}╚══════════════════════════════════════╝${N}\n\n"
 
 # .env dosyası varsa yükle
 if [ -f "$ROOT/.env" ]; then
@@ -42,60 +64,44 @@ if [ -f "$ROOT/.env" ]; then
 fi
 
 # Termux mu normal Linux mu?
-if [ -d "/data/data/com.termux" ]; then
-  TERMUX=true
-  echo "$_INF Ortam: Termux (Android)"
-else
-  TERMUX=false
-  echo "$_INF Ortam: Linux"
-fi
+if [ -d "/data/data/com.termux" ]; then TERMUX=true; else TERMUX=false; fi
 
 # ── Eski process'leri temizle ─────────────────────────────────────────────
-echo "$_INF Eski process'ler temizleniyor..."
-pkill -f "php-server.php"    2>/dev/null || true
-pkill -f "php-fpm-bridge"    2>/dev/null || true
-pkill -f "php-cgi"           2>/dev/null || true
-pkill -f "dist/index.mjs"    2>/dev/null || true
-# fuser varsa portları direkt serbest bırak
+printf "  ${DM}Önceki süreçler temizleniyor...${N}\n"
+pkill -f "php-server.php" 2>/dev/null || true
+pkill -f "php-fpm-bridge" 2>/dev/null || true
+pkill -f "php-cgi"        2>/dev/null || true
+pkill -f "dist/index.mjs" 2>/dev/null || true
 fuser -k 8000/tcp 2>/dev/null || true
 fuser -k 3000/tcp 2>/dev/null || true
 sleep 2
-echo "$_OK Temizlik tamamlandı"
+
+_hdr "SİSTEM KONTROLÜ"
 
 # ---- PHP kontrolü ----
 if ! command -v php &>/dev/null; then
   echo "$_INF PHP bulunamadı, kuruluyor..."
-  if [ "$TERMUX" = true ]; then
-    pkg install php -y
-  else
-    sudo apt-get install -y php-cli
-  fi
+  if [ "$TERMUX" = true ]; then pkg install php -y; else sudo apt-get install -y php-cli; fi
 fi
-echo "$_OK PHP: $(php -r 'echo PHP_VERSION;')"
+_item "PHP" "$(php -r 'echo PHP_VERSION;')" "ok"
 
 # ---- Node.js kontrolü ----
 if ! command -v node &>/dev/null; then
   echo "$_INF Node.js bulunamadı, kuruluyor..."
-  if [ "$TERMUX" = true ]; then
-    pkg install nodejs -y
-  else
-    curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-    sudo apt-get install -y nodejs
-  fi
+  if [ "$TERMUX" = true ]; then pkg install nodejs -y; else curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - && sudo apt-get install -y nodejs; fi
 fi
-echo "$_OK Node.js: $(node -v)"
+_item "Node.js" "$(node -v)" "ok"
 
 # ---- pnpm kontrolü ----
 if ! command -v pnpm &>/dev/null; then
-  echo "$_INF pnpm kuruluyor..."
-  npm install -g pnpm
+  echo "$_INF pnpm kuruluyor..."; npm install -g pnpm
 fi
-echo "$_OK pnpm: $(pnpm -v)"
+_item "pnpm" "$(pnpm -v)" "ok"
 
 # ---- Build kontrolü ----
 DIST="$ROOT/artifacts/api-server/dist/index.mjs"
 if [ -f "$DIST" ]; then
-  echo "$_OK Derlenmiş panel hazır, build atlanıyor."
+  _item "dist" "hazır (cached)" "ok"
 else
   echo "$_INF dist bulunamadı, derleniyor..."
   if [ ! -d "$ROOT/node_modules" ]; then
@@ -103,7 +109,14 @@ else
     pnpm install --no-frozen-lockfile
   fi
   pnpm --filter @workspace/api-server run build
-  echo "$_OK Build tamamlandı."
+  _item "dist" "build tamam" "ok"
+fi
+
+# ---- Ortam ----
+if [ "$TERMUX" = true ]; then
+  _item "Ortam" "Termux (Android)" "ok"
+else
+  _item "Ortam" "Linux" "ok"
 fi
 
 # ---- Port ayarları ----
@@ -118,8 +131,9 @@ mkdir -p "$ROOT/telegram-bot/.tmp"
 PHP_LOG="$LOGDIR/emoss-php.log"
 NODE_LOG="$LOGDIR/emoss-node.log"
 
+_hdr "SERVİSLER"
+
 # ── PHP Bot başlatma ───────────────────────────────────────────────────────
-echo "$_INF PHP Bot başlatılıyor (port 8000)..."
 
 PHP_PID=""
 
@@ -209,28 +223,20 @@ else
   PHP_PID=$!
 fi
 
-sleep 1
-
+_pbar "PHP Bot" 18 0.058
 if ! kill -0 "$PHP_PID" 2>/dev/null; then
-  echo "$_ERR PHP bot başlatılamadı! Log:"
-  cat "$PHP_LOG"
-  exit 1
+  _pbar_err; echo ""; cat "$PHP_LOG"; exit 1
 fi
-echo "$_OK PHP Bot çalışıyor (PID: $PHP_PID)"
+_pbar_ok "PID:$PHP_PID"
 
-echo "$_INF Admin Panel başlatılıyor (port $PORT)..."
 node --enable-source-maps "$ROOT/artifacts/api-server/dist/index.mjs" > "$NODE_LOG" 2>&1 &
 NODE_PID=$!
 
-sleep 1
-
+_pbar "Admin Panel" 18 0.058
 if ! kill -0 "$NODE_PID" 2>/dev/null; then
-  echo "$_ERR Admin panel başlatılamadı! Log:"
-  cat "$NODE_LOG"
-  kill "$PHP_PID" 2>/dev/null
-  exit 1
+  _pbar_err; echo ""; cat "$NODE_LOG"; kill "$PHP_PID" 2>/dev/null; exit 1
 fi
-echo "$_OK Admin Panel çalışıyor (PID: $NODE_PID)"
+_pbar_ok "PID:$NODE_PID"
 
 # ── GitHub webhook yardımcı fonksiyonları ────────────────────────────────
 GH_REPO="EmossDev/EmossDevToolsBot"
@@ -371,23 +377,22 @@ else
   echo "$_WRN ssh bulunamadı, tünel atlandı. Manuel: ssh -R 80:localhost:$PORT nokey@localhost.run"
 fi
 
-printf "\n${BG}"
-printf '  ╔══════════════════════════════════╗\n'
-printf "  ║${W}  Sistem Hazir                   ${BG}║${N}\n"
-printf "${BG}  ╠══════════════════════════════════╣${N}\n"
-printf "  ║${N}  Panel   ${D}→${N}  ${C}http://localhost:${PORT}/admin${N}\n"
-printf "${BG}  ║${N}\n"
+printf "\n"
+sleep 0.05; printf "  ${BG}╔══════════════════════════════════════╗${N}\n"
+sleep 0.03; printf "  ${BG}║${N}  ${BG}✦${N}  ${W}Sistem Hazır${N}                       ${BG}║${N}\n"
+sleep 0.02; printf "  ${BG}╠══════════════════════════════════════╣${N}\n"
+sleep 0.02; printf "  ${BG}║${N}  ${DM}Panel${N}  ${BR}→${N}  ${C}http://localhost:${PORT}/admin${N}\n"
 if [ -n "$TUNNEL_URL" ]; then
-  printf "  ║${N}  Tunel   ${D}→${N}  ${Y}${TUNNEL_URL}${N}\n"
+  sleep 0.02; printf "  ${BG}║${N}  ${DM}Tünel${N}  ${BR}→${N}  ${Y}${TUNNEL_URL}${N}\n"
 else
-  printf "  ║${N}  Tunel   ${D}→${N}  ${R}Baslatilmadi${N}\n"
+  sleep 0.02; printf "  ${BG}║${N}  ${DM}Tünel${N}  ${BR}→${N}  ${R}Başlatılmadı${N}\n"
 fi
-printf "${BG}  ╠══════════════════════════════════╣${N}\n"
-printf "  ║${N}  ${D}tail -f${N} NODE: ${D}$NODE_LOG${N}\n"
-printf "  ║${N}  ${D}tail -f${N} PHP : ${D}$PHP_LOG${N}\n"
-printf "${BG}  ╠══════════════════════════════════╣${N}\n"
-printf "  ║${N}  Durdurmak icin: ${W}Ctrl+C${N}\n"
-printf "${BG}  ╚══════════════════════════════════╝${N}\n\n"
+sleep 0.02; printf "  ${BG}╠══════════════════════════════════════╣${N}\n"
+sleep 0.02; printf "  ${BG}║${N}  ${DM}node log${N}  ${DM}→  ${NODE_LOG}${N}\n"
+sleep 0.02; printf "  ${BG}║${N}  ${DM}php  log${N}  ${DM}→  ${PHP_LOG}${N}\n"
+sleep 0.02; printf "  ${BG}╠══════════════════════════════════════╣${N}\n"
+sleep 0.02; printf "  ${BG}║${N}  ${W}Ctrl+C${N} ${DM}ile durdur${N}\n"
+sleep 0.03; printf "  ${BG}╚══════════════════════════════════════╝${N}\n\n"
 
 cleanup() {
   echo ""
