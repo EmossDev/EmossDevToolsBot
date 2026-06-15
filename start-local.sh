@@ -6,10 +6,23 @@ set -e
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT"
 
-echo "========================================"
-echo "  EmossDev Panel + Bot"
-echo "========================================"
-echo ""
+# ── ANSI renkleri ─────────────────────────────────────────────────────────
+R='\033[0;31m'; BR='\033[1;31m'
+G='\033[0;32m'; BG='\033[1;32m'
+Y='\033[1;33m'; C='\033[0;36m'
+W='\033[1;37m'; D='\033[2m'; N='\033[0m'
+
+OK_PFX="${BG}  ✓${N}"; INF_PFX="${C}  →${N}"; ERR_PFX="${BR}  ✗${N}"; WRN_PFX="${Y}  !${N}"
+
+clear 2>/dev/null || true
+printf "${BR}"
+printf '  ╔══════════════════════════════╗\n'
+printf '  ║                              ║\n'
+printf '  ║   EmossDev  Tools  Bot       ║\n'
+printf '  ║   Admin Panel  v2.0          ║\n'
+printf '  ║                              ║\n'
+printf '  ╚══════════════════════════════╝\n'
+printf "${N}\n"
 
 # .env dosyası varsa yükle
 if [ -f "$ROOT/.env" ]; then
@@ -345,19 +358,23 @@ else
   echo "[!] ssh bulunamadı, tünel atlandı. Manuel: ssh -R 80:localhost:$PORT nokey@localhost.run"
 fi
 
-echo ""
-echo "========================================"
-echo "  Admin Panel : http://localhost:$PORT/admin"
-echo "  Bot Webhook  : ${TUNNEL_URL:-<tünel-url>}"
-echo ""
-echo "  Loglar:"
-echo "    tail -f $NODE_LOG"
-echo "    tail -f $PHP_LOG"
-echo "    tail -f $TUNNEL_LOG"
-echo ""
-echo "  Durdurmak için: Ctrl+C"
-echo "========================================"
-echo ""
+printf "\n${BG}"
+printf '  ╔══════════════════════════════════╗\n'
+printf "  ║${W}  Sistem Hazir                   ${BG}║${N}\n"
+printf "${BG}  ╠══════════════════════════════════╣${N}\n"
+printf "  ║${N}  Panel   ${D}→${N}  ${C}http://localhost:${PORT}/admin${N}\n"
+printf "${BG}  ║${N}\n"
+if [ -n "$TUNNEL_URL" ]; then
+  printf "  ║${N}  Tunel   ${D}→${N}  ${Y}${TUNNEL_URL}${N}\n"
+else
+  printf "  ║${N}  Tunel   ${D}→${N}  ${R}Baslatilmadi${N}\n"
+fi
+printf "${BG}  ╠══════════════════════════════════╣${N}\n"
+printf "  ║${N}  ${D}tail -f${N} NODE: ${D}$NODE_LOG${N}\n"
+printf "  ║${N}  ${D}tail -f${N} PHP : ${D}$PHP_LOG${N}\n"
+printf "${BG}  ╠══════════════════════════════════╣${N}\n"
+printf "  ║${N}  Durdurmak icin: ${W}Ctrl+C${N}\n"
+printf "${BG}  ╚══════════════════════════════════╝${N}\n\n"
 
 cleanup() {
   echo ""

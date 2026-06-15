@@ -2035,14 +2035,16 @@ async function loadTunnelUrl(){
 }
 // ── GITHUB WEBHOOK ──
 async function loadGhWebhook(){
+  const urlEl=document.getElementById('ghWebhookUrl');
+  const secEl=document.getElementById('ghSecret');
   try{
     const d=await fetch(API+'/github-webhook/info').then(r=>r.json());
     if(!d.ok)return;
-    const urlEl=document.getElementById('ghWebhookUrl');
-    const secEl=document.getElementById('ghSecret');
     if(urlEl)urlEl.textContent=d.webhookUrl||'Tünel başlatılmamış — emossdevpanel çalıştır';
     if(secEl)secEl.value=d.secret||'';
-  }catch(_){}
+  }catch(_){
+    if(urlEl)urlEl.textContent='Config okunamadı';
+  }
 }
 function toggleGhSecret(){
   const inp=document.getElementById('ghSecret');
