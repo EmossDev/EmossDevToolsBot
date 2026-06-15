@@ -124,84 +124,80 @@ printf "\n"
 _type "D E V   T O O L S   B O T   v 2 . 0" 0.022
 printf "  ${DM}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${N}\n\n"
 
-# Boot tarama sekansı
-_scan "INIT" "clearing old processes"
-_scan "ENV " "reading config"
-_scan "PREP" "boot sequence ready"
-printf "\n"
+# ── Sistem kontrolleri ─────────────────────────────────────────────────────
+printf "  ${DM}⟳  starting...${N}"
 
-# .env dosyası varsa yükle
-if [ -f "$ROOT/.env" ]; then
-  echo "$_INF .env dosyası yükleniyor..."
-  set -a
-  # shellcheck disable=SC1091
-  source "$ROOT/.env"
-  set +a
-fi
+# .env yükle (sessiz)
+if [ -f "$ROOT/.env" ]; then set -a; source "$ROOT/.env" 2>/dev/null; set +a; fi
 
-# Termux mu normal Linux mu?
+# Termux tespiti
 if [ -d "/data/data/com.termux" ]; then TERMUX=true; else TERMUX=false; fi
 
-# ── Eski process'leri temizle (arka planda, _scan görsel ön planda) ────────
+# Eski process'leri temizle (sessiz)
 pkill -f "php-server.php" 2>/dev/null || true
 pkill -f "php-fpm-bridge" 2>/dev/null || true
 pkill -f "php-cgi"        2>/dev/null || true
 pkill -f "dist/index.mjs" 2>/dev/null || true
 fuser -k 8000/tcp 2>/dev/null || true
 fuser -k 3000/tcp 2>/dev/null || true
+printf "\r%-40s\r" ""
 
-# ── Sistem tarama sekansı ──────────────────────────────────────────────────
-_scan "INIT" "clearing old processes" "DONE" "$BG"
-
-# ---- PHP kontrolü ----
+# PHP
 if ! command -v php &>/dev/null; then
-  _scan "PKG " "installing PHP" "INSTALLING" "$Y"
-  if [ "$TERMUX" = true ]; then pkg install php -y; else sudo apt-get install -y php-cli; fi
+  printf "  ${Y}◆${N}  ${DM}installing PHP...${N}\r"
+  if [ "$TERMUX" = true ]; then pkg install php -y >/dev/null 2>&1
+  else sudo apt-get install -y php-cli >/dev/null 2>&1; fi
+  printf "\r%-40s\r" ""
 fi
 PHP_VER="$(php -r 'echo PHP_VERSION;' 2>/dev/null || echo '?')"
-_scan "SYS " "PHP $PHP_VER" "PASS" "$BG"
 
-# ---- Node.js kontrolü ----
+# Node.js
 if ! command -v node &>/dev/null; then
-  _scan "PKG " "installing Node.js" "INSTALLING" "$Y"
-  if [ "$TERMUX" = true ]; then pkg install nodejs -y; else curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - && sudo apt-get install -y nodejs; fi
+  printf "  ${Y}◆${N}  ${DM}installing Node.js...${N}\r"
+  if [ "$TERMUX" = true ]; then pkg install nodejs -y >/dev/null 2>&1
+  else curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - && sudo apt-get install -y nodejs >/dev/null 2>&1; fi
+  printf "\r%-40s\r" ""
 fi
 NODE_VER="$(node -v 2>/dev/null || echo '?')"
-_scan "SYS " "Node.js $NODE_VER" "PASS" "$BG"
 
-# ---- pnpm kontrolü ----
+# pnpm
 if ! command -v pnpm &>/dev/null; then
-  _scan "PKG " "installing pnpm" "INSTALLING" "$Y"
-  npm install -g pnpm
+  printf "  ${Y}◆${N}  ${DM}installing pnpm...${N}\r"
+  npm install -g pnpm >/dev/null 2>&1
+  printf "\r%-40s\r" ""
 fi
-_scan "SYS " "pnpm $(pnpm -v 2>/dev/null)" "PASS" "$BG"
+PNPM_VER="$(pnpm -v 2>/dev/null || echo '?')"
 
-# ---- Build kontrolü ----
+# Admin panel build
 DIST="$ROOT/artifacts/api-server/dist/index.mjs"
 if [ -f "$DIST" ]; then
-  _scan "DIST" "panel build cached" "CACHED" "$C"
+  DIST_ST="cached"
 else
-  _scan "DIST" "building panel" "BUILDING" "$Y"
-  if [ ! -d "$ROOT/node_modules" ]; then
-    pnpm install --no-frozen-lockfile
-  fi
-  pnpm --filter @workspace/api-server run build
-  _scan "DIST" "build complete" "PASS" "$BG"
+  printf "  ${Y}◆${N}  ${DM}building panel...${N}"
+  [ ! -d "$ROOT/node_modules" ] && pnpm install --no-frozen-lockfile >/dev/null 2>&1
+  pnpm --filter @workspace/api-server run build >/dev/null 2>&1
+  printf "\r%-40s\r" ""
+  DIST_ST="built"
 fi
 
-# ---- Port ayarları ----
+# Port ve ortam ayarları
 export PORT="${PORT:-3000}"
 export BOT_PORT=8000
 export NODE_ENV=production
+if [ "$TERMUX" = true ]; then OS_STR="Android / Termux"; else OS_STR="Linux"; fi
 
-_scan "NET " "binding ports $BOT_PORT + $PORT" "READY" "$BG"
-
-# Termux göster
-if [ "$TERMUX" = true ]; then
-  _scan "OS  " "Android / Termux" "OK" "$BG"
-else
-  _scan "OS  " "Linux" "OK" "$BG"
-fi
+# ── Sonuçlar: kısa ◆ listesi ──────────────────────────────────────────────
+_info(){
+  local lbl="$1" val="$2" col="${3:-$W}"
+  sleep 0.06
+  printf "  ${BG}◆${N}  ${DM}%-10s${N}  ${col}%s${N}\n" "$lbl" "$val"
+}
+_info "PHP"      "$PHP_VER"
+_info "Node"     "$NODE_VER"
+_info "pnpm"     "$PNPM_VER"
+_info "dist"     "$DIST_ST"   "$C"
+_info "ports"    ":${BOT_PORT} + :${PORT}"
+_info "platform" "$OS_STR"
 
 # ── Boot bar (yükleme animasyonu) ─────────────────────────────────────────
 printf "\n"
@@ -229,7 +225,6 @@ if [ "$TERMUX" = true ]; then
     || ls /data/data/com.termux/files/usr/sbin/php-fpm* 2>/dev/null | head -1 \
     || true)"
   if [ -n "$FPM_BIN" ]; then
-    echo "$_INF php-fpm bulundu — FastCGI modu (hızlı)..."
     FPM_CONF="$ROOT/telegram-bot/.tmp/php-fpm.conf"
     FPM_PID_FILE="$ROOT/telegram-bot/.tmp/php-fpm.pid"
     FPM_SOCK_PORT=9000
@@ -260,16 +255,13 @@ FPMCONF
     sleep 1
 
     if [ -f "$FPM_PID_FILE" ] && kill -0 "$(cat "$FPM_PID_FILE")" 2>/dev/null; then
-      echo "$_OK php-fpm çalışıyor (PID: $(cat "$FPM_PID_FILE"))"
       FPM_PORT=$FPM_SOCK_PORT PORT=8000 node "$ROOT/telegram-bot/php-fpm-bridge.mjs" > "$PHP_LOG" 2>&1 &
       PHP_PID=$!
       USE_FPM=true
     else
-      echo "$_WRN php-fpm başlatılamadı, fallback: spawn köprüsü..."
       USE_FPM=false
     fi
   else
-    echo "$_INF php-fpm yok — spawn köprüsü kullanılıyor..."
     USE_FPM=false
   fi
 
@@ -279,24 +271,19 @@ FPMCONF
       || ls /data/data/com.termux/files/usr/bin/php-cgi* 2>/dev/null | head -1 \
       || true)"
     if [ -n "$CGI_BIN" ]; then
-      echo "$_INF php-cgi FastCGI modu kullanılıyor (port 9001)..."
       "$CGI_BIN" -b 127.0.0.1:9001 >> "$LOGDIR/php-cgi.log" 2>&1 &
       CGI_PID=$!
       sleep 1
       if kill -0 "$CGI_PID" 2>/dev/null; then
-        echo "$_OK php-cgi FastCGI çalışıyor (PID: $CGI_PID)"
         FPM_PORT=9001 PORT=8000 node "$ROOT/telegram-bot/php-fpm-bridge.mjs" > "$PHP_LOG" 2>&1 &
         PHP_PID=$!
         USE_FPM=true
-      else
-        echo "$_WRN php-cgi de başlatılamadı, spawn köprüsüne geçiliyor..."
       fi
     fi
   fi
 
   if [ "$USE_FPM" != true ]; then
     # Son seçenek: lock-free PHP socket sunucusu (socket_*() flock gerektirmez)
-    echo "$_INF Lock-free PHP socket sunucusu kullanılıyor..."
     export PHP_BIN="$(command -v php)"
     PORT=8000 PHP_BIN="$PHP_BIN" php "$ROOT/telegram-bot/php-server.php" > "$PHP_LOG" 2>&1 &
     PHP_PID=$!
