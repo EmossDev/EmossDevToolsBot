@@ -20494,27 +20494,27 @@ var require_router = __commonJS({
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var methods = METHODS.map((method) => method.toLowerCase());
-    module.exports = Router6;
+    module.exports = Router7;
     module.exports.Route = Route;
-    function Router6(options) {
-      if (!(this instanceof Router6)) {
-        return new Router6(options);
+    function Router7(options) {
+      if (!(this instanceof Router7)) {
+        return new Router7(options);
       }
       const opts = options || {};
-      function router6(req, res, next) {
-        router6.handle(req, res, next);
+      function router7(req, res, next) {
+        router7.handle(req, res, next);
       }
-      Object.setPrototypeOf(router6, this);
-      router6.caseSensitive = opts.caseSensitive;
-      router6.mergeParams = opts.mergeParams;
-      router6.params = {};
-      router6.strict = opts.strict;
-      router6.stack = [];
-      return router6;
+      Object.setPrototypeOf(router7, this);
+      router7.caseSensitive = opts.caseSensitive;
+      router7.mergeParams = opts.mergeParams;
+      router7.params = {};
+      router7.strict = opts.strict;
+      router7.stack = [];
+      return router7;
     }
-    Router6.prototype = function() {
+    Router7.prototype = function() {
     };
-    Router6.prototype.param = function param(name, fn) {
+    Router7.prototype.param = function param(name, fn) {
       if (!name) {
         throw new TypeError("argument name is required");
       }
@@ -20534,7 +20534,7 @@ var require_router = __commonJS({
       params.push(fn);
       return this;
     };
-    Router6.prototype.handle = function handle(req, res, callback) {
+    Router7.prototype.handle = function handle(req, res, callback) {
       if (!callback) {
         throw new TypeError("argument callback is required");
       }
@@ -20661,7 +20661,7 @@ var require_router = __commonJS({
         }
       }
     };
-    Router6.prototype.use = function use(handler) {
+    Router7.prototype.use = function use(handler) {
       let offset = 0;
       let path = "/";
       if (typeof handler !== "function") {
@@ -20694,7 +20694,7 @@ var require_router = __commonJS({
       }
       return this;
     };
-    Router6.prototype.route = function route(path) {
+    Router7.prototype.route = function route(path) {
       const route2 = new Route(path);
       const layer = new Layer(path, {
         sensitive: this.caseSensitive,
@@ -20709,7 +20709,7 @@ var require_router = __commonJS({
       return route2;
     };
     methods.concat("all").forEach(function(method) {
-      Router6.prototype[method] = function(path) {
+      Router7.prototype[method] = function(path) {
         const route = this.route(path);
         route[method].apply(route, slice.call(arguments, 1));
         return this;
@@ -20892,13 +20892,13 @@ var require_application = __commonJS({
     var compileTrust = require_utils3().compileTrust;
     var resolve5 = __require("node:path").resolve;
     var once = require_once();
-    var Router6 = require_router();
+    var Router7 = require_router();
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var app2 = exports = module.exports = {};
     var trustProxyDefaultSymbol = "@@symbol:trust_proxy_default";
     app2.init = function init() {
-      var router6 = null;
+      var router7 = null;
       this.cache = /* @__PURE__ */ Object.create(null);
       this.engines = /* @__PURE__ */ Object.create(null);
       this.settings = /* @__PURE__ */ Object.create(null);
@@ -20907,13 +20907,13 @@ var require_application = __commonJS({
         configurable: true,
         enumerable: true,
         get: function getrouter() {
-          if (router6 === null) {
-            router6 = new Router6({
+          if (router7 === null) {
+            router7 = new Router7({
               caseSensitive: this.enabled("case sensitive routing"),
               strict: this.enabled("strict routing")
             });
           }
-          return router6;
+          return router7;
         }
       });
     };
@@ -20984,15 +20984,15 @@ var require_application = __commonJS({
       if (fns.length === 0) {
         throw new TypeError("app.use() requires a middleware function");
       }
-      var router6 = this.router;
+      var router7 = this.router;
       fns.forEach(function(fn2) {
         if (!fn2 || !fn2.handle || !fn2.set) {
-          return router6.use(path, fn2);
+          return router7.use(path, fn2);
         }
         debug7(".use app under %s", path);
         fn2.mountpath = path;
         fn2.parent = this;
-        router6.use(path, function mounted_app(req, res, next) {
+        router7.use(path, function mounted_app(req, res, next) {
           var orig = req.app;
           fn2.handle(req, res, function(err) {
             Object.setPrototypeOf(req, orig.request);
@@ -23565,7 +23565,7 @@ var require_express = __commonJS({
     var EventEmitter2 = __require("node:events").EventEmitter;
     var mixin = require_merge_descriptors();
     var proto = require_application();
-    var Router6 = require_router();
+    var Router7 = require_router();
     var req = require_request();
     var res = require_response();
     exports = module.exports = createApplication;
@@ -23587,8 +23587,8 @@ var require_express = __commonJS({
     exports.application = proto;
     exports.request = req;
     exports.response = res;
-    exports.Route = Router6.Route;
-    exports.Router = Router6;
+    exports.Route = Router7.Route;
+    exports.Router = Router7;
     exports.json = bodyParser.json;
     exports.raw = bodyParser.raw;
     exports.static = require_serve_static();
@@ -31581,7 +31581,7 @@ var require_micromatch = __commonJS({
 });
 
 // src/app.ts
-var import_express7 = __toESM(require_express2(), 1);
+var import_express8 = __toESM(require_express2(), 1);
 var import_cors = __toESM(require_lib3(), 1);
 var import_pino_http = __toESM(require_logger(), 1);
 import { resolve as resolve4 } from "node:path";
@@ -32495,11 +32495,11 @@ function parsePathRewriteRules(rewriteConfig) {
 var debug4 = Debug.extend("router");
 async function getTarget(req, config) {
   let newTarget;
-  const router6 = config.router;
-  if (isPlainObject(router6)) {
-    newTarget = getTargetFromProxyTable(req, router6);
-  } else if (typeof router6 === "function") {
-    newTarget = await router6(req);
+  const router7 = config.router;
+  if (isPlainObject(router7)) {
+    newTarget = getTargetFromProxyTable(req, router7);
+  } else if (typeof router7 === "function") {
+    newTarget = await router7(req);
   }
   return newTarget;
 }
@@ -32712,7 +32712,7 @@ function createProxyMiddleware(options) {
 var debug6 = Debug.extend("response-interceptor");
 
 // src/routes/index.ts
-var import_express5 = __toESM(require_express2(), 1);
+var import_express6 = __toESM(require_express2(), 1);
 
 // src/routes/health.ts
 var import_express = __toESM(require_express2(), 1);
@@ -36887,15 +36887,60 @@ router3.post(
 );
 var github_webhook_default = router3;
 
-// src/routes/index.ts
+// src/routes/music.ts
+var import_express5 = __toESM(require_express2(), 1);
 var router4 = (0, import_express5.Router)();
-router4.use(health_default);
-router4.use(bot_default);
-router4.use(github_webhook_default);
-var routes_default = router4;
+var INV = [
+  "https://invidious.privacydev.net",
+  "https://inv.nadeko.net",
+  "https://yt.cdaut.de",
+  "https://invidious.nerdvpn.de"
+];
+router4.get("/music/search", async (req, res) => {
+  const q = String(req.query.q || "").trim();
+  if (!q) return res.json({ results: [] });
+  for (const base of INV) {
+    try {
+      const url = base + "/api/v1/search?q=" + encodeURIComponent(q) + "&type=video&fields=videoId,title,author,lengthSeconds,videoThumbnails";
+      const r = await fetch(url, { signal: AbortSignal.timeout(7e3) });
+      if (!r.ok) continue;
+      const data = await r.json();
+      if (!Array.isArray(data)) continue;
+      const results = data.slice(0, 8).map((v) => {
+        let thumb = "";
+        if (Array.isArray(v.videoThumbnails) && v.videoThumbnails.length) {
+          const mid = v.videoThumbnails.find((t) => t.quality === "medium");
+          thumb = (mid || v.videoThumbnails[0]).url || "";
+        }
+        return {
+          id: v.videoId || "",
+          title: v.title || "",
+          artist: v.author || "",
+          thumb,
+          dur: v.lengthSeconds ? fmtDur(Number(v.lengthSeconds)) : ""
+        };
+      });
+      return res.json({ results });
+    } catch (_) {
+    }
+  }
+  return res.json({ results: [], error: "T\xFCm Invidious instance'lar\u0131 yan\u0131t vermedi" });
+});
+function fmtDur(s) {
+  return Math.floor(s / 60) + ":" + (s % 60 < 10 ? "0" : "") + s % 60;
+}
+var music_default = router4;
+
+// src/routes/index.ts
+var router5 = (0, import_express6.Router)();
+router5.use(health_default);
+router5.use(bot_default);
+router5.use(github_webhook_default);
+router5.use(music_default);
+var routes_default = router5;
 
 // src/routes/admin.ts
-var import_express6 = __toESM(require_express2(), 1);
+var import_express7 = __toESM(require_express2(), 1);
 import { resolve as resolve3 } from "node:path";
 import { deflateSync } from "node:zlib";
 function uint32BE(n) {
@@ -36933,7 +36978,7 @@ function solidColorPNG(size, r, g, b) {
 }
 var ICON_192 = solidColorPNG(192, 220, 38, 38);
 var ICON_512 = solidColorPNG(512, 220, 38, 38);
-var router5 = (0, import_express6.Router)();
+var router6 = (0, import_express7.Router)();
 var html = String.raw`<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -38908,26 +38953,15 @@ async function doAdd(){
   var _results=[];
   var _currentIdx=-1;
 
-  var INV=['https://invidious.privacydev.net','https://inv.nadeko.net','https://yt.cdaut.de','https://invidious.nerdvpn.de'];
-
   function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-  function fmtDur(s){return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);}
 
   async function searchYT(q){
-    for(var i=0;i<INV.length;i++){
-      try{
-        var r=await fetch(INV[i]+'/api/v1/search?q='+encodeURIComponent(q)+'&type=video&fields=videoId,title,author,lengthSeconds,videoThumbnails',{signal:AbortSignal.timeout(5000)});
-        if(!r.ok)continue;
-        var d=await r.json();
-        if(!Array.isArray(d))continue;
-        return d.slice(0,5).map(function(v){
-          var thumb='';
-          if(v.videoThumbnails&&v.videoThumbnails.length){var mid=v.videoThumbnails.find(function(t){return t.quality==='medium';});thumb=(mid||v.videoThumbnails[0]).url||'';}
-          return{src:'yt',id:v.videoId||'',title:v.title||'',artist:v.author||'',thumb:thumb,dur:v.lengthSeconds?fmtDur(v.lengthSeconds):''};
-        });
-      }catch(e){}
-    }
-    return[];
+    try{
+      var r=await fetch(API+'/music/search?q='+encodeURIComponent(q));
+      if(!r.ok)return[];
+      var d=await r.json();
+      return(d.results||[]);
+    }catch(e){return[];}
   }
 
   function renderResults(list){
@@ -39064,26 +39098,26 @@ if('serviceWorker' in navigator){
 </script>
 </body>
 </html>`;
-router5.get("/", (_req, res) => {
+router6.get("/", (_req, res) => {
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
-router5.get("/app-icon.jpg", (_req, res) => {
+router6.get("/app-icon.jpg", (_req, res) => {
   res.sendFile(resolve3(process.cwd(), "artifacts/api-server/public/app-icon.jpg"));
 });
-router5.get("/icon-192.png", (_req, res) => {
+router6.get("/icon-192.png", (_req, res) => {
   res.setHeader("Cache-Control", "public, max-age=86400");
   res.sendFile(resolve3(process.cwd(), "artifacts/api-server/public/appicon.png"));
 });
-router5.get("/icon-512.png", (_req, res) => {
+router6.get("/icon-512.png", (_req, res) => {
   res.setHeader("Cache-Control", "public, max-age=86400");
   res.sendFile(resolve3(process.cwd(), "artifacts/api-server/public/appicon.png"));
 });
-router5.get("/splashsc.png", (_req, res) => {
+router6.get("/splashsc.png", (_req, res) => {
   res.setHeader("Cache-Control", "public, max-age=86400");
   res.sendFile(resolve3(process.cwd(), "artifacts/api-server/public/splashsc.png"));
 });
-router5.get("/sw.js", (_req, res) => {
+router6.get("/sw.js", (_req, res) => {
   res.setHeader("Content-Type", "application/javascript");
   res.setHeader("Service-Worker-Allowed", "/admin/");
   res.send(`const CACHE='emossdev-v5';
@@ -39092,7 +39126,7 @@ self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.add
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{if(res.ok){const c=res.clone();caches.open(CACHE).then(cache=>cache.put(e.request,c));}return res;})));});`);
 });
-router5.get("/manifest.json", (_req, res) => {
+router6.get("/manifest.json", (_req, res) => {
   res.json({
     id: "/admin/",
     name: "EmossDev Panel",
@@ -39111,7 +39145,7 @@ router5.get("/manifest.json", (_req, res) => {
     ]
   });
 });
-var admin_default = router5;
+var admin_default = router6;
 
 // src/lib/logger.ts
 var import_pino = __toESM(require_pino(), 1);
@@ -39132,7 +39166,7 @@ var logger = (0, import_pino.default)({
 });
 
 // src/app.ts
-var app = (0, import_express7.default)();
+var app = (0, import_express8.default)();
 app.use(
   (0, import_pino_http.default)({
     logger,
@@ -39153,9 +39187,9 @@ app.use(
   })
 );
 app.use((0, import_cors.default)());
-app.use(import_express7.default.json());
-app.use(import_express7.default.urlencoded({ extended: true }));
-app.use("/static", import_express7.default.static(resolve4(process.cwd(), "public")));
+app.use(import_express8.default.json());
+app.use(import_express8.default.urlencoded({ extended: true }));
+app.use("/static", import_express8.default.static(resolve4(process.cwd(), "public")));
 app.use("/admin", admin_default);
 app.use("/api", routes_default);
 app.get("/.well-known/assetlinks.json", (_req, res) => {

@@ -2012,26 +2012,15 @@ async function doAdd(){
   var _results=[];
   var _currentIdx=-1;
 
-  var INV=['https://invidious.privacydev.net','https://inv.nadeko.net','https://yt.cdaut.de','https://invidious.nerdvpn.de'];
-
   function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-  function fmtDur(s){return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);}
 
   async function searchYT(q){
-    for(var i=0;i<INV.length;i++){
-      try{
-        var r=await fetch(INV[i]+'/api/v1/search?q='+encodeURIComponent(q)+'&type=video&fields=videoId,title,author,lengthSeconds,videoThumbnails',{signal:AbortSignal.timeout(5000)});
-        if(!r.ok)continue;
-        var d=await r.json();
-        if(!Array.isArray(d))continue;
-        return d.slice(0,5).map(function(v){
-          var thumb='';
-          if(v.videoThumbnails&&v.videoThumbnails.length){var mid=v.videoThumbnails.find(function(t){return t.quality==='medium';});thumb=(mid||v.videoThumbnails[0]).url||'';}
-          return{src:'yt',id:v.videoId||'',title:v.title||'',artist:v.author||'',thumb:thumb,dur:v.lengthSeconds?fmtDur(v.lengthSeconds):''};
-        });
-      }catch(e){}
-    }
-    return[];
+    try{
+      var r=await fetch(API+'/music/search?q='+encodeURIComponent(q));
+      if(!r.ok)return[];
+      var d=await r.json();
+      return(d.results||[]);
+    }catch(e){return[];}
   }
 
   function renderResults(list){
