@@ -406,7 +406,7 @@ if command -v ssh &>/dev/null; then
   ssh -o StrictHostKeyChecking=no \
       -o ServerAliveInterval=30 \
       -o ServerAliveCountMax=3 \
-      -R "80:localhost:$PORT" localhost.run \
+      -R "80:localhost:$BOT_PORT" localhost.run \
       > "$TUNNEL_LOG" 2>&1 &
   TUNNEL_PID=$!
 
