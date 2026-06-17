@@ -36890,44 +36890,60 @@ var github_webhook_default = router3;
 // src/routes/music.ts
 var import_express5 = __toESM(require_express2(), 1);
 var router4 = (0, import_express5.Router)();
-var INV = [
-  "https://invidious.privacydev.net",
-  "https://inv.nadeko.net",
-  "https://yt.cdaut.de",
-  "https://invidious.nerdvpn.de"
-];
 router4.get("/music/search", async (req, res) => {
   const q = String(req.query.q || "").trim();
   if (!q) return res.json({ results: [] });
-  for (const base of INV) {
-    try {
-      const url = base + "/api/v1/search?q=" + encodeURIComponent(q) + "&type=video&fields=videoId,title,author,lengthSeconds,videoThumbnails";
-      const r = await fetch(url, { signal: AbortSignal.timeout(7e3) });
-      if (!r.ok) continue;
-      const data = await r.json();
-      if (!Array.isArray(data)) continue;
-      const results = data.slice(0, 8).map((v) => {
-        let thumb = "";
-        if (Array.isArray(v.videoThumbnails) && v.videoThumbnails.length) {
-          const mid = v.videoThumbnails.find((t) => t.quality === "medium");
-          thumb = (mid || v.videoThumbnails[0]).url || "";
-        }
-        return {
-          id: v.videoId || "",
-          title: v.title || "",
-          artist: v.author || "",
-          thumb,
-          dur: v.lengthSeconds ? fmtDur(Number(v.lengthSeconds)) : ""
-        };
-      });
-      return res.json({ results });
-    } catch (_) {
+  try {
+    const searchUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(q) + "&sp=EgIQAQ%3D%3D";
+    const r = await fetch(searchUrl, {
+      signal: AbortSignal.timeout(8e3),
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Accept-Language": "tr-TR,tr;q=0.9,en;q=0.8"
+      }
+    });
+    if (!r.ok) return res.json({ results: [], error: "YouTube yan\u0131t vermedi" });
+    const html2 = await r.text();
+    const match = html2.match(/var ytInitialData\s*=\s*(\{.+?\});\s*<\/script>/s);
+    if (!match) {
+      return res.json({ results: fallbackScrape(html2) });
     }
+    let data;
+    try {
+      data = JSON.parse(match[1]);
+    } catch {
+      return res.json({ results: fallbackScrape(html2) });
+    }
+    const contents = data?.contents?.twoColumnSearchResultsRenderer?.primaryContents?.sectionListRenderer?.contents?.[0]?.itemSectionRenderer?.contents ?? [];
+    const results = [];
+    for (const item of contents) {
+      if (results.length >= 8) break;
+      const v = item?.videoRenderer;
+      if (!v?.videoId) continue;
+      const title = v.title?.runs?.[0]?.text ?? v.title?.simpleText ?? "";
+      const artist = v.ownerText?.runs?.[0]?.text ?? v.shortBylineText?.runs?.[0]?.text ?? "";
+      const thumbs = v.thumbnail?.thumbnails ?? [];
+      const thumb = thumbs.length ? thumbs[Math.floor(thumbs.length / 2)].url ?? "" : "";
+      const durText = v.lengthText?.simpleText ?? v.lengthText?.runs?.[0]?.text ?? "";
+      results.push({ id: v.videoId, title, artist, thumb, dur: durText });
+    }
+    return res.json({ results });
+  } catch (e) {
+    return res.json({ results: [], error: String(e) });
   }
-  return res.json({ results: [], error: "T\xFCm Invidious instance'lar\u0131 yan\u0131t vermedi" });
 });
-function fmtDur(s) {
-  return Math.floor(s / 60) + ":" + (s % 60 < 10 ? "0" : "") + s % 60;
+function fallbackScrape(html2) {
+  const ids = [...html2.matchAll(/"videoId":"([a-zA-Z0-9_-]{11})"/g)].map(
+    (m) => m[1]
+  );
+  const unique = [...new Set(ids)].slice(0, 8);
+  return unique.map((id) => ({
+    id,
+    title: id,
+    artist: "YouTube",
+    thumb: `https://i.ytimg.com/vi/${id}/mqdefault.jpg`,
+    dur: ""
+  }));
 }
 var music_default = router4;
 
