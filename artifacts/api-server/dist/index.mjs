@@ -37484,32 +37484,65 @@ body::before{
   background:var(--surface-bg);
   border:1px solid var(--border2);border-radius:20px;
   backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);
-  padding:14px 14px 16px;
+  padding:14px 14px 14px;
   transform:translateY(calc(100% + 90px));opacity:0;pointer-events:none;
   transition:transform .38s cubic-bezier(.34,1.56,.64,1),opacity .25s ease;
   box-shadow:0 -4px 32px rgba(0,0,0,.65),0 0 0 .5px rgba(220,38,38,.12);
+  display:flex;flex-direction:column;gap:9px;max-height:80vh;
 }
 .music-panel.open{transform:translateY(0);opacity:1;pointer-events:auto}
-.mp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mp-head{display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .mp-title{font-size:13px;font-weight:800;color:var(--text1);display:flex;align-items:center;gap:7px}
 .mp-title-dot{width:8px;height:8px;border-radius:50%;background:var(--r0);animation:musicpulse 1.4s ease-in-out infinite}
 .music-panel.playing .mp-title-dot{background:#1db954;box-shadow:0 0 8px #1db95466}
 .mp-close-btn{width:26px;height:26px;border-radius:50%;background:var(--card2);border:1px solid var(--border2);display:grid;place-items:center;cursor:pointer;font-size:12px;color:var(--muted);line-height:1}
-.mp-presets{display:flex;gap:6px;margin-bottom:11px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
-.mp-presets::-webkit-scrollbar{display:none}
-.mp-preset{padding:5px 13px;border-radius:14px;font-size:11px;font-weight:700;border:1px solid var(--border2);color:var(--muted);background:var(--card2);cursor:pointer;transition:.15s;white-space:nowrap;flex-shrink:0}
-.mp-preset:active{opacity:.6}
-.mp-preset.active{border-color:var(--r0);color:var(--r3);background:rgba(220,38,38,.12)}
-.mp-input-row{display:flex;gap:6px;margin-bottom:10px}
-.mp-url-input{flex:1;background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:9px 11px;color:var(--text1);font-size:11px;font-family:'Courier New',monospace;outline:none;transition:.2s;min-width:0}
-.mp-url-input:focus{border-color:var(--r0);box-shadow:0 0 0 2px rgba(220,38,38,.15)}
-.mp-url-input::placeholder{color:var(--muted);font-family:system-ui,sans-serif;font-size:11px}
-.mp-go-btn{width:36px;height:36px;border-radius:10px;background:var(--r0);border:none;display:grid;place-items:center;cursor:pointer;flex-shrink:0;transition:.15s}
-.mp-go-btn:active{transform:scale(.9)}
-.mp-go-btn svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-.mp-player{width:100%;border-radius:12px;overflow:hidden;background:var(--card2);border:1px solid var(--border2)}
-.mp-player iframe{width:100%;border:none;display:block}
-.mp-empty{font-size:12px;color:var(--muted);text-align:center;padding:22px 10px;line-height:1.6}
+/* search row */
+.mp-search-row{display:flex;gap:6px;flex-shrink:0}
+.mp-search-input{flex:1;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:9px 13px;color:var(--text1);font-size:12px;outline:none;transition:.2s;min-width:0}
+.mp-search-input:focus{border-color:var(--r0);box-shadow:0 0 0 2px rgba(220,38,38,.15)}
+.mp-search-input::placeholder{color:var(--muted);font-size:12px}
+.mp-search-btn{width:38px;height:38px;border-radius:12px;background:var(--r0);border:none;display:grid;place-items:center;cursor:pointer;flex-shrink:0;transition:.15s}
+.mp-search-btn:active{transform:scale(.9);opacity:.8}
+.mp-search-btn svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+/* now-playing bar */
+.mp-now{display:none;align-items:center;gap:9px;background:rgba(29,185,84,.08);border:1px solid rgba(29,185,84,.22);border-radius:12px;padding:8px 11px;flex-shrink:0}
+.mp-now.show{display:flex}
+.mp-now-art{width:32px;height:32px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--card3)}
+.mp-now-info{flex:1;min-width:0}
+.mp-now-track{font-size:11px;font-weight:700;color:var(--text1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-now-artist{font-size:10px;color:var(--muted);margin-top:1px}
+.mp-now-ctl{display:flex;gap:5px;flex-shrink:0}
+.mp-now-pause{width:28px;height:28px;border-radius:50%;background:rgba(29,185,84,.15);border:1px solid rgba(29,185,84,.3);display:grid;place-items:center;cursor:pointer;transition:.15s}
+.mp-now-pause:active{transform:scale(.88)}
+.mp-now-pause svg{width:11px;height:11px;fill:#1db954;stroke:none}
+/* loading */
+.mp-loading{display:none;text-align:center;padding:14px;font-size:12px;color:var(--muted);flex-shrink:0}
+.mp-loading.show{display:block}
+@keyframes mpspin{to{transform:rotate(360deg)}}
+.mp-spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--r0);border-radius:50%;animation:mpspin .7s linear infinite;vertical-align:middle;margin-right:6px}
+/* results list */
+.mp-results{overflow-y:auto;display:flex;flex-direction:column;gap:6px;flex:1;min-height:80px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;padding-right:2px}
+.mp-results::-webkit-scrollbar{width:3px}
+.mp-results::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.mp-empty{font-size:12px;color:var(--muted);text-align:center;padding:20px 10px;line-height:1.6;flex-shrink:0}
+/* result item */
+.mp-item{display:flex;align-items:center;gap:9px;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:8px 10px;flex-shrink:0;transition:.15s}
+.mp-item.active-track{border-color:rgba(29,185,84,.4);background:rgba(29,185,84,.06)}
+.mp-item-art{width:38px;height:38px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--card3)}
+.mp-item-info{flex:1;min-width:0}
+.mp-item-track{font-size:11px;font-weight:700;color:var(--text1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-item-meta{font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-item-btns{display:flex;gap:5px;flex-shrink:0;align-items:center}
+.mp-item-play{width:30px;height:30px;border-radius:50%;background:var(--r0);border:none;display:grid;place-items:center;cursor:pointer;flex-shrink:0;transition:.15s}
+.mp-item-play:active{transform:scale(.88)}
+.mp-item-play.playing{background:#1db954}
+.mp-item-play svg{width:10px;height:10px;fill:#fff;stroke:none}
+.mp-item-play.no-preview{background:var(--card3);cursor:default;opacity:.45}
+.mp-item-link{width:24px;height:24px;border-radius:7px;background:var(--card3);border:1px solid var(--border2);display:grid;place-items:center;text-decoration:none;transition:.15s;flex-shrink:0}
+.mp-item-link:active{opacity:.6}
+.mp-item-link svg{width:10px;height:10px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mp-item-link.yt-lnk svg{stroke:#ff4444}
+.mp-item-link.sp-lnk svg{stroke:#1db954}
 
 /* ── BOT URL INPUT ── */
 .bu-input-wrap{display:flex;gap:6px;align-items:center;margin-top:6px}
@@ -37625,24 +37658,29 @@ body::before{
     </div>
     <div class="mp-close-btn" onclick="toggleMusic()">✕</div>
   </div>
-  <div class="mp-presets" id="mpPresets">
-    <div class="mp-preset" onclick="playPreset('yoklama',this)">🔫 Yoklama</div>
-    <div class="mp-preset" onclick="playPreset('simsek',this)">⚡ Şimşek</div>
-    <div class="mp-preset" onclick="playPreset('olay',this)">🎯 Olay</div>
-    <div class="mp-preset" onclick="playPreset('wesliye',this)">🗡️ Wesliye</div>
-    <div class="mp-preset" onclick="playPreset('gercek',this)">🖤 Gerçek</div>
-    <div class="mp-preset" onclick="playPreset('cephe',this)">🔥 Cephe</div>
-    <div class="mp-preset" onclick="playPreset('lofi',this)">🎵 Lofi</div>
-  </div>
-  <div class="mp-input-row">
-    <input type="url" id="mpUrlInput" class="mp-url-input" placeholder="YouTube veya Spotify URL yapıştır…" inputmode="url"/>
-    <button class="mp-go-btn" onclick="loadMusicUrl()">
-      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+  <div class="mp-search-row">
+    <input type="search" id="mpSearchInput" class="mp-search-input" placeholder="Şarkı veya sanatçı ara…" autocomplete="off"/>
+    <button class="mp-search-btn" onclick="mpSearch()">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </button>
   </div>
-  <div class="mp-player" id="mpPlayer">
-    <div class="mp-empty">▶ Hazır bir seç veya URL yapıştır</div>
+  <div class="mp-now" id="mpNow">
+    <img class="mp-now-art" id="mpNowArt" src="" alt=""/>
+    <div class="mp-now-info">
+      <div class="mp-now-track" id="mpNowTrack">—</div>
+      <div class="mp-now-artist" id="mpNowArtist">—</div>
+    </div>
+    <div class="mp-now-ctl">
+      <div class="mp-now-pause" onclick="mpTogglePause()" id="mpPauseBtn">
+        <svg id="mpPauseIc" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+      </div>
+    </div>
   </div>
+  <div class="mp-loading" id="mpLoading"><span class="mp-spinner"></span>Aranıyor…</div>
+  <div class="mp-results" id="mpResults">
+    <div class="mp-empty">🎵 Şarkı veya sanatçı adı yazıp ara</div>
+  </div>
+  <audio id="mpAudio" preload="none"></audio>
 </div>
 
 
@@ -38875,88 +38913,172 @@ async function doAdd(){
   }else toast('✗ '+(d.error||'Ekleme hatası'),false);
 }
 
-// ── MUSIC PANEL (YouTube / Spotify) ──
+// ── MUSIC PANEL (Search + Play) ──
 (function(){
-  let panelOpen=false;
+  var panelOpen=false;
+  var _tracks=[];
+  var _currentBtn=null;
+  var _audio=null;
 
-  // Hazır playlist'ler (sadece YouTube)
-  const PRESETS={
-    yoklama:{type:'yt',id:'KGeY5ZW42-M'},
-    simsek: {type:'yt',id:'eU4hSKU2yuU'},
-    olay:   {type:'yt',id:'Df1Ew0s_e5c'},
-    wesliye:{type:'yt',id:'WTx6wElGHe4'},
-    gercek: {type:'yt',id:'tcUAi-l-h9k'},
-    cephe:  {type:'yt',id:'G7e2KlYbFa0'},
-    lofi:   {type:'yt-playlist',id:'PLQkQfzsIUwRYZtP0FDKL5HBhX0RL_LmEN'},
-  };
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function dur(ms){var s=Math.round(ms/1000);return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);}
 
-  function buildEmbed(parsed){
-    if(!parsed)return null;
-    switch(parsed.type){
-      case 'yt':          return 'https://www.youtube.com/embed/'+parsed.id+'?autoplay=1&loop=1&playlist='+parsed.id;
-      case 'yt-playlist': return 'https://www.youtube.com/embed?listType=playlist&list='+parsed.id+'&autoplay=1';
-      case 'sp-track':    return 'https://open.spotify.com/embed/track/'+parsed.id+'?utm_source=generator&theme=0';
-      case 'sp-playlist': return 'https://open.spotify.com/embed/playlist/'+parsed.id+'?utm_source=generator&theme=0';
-      case 'sp-album':    return 'https://open.spotify.com/embed/album/'+parsed.id+'?utm_source=generator&theme=0';
+  function setNow(t){
+    var now=document.getElementById('mpNow');
+    var track=document.getElementById('mpNowTrack');
+    var artist=document.getElementById('mpNowArtist');
+    var art=document.getElementById('mpNowArt');
+    if(track)track.textContent=t.trackName||'';
+    if(artist)artist.textContent=t.artistName||'';
+    if(art){art.src=t.artworkUrl100||'';art.style.display=t.artworkUrl100?'':'none';}
+    if(now)now.classList.add('show');
+    document.getElementById('musicPanel').classList.add('playing');
+    var ic=document.getElementById('mpPauseIc');
+    if(ic)ic.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+  }
+
+  function clearNow(){
+    var now=document.getElementById('mpNow');
+    if(now)now.classList.remove('show');
+    document.getElementById('musicPanel').classList.remove('playing');
+  }
+
+  window.mpPlay=function(i,btn){
+    var t=_tracks[i];
+    if(!t||!t.previewUrl)return;
+    // same track → toggle pause
+    if(_currentBtn===btn&&_audio&&!_audio.paused){
+      _audio.pause();
+      btn.innerHTML='<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#fff"/></svg>';
+      btn.classList.remove('playing');
+      var ic=document.getElementById('mpPauseIc');
+      if(ic)ic.innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>';
+      return;
     }
-    return null;
-  }
-
-  function parseUrl(raw){
-    // YouTube watch
-    let m=raw.match(/(?:youtube\.com\/watch\?.*v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-    if(m)return{type:'yt',id:m[1]};
-    // YouTube playlist
-    m=raw.match(/[?&]list=([a-zA-Z0-9_-]+)/);
-    if(m&&raw.includes('youtube'))return{type:'yt-playlist',id:m[1]};
-    // Spotify
-    m=raw.match(/open\.spotify\.com\/(track|playlist|album)\/([a-zA-Z0-9]+)/);
-    if(m)return{type:'sp-'+m[1],id:m[2]};
-    return null;
-  }
-
-  function renderPlayer(parsed){
-    const url=buildEmbed(parsed);
-    if(!url){toast('✗ Desteklenmeyen URL',false);return;}
-    const player=document.getElementById('mpPlayer');
-    const panel=document.getElementById('musicPanel');
-    if(!player)return;
-    const isSpotify=parsed.type.startsWith('sp-');
-    const h=isSpotify?152:200;
-    player.innerHTML='<iframe src="'+url+'" height="'+h+'" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy" allowfullscreen></iframe>';
-    if(panel)panel.classList.add('playing');
-  }
-
-  window.playPreset=function(key,el){
-    const preset=PRESETS[key];if(!preset)return;
-    document.querySelectorAll('.mp-preset').forEach(p=>p.classList.remove('active'));
-    if(el)el.classList.add('active');
-    document.getElementById('mpUrlInput').value='';
-    renderPlayer(preset);
+    // resume same track
+    if(_currentBtn===btn&&_audio&&_audio.paused){
+      _audio.play();
+      btn.innerHTML='<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="#fff"/><rect x="14" y="4" width="4" height="16" fill="#fff"/></svg>';
+      btn.classList.add('playing');
+      var ic2=document.getElementById('mpPauseIc');
+      if(ic2)ic2.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+      return;
+    }
+    // new track: reset previous
+    if(_currentBtn&&_currentBtn!==btn){
+      _currentBtn.innerHTML='<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#fff"/></svg>';
+      _currentBtn.classList.remove('playing');
+      document.querySelectorAll('.mp-item').forEach(function(el){el.classList.remove('active-track');});
+    }
+    _currentBtn=btn;
+    if(!_audio)_audio=document.getElementById('mpAudio');
+    _audio.src=t.previewUrl;
+    _audio.play();
+    _audio.onended=function(){
+      btn.innerHTML='<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#fff"/></svg>';
+      btn.classList.remove('playing');
+      clearNow();
+    };
+    btn.innerHTML='<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="#fff"/><rect x="14" y="4" width="4" height="16" fill="#fff"/></svg>';
+    btn.classList.add('playing');
+    // mark parent item
+    var item=btn.closest('.mp-item');
+    if(item)item.classList.add('active-track');
+    setNow(t);
   };
 
-  window.loadMusicUrl=function(){
-    const inp=document.getElementById('mpUrlInput');
-    const raw=inp?inp.value.trim():'';
-    if(!raw)return;
-    const parsed=parseUrl(raw);
-    if(!parsed){toast('✗ YouTube veya Spotify linki gir',false);return;}
-    document.querySelectorAll('.mp-preset').forEach(p=>p.classList.remove('active'));
-    renderPlayer(parsed);
+  window.mpTogglePause=function(){
+    if(!_audio)return;
+    var ic=document.getElementById('mpPauseIc');
+    if(_audio.paused){
+      _audio.play();
+      if(ic)ic.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+      if(_currentBtn){_currentBtn.innerHTML='<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="#fff"/><rect x="14" y="4" width="4" height="16" fill="#fff"/></svg>';_currentBtn.classList.add('playing');}
+    }else{
+      _audio.pause();
+      if(ic)ic.innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>';
+      if(_currentBtn){_currentBtn.innerHTML='<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#fff"/></svg>';_currentBtn.classList.remove('playing');}
+    }
+  };
+
+  window.mpSearch=async function(){
+    var inp=document.getElementById('mpSearchInput');
+    var q=inp?inp.value.trim():'';
+    if(!q)return;
+    var results=document.getElementById('mpResults');
+    var loading=document.getElementById('mpLoading');
+    if(results)results.innerHTML='';
+    if(loading)loading.classList.add('show');
+    // stop current playback
+    if(_audio){_audio.pause();_audio.src='';}
+    _currentBtn=null;_tracks=[];
+    clearNow();
+    var tracks=[];
+    try{
+      var res=await fetch('https://itunes.apple.com/search?term='+encodeURIComponent(q)+'&media=music&limit=10&country=TR');
+      var data=await res.json();
+      tracks=data.results||[];
+    }catch(e){
+      if(loading)loading.classList.remove('show');
+      if(results)results.innerHTML='<div class="mp-empty">❌ Bağlantı hatası. Tekrar dene.</div>';
+      return;
+    }
+    if(loading)loading.classList.remove('show');
+    if(!tracks.length){
+      if(results)results.innerHTML='<div class="mp-empty">🔍 Sonuç bulunamadı.</div>';
+      return;
+    }
+    _tracks=tracks;
+    results.innerHTML='';
+    tracks.forEach(function(t,i){
+      var artist=t.artistName||'';
+      var track=t.trackName||'';
+      var album=t.collectionName||'';
+      var art=t.artworkUrl100||'';
+      var preview=t.previewUrl||'';
+      var durStr=t.trackTimeMillis?dur(t.trackTimeMillis):'';
+      var ytUrl='https://www.youtube.com/results?search_query='+encodeURIComponent(artist+' '+track);
+      var spUrl='https://open.spotify.com/search/'+encodeURIComponent(artist+' '+track);
+      var playBtn=preview
+        ?'<button class="mp-item-play" onclick="mpPlay('+i+',this)" title="Çal"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#fff"/></svg></button>'
+        :'<button class="mp-item-play no-preview" title="Önizleme yok" disabled><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#fff" opacity=".5"/></svg></button>';
+      var el=document.createElement('div');
+      el.className='mp-item';
+      el.innerHTML=
+        (art?'<img class="mp-item-art" src="'+esc(art)+'" alt="" loading="lazy"/>':'<div class="mp-item-art"></div>')+
+        '<div class="mp-item-info">'+
+          '<div class="mp-item-track">'+esc(track)+'</div>'+
+          '<div class="mp-item-meta">'+esc(artist)+(durStr?' &middot; '+durStr:'')+'</div>'+
+          (album?'<div class="mp-item-meta" style="opacity:.6;font-size:9px">'+esc(album)+'</div>':'')+
+        '</div>'+
+        '<div class="mp-item-btns">'+
+          playBtn+
+          '<a class="mp-item-link yt-lnk" href="'+esc(ytUrl)+'" target="_blank" rel="noopener" title="YouTube\'da ara">'+
+            '<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" stroke-width="2"/></svg>'+
+          '</a>'+
+          '<a class="mp-item-link sp-lnk" href="'+esc(spUrl)+'" target="_blank" rel="noopener" title="Spotify\'da ara">'+
+            '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M8 12.5c2.5-1 5.5-.5 7.5 1" stroke-width="1.8"/><path d="M7.5 9.5c3-1.2 7-.7 9.5 1.5" stroke-width="1.8"/><path d="M8.5 15.5c2-.8 4.5-.4 6 1" stroke-width="1.8"/></svg>'+
+          '</a>'+
+        '</div>';
+      results.appendChild(el);
+    });
   };
 
   window.toggleMusic=function(){
     panelOpen=!panelOpen;
-    const panel=document.getElementById('musicPanel');
-    const btn=document.getElementById('musicBtn');
+    var panel=document.getElementById('musicPanel');
+    var btn=document.getElementById('musicBtn');
     if(panel)panel.classList.toggle('open',panelOpen);
     if(btn)btn.classList.toggle('on',panelOpen);
+    if(panelOpen){
+      setTimeout(function(){var inp=document.getElementById('mpSearchInput');if(inp)inp.focus();},360);
+    }
   };
 
-  // Enter tuşuyla URL oynat
-  document.addEventListener('DOMContentLoaded',()=>{
-    const inp=document.getElementById('mpUrlInput');
-    if(inp)inp.addEventListener('keydown',e=>{if(e.key==='Enter')loadMusicUrl();});
+  document.addEventListener('DOMContentLoaded',function(){
+    _audio=document.getElementById('mpAudio');
+    var inp=document.getElementById('mpSearchInput');
+    if(inp)inp.addEventListener('keydown',function(e){if(e.key==='Enter')mpSearch();});
   });
 })();
 
