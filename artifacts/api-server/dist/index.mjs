@@ -37504,10 +37504,16 @@ body::before{
 .mp-search-btn{width:38px;height:38px;border-radius:12px;background:var(--r0);border:none;display:grid;place-items:center;cursor:pointer;flex-shrink:0;transition:.15s}
 .mp-search-btn:active{transform:scale(.9);opacity:.8}
 .mp-search-btn svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-/* embedded player */
-.mp-player-area{display:none;flex-shrink:0;border-radius:12px;overflow:hidden;background:var(--card2);border:1px solid var(--border2)}
+/* hidden audio player (iframe 1px, invisible) */
+.mp-player-area{display:none;overflow:hidden;height:1px;flex-shrink:0}
 .mp-player-area.show{display:block}
-.mp-player-area iframe{width:100%;border:none;display:block}
+.mp-player-area iframe{width:1px;height:1px;border:none;position:absolute;pointer-events:none;opacity:0}
+/* now playing bar */
+.mp-nowbar{display:none;align-items:center;gap:8px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);border-radius:10px;padding:7px 10px;flex-shrink:0}
+.mp-nowbar.show{display:flex}
+.mp-nowbar-dot{width:7px;height:7px;border-radius:50%;background:var(--r0);animation:musicpulse 1.2s ease-in-out infinite;flex-shrink:0}
+.mp-nowbar-text{font-size:11px;color:var(--text1);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-nowbar-stop{width:22px;height:22px;border-radius:6px;background:var(--card3);border:1px solid var(--border2);display:grid;place-items:center;cursor:pointer;flex-shrink:0;font-size:10px;color:var(--muted)}
 /* loading */
 .mp-loading{display:none;text-align:center;padding:14px;font-size:12px;color:var(--muted);flex-shrink:0}
 .mp-loading.show{display:block}
@@ -37655,6 +37661,11 @@ body::before{
     </button>
   </div>
   <div class="mp-player-area" id="mpPlayerArea"></div>
+  <div class="mp-nowbar" id="mpNowbar">
+    <div class="mp-nowbar-dot"></div>
+    <div class="mp-nowbar-text" id="mpNowbarText">Çalıyor…</div>
+    <div class="mp-nowbar-stop" onclick="mpStop()" title="Durdur">■</div>
+  </div>
   <div class="mp-loading" id="mpLoading"><span class="mp-spinner"></span>Aranıyor…</div>
   <div class="mp-results" id="mpResults">
     <div class="mp-empty">🎵 Şarkı veya sanatçı adı yaz, Enter'a bas</div>
@@ -38940,6 +38951,21 @@ async function doAdd(){
     });
   }
 
+  window.mpStop=function(){
+    var area=document.getElementById('mpPlayerArea');
+    var nowbar=document.getElementById('mpNowbar');
+    var panel=document.getElementById('musicPanel');
+    if(area){area.innerHTML='';area.classList.remove('show');}
+    if(nowbar)nowbar.classList.remove('show');
+    if(panel)panel.classList.remove('playing');
+    document.querySelectorAll('.mp-item').forEach(function(el){el.classList.remove('active-track');});
+    document.querySelectorAll('.mp-item-play').forEach(function(b){
+      b.classList.remove('playing');
+      b.innerHTML='<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#fff"/></svg>';
+    });
+    _currentIdx=-1;
+  };
+
   window.mpPlayItem=function(i){
     var r=_results[i];
     if(!r)return;
@@ -38952,13 +38978,16 @@ async function doAdd(){
     });
     _currentIdx=i;
     var area=document.getElementById('mpPlayerArea');
+    var nowbar=document.getElementById('mpNowbar');
+    var nowbarText=document.getElementById('mpNowbarText');
     var panel=document.getElementById('musicPanel');
     if(!area)return;
     var embedUrl='https://www.youtube.com/embed/'+r.id+'?autoplay=1&rel=0';
-    area.innerHTML='<iframe src="'+esc(embedUrl)+'" height="200" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>';
+    area.innerHTML='<iframe src="'+esc(embedUrl)+'" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>';
     area.classList.add('show');
+    if(nowbarText)nowbarText.textContent=r.title+(r.artist?' — '+r.artist:'');
+    if(nowbar)nowbar.classList.add('show');
     if(panel)panel.classList.add('playing');
-    setTimeout(function(){area.scrollIntoView({behavior:'smooth',block:'nearest'});},120);
   };
 
   window.mpSearch=async function(){
