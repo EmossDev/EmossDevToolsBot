@@ -37504,45 +37504,35 @@ body::before{
 .mp-search-btn{width:38px;height:38px;border-radius:12px;background:var(--r0);border:none;display:grid;place-items:center;cursor:pointer;flex-shrink:0;transition:.15s}
 .mp-search-btn:active{transform:scale(.9);opacity:.8}
 .mp-search-btn svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-/* now-playing bar */
-.mp-now{display:none;align-items:center;gap:9px;background:rgba(29,185,84,.08);border:1px solid rgba(29,185,84,.22);border-radius:12px;padding:8px 11px;flex-shrink:0}
-.mp-now.show{display:flex}
-.mp-now-art{width:32px;height:32px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--card3)}
-.mp-now-info{flex:1;min-width:0}
-.mp-now-track{font-size:11px;font-weight:700;color:var(--text1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mp-now-artist{font-size:10px;color:var(--muted);margin-top:1px}
-.mp-now-ctl{display:flex;gap:5px;flex-shrink:0}
-.mp-now-pause{width:28px;height:28px;border-radius:50%;background:rgba(29,185,84,.15);border:1px solid rgba(29,185,84,.3);display:grid;place-items:center;cursor:pointer;transition:.15s}
-.mp-now-pause:active{transform:scale(.88)}
-.mp-now-pause svg{width:11px;height:11px;fill:#1db954;stroke:none}
+/* embedded player */
+.mp-player-area{display:none;flex-shrink:0;border-radius:12px;overflow:hidden;background:var(--card2);border:1px solid var(--border2)}
+.mp-player-area.show{display:block}
+.mp-player-area iframe{width:100%;border:none;display:block}
 /* loading */
 .mp-loading{display:none;text-align:center;padding:14px;font-size:12px;color:var(--muted);flex-shrink:0}
 .mp-loading.show{display:block}
 @keyframes mpspin{to{transform:rotate(360deg)}}
 .mp-spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--r0);border-radius:50%;animation:mpspin .7s linear infinite;vertical-align:middle;margin-right:6px}
 /* results list */
-.mp-results{overflow-y:auto;display:flex;flex-direction:column;gap:6px;flex:1;min-height:80px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;padding-right:2px}
+.mp-results{overflow-y:auto;display:flex;flex-direction:column;gap:6px;flex:1;min-height:60px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;padding-right:2px}
 .mp-results::-webkit-scrollbar{width:3px}
 .mp-results::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 .mp-empty{font-size:12px;color:var(--muted);text-align:center;padding:20px 10px;line-height:1.6;flex-shrink:0}
 /* result item */
 .mp-item{display:flex;align-items:center;gap:9px;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:8px 10px;flex-shrink:0;transition:.15s}
-.mp-item.active-track{border-color:rgba(29,185,84,.4);background:rgba(29,185,84,.06)}
+.mp-item.active-track{border-color:rgba(220,38,38,.45);background:rgba(220,38,38,.07)}
 .mp-item-art{width:38px;height:38px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--card3)}
 .mp-item-info{flex:1;min-width:0}
 .mp-item-track{font-size:11px;font-weight:700;color:var(--text1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mp-item-meta{font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mp-item-btns{display:flex;gap:5px;flex-shrink:0;align-items:center}
-.mp-item-play{width:30px;height:30px;border-radius:50%;background:var(--r0);border:none;display:grid;place-items:center;cursor:pointer;flex-shrink:0;transition:.15s}
+.mp-item-src{font-size:9px;font-weight:700;margin-top:3px;display:inline-block;padding:1px 6px;border-radius:6px}
+.mp-src-yt{background:rgba(255,68,68,.15);color:#ff6b6b;border:1px solid rgba(255,68,68,.25)}
+.mp-src-am{background:rgba(252,100,100,.12);color:#fc8080;border:1px solid rgba(252,100,100,.2)}
+.mp-item-play{width:32px;height:32px;border-radius:50%;background:var(--r0);border:none;display:grid;place-items:center;cursor:pointer;flex-shrink:0;transition:.15s}
 .mp-item-play:active{transform:scale(.88)}
-.mp-item-play.playing{background:#1db954}
-.mp-item-play svg{width:10px;height:10px;fill:#fff;stroke:none}
-.mp-item-play.no-preview{background:var(--card3);cursor:default;opacity:.45}
-.mp-item-link{width:24px;height:24px;border-radius:7px;background:var(--card3);border:1px solid var(--border2);display:grid;place-items:center;text-decoration:none;transition:.15s;flex-shrink:0}
-.mp-item-link:active{opacity:.6}
-.mp-item-link svg{width:10px;height:10px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.mp-item-link.yt-lnk svg{stroke:#ff4444}
-.mp-item-link.sp-lnk svg{stroke:#1db954}
+.mp-item-play.playing{background:#1db954;box-shadow:0 0 10px #1db95455}
+.mp-item-play svg{width:11px;height:11px;fill:#fff;stroke:none}
+.mp-searching{font-size:10px;color:var(--muted);text-align:center;padding:4px 0;flex-shrink:0}
 
 /* ── BOT URL INPUT ── */
 .bu-input-wrap{display:flex;gap:6px;align-items:center;margin-top:6px}
@@ -37664,23 +37654,11 @@ body::before{
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </button>
   </div>
-  <div class="mp-now" id="mpNow">
-    <img class="mp-now-art" id="mpNowArt" src="" alt=""/>
-    <div class="mp-now-info">
-      <div class="mp-now-track" id="mpNowTrack">—</div>
-      <div class="mp-now-artist" id="mpNowArtist">—</div>
-    </div>
-    <div class="mp-now-ctl">
-      <div class="mp-now-pause" onclick="mpTogglePause()" id="mpPauseBtn">
-        <svg id="mpPauseIc" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-      </div>
-    </div>
-  </div>
+  <div class="mp-player-area" id="mpPlayerArea"></div>
   <div class="mp-loading" id="mpLoading"><span class="mp-spinner"></span>Aranıyor…</div>
   <div class="mp-results" id="mpResults">
-    <div class="mp-empty">🎵 Şarkı veya sanatçı adı yazıp ara</div>
+    <div class="mp-empty">🎵 Şarkı veya sanatçı adı yaz, Enter'a bas</div>
   </div>
-  <audio id="mpAudio" preload="none"></audio>
 </div>
 
 
@@ -38913,155 +38891,118 @@ async function doAdd(){
   }else toast('✗ '+(d.error||'Ekleme hatası'),false);
 }
 
-// ── MUSIC PANEL (Search + Play) ──
+// ── MUSIC PANEL (YouTube + Apple Music search, full embed play) ──
 (function(){
   var panelOpen=false;
-  var _tracks=[];
-  var _currentBtn=null;
-  var _audio=null;
+  var _results=[];
+  var _currentIdx=-1;
+
+  var INV=['https://invidious.privacydev.net','https://inv.nadeko.net','https://yt.cdaut.de','https://invidious.nerdvpn.de'];
 
   function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-  function dur(ms){var s=Math.round(ms/1000);return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);}
+  function fmtDur(s){return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);}
 
-  function setNow(t){
-    var now=document.getElementById('mpNow');
-    var track=document.getElementById('mpNowTrack');
-    var artist=document.getElementById('mpNowArtist');
-    var art=document.getElementById('mpNowArt');
-    if(track)track.textContent=t.trackName||'';
-    if(artist)artist.textContent=t.artistName||'';
-    if(art){art.src=t.artworkUrl100||'';art.style.display=t.artworkUrl100?'':'none';}
-    if(now)now.classList.add('show');
-    document.getElementById('musicPanel').classList.add('playing');
-    var ic=document.getElementById('mpPauseIc');
-    if(ic)ic.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+  async function searchYT(q){
+    for(var i=0;i<INV.length;i++){
+      try{
+        var r=await fetch(INV[i]+'/api/v1/search?q='+encodeURIComponent(q)+'&type=video&fields=videoId,title,author,lengthSeconds,videoThumbnails',{signal:AbortSignal.timeout(5000)});
+        if(!r.ok)continue;
+        var d=await r.json();
+        if(!Array.isArray(d))continue;
+        return d.slice(0,5).map(function(v){
+          var thumb='';
+          if(v.videoThumbnails&&v.videoThumbnails.length){var mid=v.videoThumbnails.find(function(t){return t.quality==='medium';});thumb=(mid||v.videoThumbnails[0]).url||'';}
+          return{src:'yt',id:v.videoId||'',title:v.title||'',artist:v.author||'',thumb:thumb,dur:v.lengthSeconds?fmtDur(v.lengthSeconds):''};
+        });
+      }catch(e){}
+    }
+    return[];
   }
 
-  function clearNow(){
-    var now=document.getElementById('mpNow');
-    if(now)now.classList.remove('show');
-    document.getElementById('musicPanel').classList.remove('playing');
+  async function searchAM(q){
+    try{
+      var r=await fetch('https://itunes.apple.com/search?term='+encodeURIComponent(q)+'&media=music&limit=5&country=TR',{signal:AbortSignal.timeout(6000)});
+      if(!r.ok)return[];
+      var d=await r.json();
+      return(d.results||[]).map(function(t){
+        return{src:'am',id:''+t.trackId,title:t.trackName||'',artist:t.artistName||'',thumb:t.artworkUrl100||'',dur:t.trackTimeMillis?fmtDur(Math.round(t.trackTimeMillis/1000)):'',searchQ:(t.artistName||'')+' '+(t.trackName||'')};
+      });
+    }catch(e){return[];}
   }
 
-  window.mpPlay=function(i,btn){
-    var t=_tracks[i];
-    if(!t||!t.previewUrl)return;
-    // same track → toggle pause
-    if(_currentBtn===btn&&_audio&&!_audio.paused){
-      _audio.pause();
-      btn.innerHTML='<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#fff"/></svg>';
-      btn.classList.remove('playing');
-      var ic=document.getElementById('mpPauseIc');
-      if(ic)ic.innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>';
-      return;
-    }
-    // resume same track
-    if(_currentBtn===btn&&_audio&&_audio.paused){
-      _audio.play();
-      btn.innerHTML='<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="#fff"/><rect x="14" y="4" width="4" height="16" fill="#fff"/></svg>';
-      btn.classList.add('playing');
-      var ic2=document.getElementById('mpPauseIc');
-      if(ic2)ic2.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
-      return;
-    }
-    // new track: reset previous
-    if(_currentBtn&&_currentBtn!==btn){
-      _currentBtn.innerHTML='<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#fff"/></svg>';
-      _currentBtn.classList.remove('playing');
-      document.querySelectorAll('.mp-item').forEach(function(el){el.classList.remove('active-track');});
-    }
-    _currentBtn=btn;
-    if(!_audio)_audio=document.getElementById('mpAudio');
-    _audio.src=t.previewUrl;
-    _audio.play();
-    _audio.onended=function(){
-      btn.innerHTML='<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#fff"/></svg>';
-      btn.classList.remove('playing');
-      clearNow();
-    };
-    btn.innerHTML='<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="#fff"/><rect x="14" y="4" width="4" height="16" fill="#fff"/></svg>';
-    btn.classList.add('playing');
-    // mark parent item
-    var item=btn.closest('.mp-item');
-    if(item)item.classList.add('active-track');
-    setNow(t);
-  };
+  function renderResults(list){
+    var el=document.getElementById('mpResults');
+    if(!el)return;
+    el.innerHTML='';
+    if(!list.length){el.innerHTML='<div class="mp-empty">🔍 Sonuç bulunamadı.</div>';return;}
+    list.forEach(function(r,i){
+      var badge=r.src==='yt'?'<span class="mp-item-src mp-src-yt">▶ YouTube</span>':'<span class="mp-item-src mp-src-am">🎵 Apple Music</span>';
+      var item=document.createElement('div');
+      item.className='mp-item';
+      item.innerHTML=
+        (r.thumb?'<img class="mp-item-art" src="'+esc(r.thumb)+'" alt="" loading="lazy"/>':'<div class="mp-item-art"></div>')+
+        '<div class="mp-item-info">'+
+          '<div class="mp-item-track">'+esc(r.title)+'</div>'+
+          '<div class="mp-item-meta">'+esc(r.artist)+(r.dur?' &middot; '+r.dur:'')+'</div>'+
+          badge+
+        '</div>'+
+        '<button class="mp-item-play" onclick="mpPlayItem('+i+')" title="Tam Çal">'+
+          '<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#fff"/></svg>'+
+        '</button>';
+      el.appendChild(item);
+    });
+  }
 
-  window.mpTogglePause=function(){
-    if(!_audio)return;
-    var ic=document.getElementById('mpPauseIc');
-    if(_audio.paused){
-      _audio.play();
-      if(ic)ic.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
-      if(_currentBtn){_currentBtn.innerHTML='<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="#fff"/><rect x="14" y="4" width="4" height="16" fill="#fff"/></svg>';_currentBtn.classList.add('playing');}
+  window.mpPlayItem=async function(i){
+    var r=_results[i];
+    if(!r)return;
+    document.querySelectorAll('.mp-item').forEach(function(el,idx){el.classList.toggle('active-track',idx===i);});
+    document.querySelectorAll('.mp-item-play').forEach(function(b,idx){
+      b.classList.toggle('playing',idx===i);
+      b.innerHTML=idx===i
+        ?'<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="#fff"/><rect x="14" y="4" width="4" height="16" fill="#fff"/></svg>'
+        :'<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#fff"/></svg>';
+    });
+    _currentIdx=i;
+    var area=document.getElementById('mpPlayerArea');
+    var panel=document.getElementById('musicPanel');
+    if(!area)return;
+    area.innerHTML='<div style="text-align:center;padding:14px;font-size:12px;color:var(--muted)"><span class="mp-spinner"></span>Yükleniyor…</div>';
+    area.classList.add('show');
+    var embedUrl='';
+    if(r.src==='yt'){
+      embedUrl='https://www.youtube.com/embed/'+r.id+'?autoplay=1&rel=0';
     }else{
-      _audio.pause();
-      if(ic)ic.innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>';
-      if(_currentBtn){_currentBtn.innerHTML='<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#fff"/></svg>';_currentBtn.classList.remove('playing');}
+      var vids=await searchYT(r.searchQ||r.artist+' '+r.title);
+      if(vids.length)embedUrl='https://www.youtube.com/embed/'+vids[0].id+'?autoplay=1&rel=0';
     }
+    if(!embedUrl){area.innerHTML='<div class="mp-empty">❌ Video bulunamadı.</div>';return;}
+    area.innerHTML='<iframe src="'+esc(embedUrl)+'" height="200" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>';
+    if(panel)panel.classList.add('playing');
+    setTimeout(function(){area.scrollIntoView({behavior:'smooth',block:'nearest'});},120);
   };
 
   window.mpSearch=async function(){
     var inp=document.getElementById('mpSearchInput');
     var q=inp?inp.value.trim():'';
     if(!q)return;
-    var results=document.getElementById('mpResults');
     var loading=document.getElementById('mpLoading');
-    if(results)results.innerHTML='';
+    var area=document.getElementById('mpPlayerArea');
+    var panel=document.getElementById('musicPanel');
     if(loading)loading.classList.add('show');
-    // stop current playback
-    if(_audio){_audio.pause();_audio.src='';}
-    _currentBtn=null;_tracks=[];
-    clearNow();
-    var tracks=[];
-    try{
-      var res=await fetch('https://itunes.apple.com/search?term='+encodeURIComponent(q)+'&media=music&limit=10&country=TR');
-      var data=await res.json();
-      tracks=data.results||[];
-    }catch(e){
-      if(loading)loading.classList.remove('show');
-      if(results)results.innerHTML='<div class="mp-empty">❌ Bağlantı hatası. Tekrar dene.</div>';
-      return;
-    }
+    document.getElementById('mpResults').innerHTML='';
+    if(area){area.innerHTML='';area.classList.remove('show');}
+    if(panel)panel.classList.remove('playing');
+    _results=[];_currentIdx=-1;
+    var searches=await Promise.allSettled([searchYT(q),searchAM(q)]);
+    var ytR=searches[0].status==='fulfilled'?searches[0].value:[];
+    var amR=searches[1].status==='fulfilled'?searches[1].value:[];
     if(loading)loading.classList.remove('show');
-    if(!tracks.length){
-      if(results)results.innerHTML='<div class="mp-empty">🔍 Sonuç bulunamadı.</div>';
-      return;
-    }
-    _tracks=tracks;
-    results.innerHTML='';
-    tracks.forEach(function(t,i){
-      var artist=t.artistName||'';
-      var track=t.trackName||'';
-      var album=t.collectionName||'';
-      var art=t.artworkUrl100||'';
-      var preview=t.previewUrl||'';
-      var durStr=t.trackTimeMillis?dur(t.trackTimeMillis):'';
-      var ytUrl='https://www.youtube.com/results?search_query='+encodeURIComponent(artist+' '+track);
-      var spUrl='https://open.spotify.com/search/'+encodeURIComponent(artist+' '+track);
-      var playBtn=preview
-        ?'<button class="mp-item-play" onclick="mpPlay('+i+',this)" title="Çal"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#fff"/></svg></button>'
-        :'<button class="mp-item-play no-preview" title="Önizleme yok" disabled><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#fff" opacity=".5"/></svg></button>';
-      var el=document.createElement('div');
-      el.className='mp-item';
-      el.innerHTML=
-        (art?'<img class="mp-item-art" src="'+esc(art)+'" alt="" loading="lazy"/>':'<div class="mp-item-art"></div>')+
-        '<div class="mp-item-info">'+
-          '<div class="mp-item-track">'+esc(track)+'</div>'+
-          '<div class="mp-item-meta">'+esc(artist)+(durStr?' &middot; '+durStr:'')+'</div>'+
-          (album?'<div class="mp-item-meta" style="opacity:.6;font-size:9px">'+esc(album)+'</div>':'')+
-        '</div>'+
-        '<div class="mp-item-btns">'+
-          playBtn+
-          '<a class="mp-item-link yt-lnk" href="'+esc(ytUrl)+'" target="_blank" rel="noopener" title="YouTube\'da ara">'+
-            '<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" stroke-width="2"/></svg>'+
-          '</a>'+
-          '<a class="mp-item-link sp-lnk" href="'+esc(spUrl)+'" target="_blank" rel="noopener" title="Spotify\'da ara">'+
-            '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M8 12.5c2.5-1 5.5-.5 7.5 1" stroke-width="1.8"/><path d="M7.5 9.5c3-1.2 7-.7 9.5 1.5" stroke-width="1.8"/><path d="M8.5 15.5c2-.8 4.5-.4 6 1" stroke-width="1.8"/></svg>'+
-          '</a>'+
-        '</div>';
-      results.appendChild(el);
-    });
+    var merged=[];
+    var max=Math.max(ytR.length,amR.length);
+    for(var i=0;i<max;i++){if(i<ytR.length)merged.push(ytR[i]);if(i<amR.length)merged.push(amR[i]);}
+    _results=merged;
+    renderResults(merged);
   };
 
   window.toggleMusic=function(){
@@ -39070,16 +39011,14 @@ async function doAdd(){
     var btn=document.getElementById('musicBtn');
     if(panel)panel.classList.toggle('open',panelOpen);
     if(btn)btn.classList.toggle('on',panelOpen);
-    if(panelOpen){
-      setTimeout(function(){var inp=document.getElementById('mpSearchInput');if(inp)inp.focus();},360);
-    }
+    if(panelOpen)setTimeout(function(){var inp=document.getElementById('mpSearchInput');if(inp)inp.focus();},360);
   };
 
   document.addEventListener('DOMContentLoaded',function(){
-    _audio=document.getElementById('mpAudio');
     var inp=document.getElementById('mpSearchInput');
     if(inp)inp.addEventListener('keydown',function(e){if(e.key==='Enter')mpSearch();});
   });
+
 })();
 
 // Init
