@@ -2023,24 +2023,12 @@ async function doAdd(){
     return[];
   }
 
-  async function searchAM(q){
-    try{
-      var r=await fetch('https://itunes.apple.com/search?term='+encodeURIComponent(q)+'&media=music&limit=5&country=TR',{signal:AbortSignal.timeout(6000)});
-      if(!r.ok)return[];
-      var d=await r.json();
-      return(d.results||[]).map(function(t){
-        return{src:'am',id:''+t.trackId,title:t.trackName||'',artist:t.artistName||'',thumb:t.artworkUrl100||'',dur:t.trackTimeMillis?fmtDur(Math.round(t.trackTimeMillis/1000)):'',searchQ:(t.artistName||'')+' '+(t.trackName||'')};
-      });
-    }catch(e){return[];}
-  }
-
   function renderResults(list){
     var el=document.getElementById('mpResults');
     if(!el)return;
     el.innerHTML='';
     if(!list.length){el.innerHTML='<div class="mp-empty">🔍 Sonuç bulunamadı.</div>';return;}
     list.forEach(function(r,i){
-      var badge=r.src==='yt'?'<span class="mp-item-src mp-src-yt">▶ YouTube</span>':'<span class="mp-item-src mp-src-am">🎵 Apple Music</span>';
       var item=document.createElement('div');
       item.className='mp-item';
       item.innerHTML=
@@ -2048,16 +2036,15 @@ async function doAdd(){
         '<div class="mp-item-info">'+
           '<div class="mp-item-track">'+esc(r.title)+'</div>'+
           '<div class="mp-item-meta">'+esc(r.artist)+(r.dur?' &middot; '+r.dur:'')+'</div>'+
-          badge+
         '</div>'+
-        '<button class="mp-item-play" onclick="mpPlayItem('+i+')" title="Tam Çal">'+
+        '<button class="mp-item-play" onclick="mpPlayItem('+i+')" title="Çal">'+
           '<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#fff"/></svg>'+
         '</button>';
       el.appendChild(item);
     });
   }
 
-  window.mpPlayItem=async function(i){
+  window.mpPlayItem=function(i){
     var r=_results[i];
     if(!r)return;
     document.querySelectorAll('.mp-item').forEach(function(el,idx){el.classList.toggle('active-track',idx===i);});
@@ -2071,17 +2058,9 @@ async function doAdd(){
     var area=document.getElementById('mpPlayerArea');
     var panel=document.getElementById('musicPanel');
     if(!area)return;
-    area.innerHTML='<div style="text-align:center;padding:14px;font-size:12px;color:var(--muted)"><span class="mp-spinner"></span>Yükleniyor…</div>';
-    area.classList.add('show');
-    var embedUrl='';
-    if(r.src==='yt'){
-      embedUrl='https://www.youtube.com/embed/'+r.id+'?autoplay=1&rel=0';
-    }else{
-      var vids=await searchYT(r.searchQ||r.artist+' '+r.title);
-      if(vids.length)embedUrl='https://www.youtube.com/embed/'+vids[0].id+'?autoplay=1&rel=0';
-    }
-    if(!embedUrl){area.innerHTML='<div class="mp-empty">❌ Video bulunamadı.</div>';return;}
+    var embedUrl='https://www.youtube.com/embed/'+r.id+'?autoplay=1&rel=0';
     area.innerHTML='<iframe src="'+esc(embedUrl)+'" height="200" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>';
+    area.classList.add('show');
     if(panel)panel.classList.add('playing');
     setTimeout(function(){area.scrollIntoView({behavior:'smooth',block:'nearest'});},120);
   };
@@ -2098,15 +2077,10 @@ async function doAdd(){
     if(area){area.innerHTML='';area.classList.remove('show');}
     if(panel)panel.classList.remove('playing');
     _results=[];_currentIdx=-1;
-    var searches=await Promise.allSettled([searchYT(q),searchAM(q)]);
-    var ytR=searches[0].status==='fulfilled'?searches[0].value:[];
-    var amR=searches[1].status==='fulfilled'?searches[1].value:[];
+    var list=await searchYT(q);
     if(loading)loading.classList.remove('show');
-    var merged=[];
-    var max=Math.max(ytR.length,amR.length);
-    for(var i=0;i<max;i++){if(i<ytR.length)merged.push(ytR[i]);if(i<amR.length)merged.push(amR[i]);}
-    _results=merged;
-    renderResults(merged);
+    _results=list;
+    renderResults(list);
   };
 
   window.toggleMusic=function(){
