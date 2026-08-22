@@ -37569,12 +37569,22 @@ body::before{
 .mp-player-area{display:none;overflow:hidden;height:1px;flex-shrink:0}
 .mp-player-area.show{display:block}
 .mp-player-area iframe{width:1px;height:1px;border:none;position:absolute;pointer-events:none;opacity:0}
-/* now playing bar */
-.mp-nowbar{display:none;align-items:center;gap:8px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);border-radius:10px;padding:7px 10px;flex-shrink:0}
-.mp-nowbar.show{display:flex}
-.mp-nowbar-dot{width:7px;height:7px;border-radius:50%;background:var(--r0);animation:musicpulse 1.2s ease-in-out infinite;flex-shrink:0}
-.mp-nowbar-text{font-size:11px;color:var(--text1);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mp-nowbar-stop{width:22px;height:22px;border-radius:6px;background:var(--card3);border:1px solid var(--border2);display:grid;place-items:center;cursor:pointer;flex-shrink:0;font-size:10px;color:var(--muted)}
+ /* now playing media screen */
+.mp-player-card{display:none;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(220,38,38,.16),rgba(20,0,0,.42));border:1px solid rgba(220,38,38,.32);border-radius:14px;padding:10px;flex-shrink:0;min-width:0}
+.mp-player-card.show{display:flex}
+.mp-player-art{width:58px;height:58px;border-radius:10px;object-fit:cover;background:var(--card3);flex-shrink:0}
+.mp-player-main{min-width:0;flex:1}
+.mp-player-label{font-size:8px;font-weight:800;letter-spacing:.11em;color:var(--r3);margin-bottom:3px}
+.mp-player-title{font-size:12px;font-weight:800;color:var(--text1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-player-artist{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.mp-progress-wrap{cursor:pointer;padding:8px 0 3px}
+.mp-progress-track{height:4px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden}
+.mp-progress-fill{height:100%;width:0;background:var(--r0);border-radius:4px;transition:width .25s linear}
+.mp-time-row{display:flex;justify-content:space-between;color:var(--muted);font:9px 'Courier New',monospace}
+.mp-player-control,.mp-player-stop{border:1px solid var(--border2);display:grid;place-items:center;cursor:pointer;flex-shrink:0}
+.mp-player-control{width:32px;height:32px;border-radius:50%;background:var(--r0)}
+.mp-player-control svg{width:12px;height:12px;fill:#fff;stroke:none}
+.mp-player-stop{align-self:flex-start;width:20px;height:20px;border-radius:6px;background:var(--card3);color:var(--muted);font-size:15px;line-height:1}
 /* loading */
 .mp-loading{display:none;text-align:center;padding:14px;font-size:12px;color:var(--muted);flex-shrink:0}
 .mp-loading.show{display:block}
@@ -37620,13 +37630,6 @@ body::before{
   font-family:'Courier New',monospace;color:var(--g1);margin-top:8px;
 }
 .uptime-badge::before{content:'⏱';font-size:10px}
-
-/* ── AUDIO VISUALIZER ── */
-#ekg{width:100%;height:52px;border-radius:10px;display:block}
-#micBtn:hover{background:rgba(40,10,10,.6)!important;border-color:rgba(220,38,38,.35)!important}
-#micBtn.on{border-color:rgba(220,38,38,.75)!important;background:rgba(140,8,8,.38)!important;box-shadow:0 0 10px rgba(220,38,38,.35)!important}
-#micBtn.on #micSvg{stroke:#f87171!important}
-#micBtn.on #micLbl{color:#f87171!important}
 
 /* ── DRAG HANDLE ── */
 .stat-card{cursor:grab;user-select:none;touch-action:none}
@@ -37722,10 +37725,21 @@ body::before{
     </button>
   </div>
   <div class="mp-player-area" id="mpPlayerArea"></div>
-  <div class="mp-nowbar" id="mpNowbar">
-    <div class="mp-nowbar-dot"></div>
-    <div class="mp-nowbar-text" id="mpNowbarText">Çalıyor…</div>
-    <div class="mp-nowbar-stop" onclick="mpStop()" title="Durdur">■</div>
+  <div class="mp-player-card" id="mpPlayerCard">
+    <img class="mp-player-art" id="mpPlayerArt" alt="" />
+    <div class="mp-player-main">
+      <div class="mp-player-label">ŞİMDİ ÇALIYOR</div>
+      <div class="mp-player-title" id="mpPlayerTitle">—</div>
+      <div class="mp-player-artist" id="mpPlayerArtist">—</div>
+      <div class="mp-progress-wrap" id="mpProgressWrap" title="Şarkıda ilerle">
+        <div class="mp-progress-track"><div class="mp-progress-fill" id="mpProgressFill"></div></div>
+      </div>
+      <div class="mp-time-row"><span id="mpCurrentTime">0:00</span><span id="mpDuration">0:00</span></div>
+    </div>
+    <button class="mp-player-control" id="mpPlayerControl" onclick="mpTogglePause()" title="Duraklat">
+      <svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+    </button>
+    <button class="mp-player-stop" onclick="mpStop()" title="Durdur">×</button>
   </div>
   <div class="mp-loading" id="mpLoading"><span class="mp-spinner"></span>Aranıyor…</div>
   <div class="mp-results" id="mpResults">
@@ -37802,13 +37816,6 @@ body::before{
       </div>
       <div class="card-body">
         <div class="uptime-badge" id="uptimeBadge">00:00:00</div>
-        <div style="position:relative;margin-top:8px">
-          <canvas id="ekg"></canvas>
-          <button id="micBtn" onclick="toggleMic()" title="Mikrofon ile ses görselleştir" style="position:absolute;top:5px;right:5px;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:3px 7px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .2s">
-            <svg id="micSvg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 19v3"/></svg>
-            <span id="micLbl" style="font-size:8px;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.38)">MİK</span>
-          </button>
-        </div>
         <div class="info-grid" id="infoGrid">
           <div class="info-cell"><label>Ad</label><span style="color:var(--muted)">—</span></div>
           <div class="info-cell"><label>Kullanıcı Adı</label><span style="color:var(--muted)">—</span></div>
@@ -38378,112 +38385,6 @@ function setMoodLed(online){
   },{passive:true});
 })();
 
-// ── AUDIO VISUALIZER ──
-(function(){
-  const cv=document.getElementById('ekg');
-  if(!cv)return;
-  const cx=cv.getContext('2d');
-  const H=52;
-  let botOnline=false,t=0,actLevel=0;
-  const BARS=44;
-  const bars=Array.from({length:BARS},function(_,i){
-    return{phase:Math.random()*Math.PI*2,freq:0.016+Math.random()*0.05+(i<6?0.022:0),val:1.5,target:1.5};
-  });
-
-  // ── Web Audio API ──────────────────────────────
-  let _actx=null,_an=null,_ms=null,_md=null,_on=false;
-  window.toggleMic=async function(){
-    const btn=document.getElementById('micBtn');
-    if(_on){
-      _on=false;
-      if(_ms)_ms.getTracks().forEach(function(tr){tr.stop();});
-      if(_actx)_actx.close();
-      _actx=null;_an=null;_ms=null;_md=null;
-      if(btn)btn.classList.remove('on');
-      return;
-    }
-    try{
-      _ms=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:true},video:false});
-      _actx=new(window.AudioContext||window.webkitAudioContext)();
-      _an=_actx.createAnalyser();
-      _an.fftSize=256;
-      _an.smoothingTimeConstant=0.82;
-      _actx.createMediaStreamSource(_ms).connect(_an);
-      _md=new Uint8Array(_an.frequencyBinCount);
-      _on=true;
-      if(btn)btn.classList.add('on');
-    }catch(e){console.warn('Mic:',e);}
-  };
-  // ──────────────────────────────────────────────
-
-  function resize(){cv.width=cv.offsetWidth||300;}
-  resize();
-  window.addEventListener('resize',resize);
-
-  function frame(){
-    t++;
-    if(actLevel>0)actLevel=Math.max(0,actLevel-0.012);
-    resize();
-    const W=cv.width;
-    const bw=W/BARS;
-
-    if(_on&&_an&&_md){
-      // ── Gerçek ses modü ──
-      _an.getByteFrequencyData(_md);
-      const bins=_md.length;
-      bars.forEach(function(b,i){
-        var p=Math.pow(i/(BARS-1),0.62);
-        var bin=Math.min(bins-1,Math.floor(p*(bins*0.78)));
-        var raw=_md[bin]/255;
-        b.target=Math.max(1.5,raw*H*1.18+actLevel*H*0.1);
-        b.val+=(b.target-b.val)*0.40;
-      });
-    }else{
-      // ── Simülasyon modu ──
-      var baseAmp=botOnline?0.30:0.05;
-      bars.forEach(function(b,i){
-        b.phase+=b.freq;
-        var v=Math.abs(Math.sin(b.phase)*0.55+Math.sin(b.phase*2.3+i*0.35)*0.28+Math.sin(b.phase*0.6-i*0.18)*0.17);
-        if(actLevel>0)v+=actLevel*Math.abs(Math.sin(b.phase*3+i))*0.4;
-        b.target=Math.max(1.5,v*baseAmp*H*0.94);
-        b.val+=(b.target-b.val)*0.16;
-      });
-    }
-
-    cx.clearRect(0,0,W,H);
-    bars.forEach(function(b,i){
-      var bh=b.val,x=i*bw,y=H-bh;
-      var g=cx.createLinearGradient(x,y,x,H);
-      if(_on){
-        var iv=bh/H;
-        var rr=Math.round(160+95*iv),gg=Math.round(55-45*iv),bb=Math.round(25+45*iv);
-        g.addColorStop(0,'rgba('+rr+','+gg+','+bb+',.96)');
-        g.addColorStop(0.5,'rgba(210,32,32,.72)');
-        g.addColorStop(1,'rgba(60,0,0,.28)');
-        cx.shadowColor=bh>H*0.5?'#ff4820':'#dc2626';
-        cx.shadowBlur=bh>H*0.3?10+iv*8:3;
-      }else if(botOnline){
-        g.addColorStop(0,'rgba(220,38,38,.88)');
-        g.addColorStop(0.55,'rgba(160,16,16,.65)');
-        g.addColorStop(1,'rgba(60,0,0,.35)');
-        cx.shadowColor='#dc2626';
-        cx.shadowBlur=Math.max(0,actLevel*7);
-      }else{
-        g.addColorStop(0,'rgba(70,70,70,.45)');
-        g.addColorStop(1,'rgba(20,20,20,.2)');
-        cx.shadowBlur=0;
-      }
-      cx.fillStyle=g;
-      cx.fillRect(x+1,y,Math.max(1,bw-2),bh);
-    });
-    cx.shadowBlur=0;
-    requestAnimationFrame(frame);
-  }
-  frame();
-  window.ekgSetOnline=function(v){botOnline=v;};
-  window.ekgActivity=function(){actLevel=1;};
-})();
-
 // ── UPTIME COUNTDOWN ──
 let uptimeStart=null;
 function startUptime(){uptimeStart=Date.now();}
@@ -38621,8 +38522,6 @@ function setStatus(state,label){
   document.getElementById('sbadgeText').textContent=label;
   const online=state==='st-online';
   setMoodLed(online);
-  if(window.ekgSetOnline)window.ekgSetOnline(online);
-  if(online&&window.ekgActivity)window.ekgActivity();
 }
 
 // ── NAV PILL ──
@@ -38740,7 +38639,6 @@ function updateBotPower(isOn,url){
   const urlInp=document.getElementById('botWhUrl');
   if(urlInp&&!urlInp.matches(':focus'))urlInp.value=url||'';
   // Header EKG'yi güncelle
-  if(window.ekgSetOnline)window.ekgSetOnline(isOn);
 }
 let botBusy=false;
 async function toggleBot(){
@@ -38771,7 +38669,7 @@ async function doSetWebhook(){
     if(inp&&!inp.matches(':focus'))inp.value=d.webhookUrl;
   }
   toast(d.ok?'✓ Bot aktif — '+d.webhookUrl:'✗ '+(d.description||d.error||'Hata'),d.ok);
-  if(d.ok){loadStatus();if(window.ekgActivity)window.ekgActivity();}
+  if(d.ok){loadStatus();}
 }
 async function doDelWebhook(){
   toast('🔴 Bot kapatılıyor…');
@@ -38963,13 +38861,33 @@ async function doAdd(){
   }else toast('✗ '+(d.error||'Ekleme hatası'),false);
 }
 
-// ── MUSIC PANEL (YouTube + Apple Music search, full embed play) ──
+// ── MUSIC PANEL (YouTube search + compact media player) ──
 (function(){
   var panelOpen=false;
   var _results=[];
   var _currentIdx=-1;
+  var _playerPaused=false;
+  var _duration=0;
 
   function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function fmtTime(s){
+    s=Math.max(0,Math.floor(Number(s)||0));
+    return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);
+  }
+  function sendPlayerCommand(func,args){
+    var frame=document.querySelector('#mpPlayerArea iframe');
+    if(frame&&frame.contentWindow)frame.contentWindow.postMessage(JSON.stringify({event:'command',func:func,args:args||[]}),'https://www.youtube.com');
+  }
+  function updateProgress(current,duration){
+    if(duration>0)_duration=duration;
+    var pct=_duration>0?Math.min(100,(current/_duration)*100):0;
+    var fill=document.getElementById('mpProgressFill');
+    var cur=document.getElementById('mpCurrentTime');
+    var total=document.getElementById('mpDuration');
+    if(fill)fill.style.width=pct+'%';
+    if(cur)cur.textContent=fmtTime(current);
+    if(total)total.textContent=fmtTime(_duration);
+  }
 
   async function searchYT(q){
     try{
@@ -39003,10 +38921,10 @@ async function doAdd(){
 
   window.mpStop=function(){
     var area=document.getElementById('mpPlayerArea');
-    var nowbar=document.getElementById('mpNowbar');
+    var playerCard=document.getElementById('mpPlayerCard');
     var panel=document.getElementById('musicPanel');
     if(area){area.innerHTML='';area.classList.remove('show');}
-    if(nowbar)nowbar.classList.remove('show');
+    if(playerCard)playerCard.classList.remove('show');
     if(panel)panel.classList.remove('playing');
     document.querySelectorAll('.mp-item').forEach(function(el){el.classList.remove('active-track');});
     document.querySelectorAll('.mp-item-play').forEach(function(b){
@@ -39014,6 +38932,22 @@ async function doAdd(){
       b.innerHTML='<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#fff"/></svg>';
     });
     _currentIdx=-1;
+    _playerPaused=false;_duration=0;
+  };
+
+  window.mpTogglePause=function(){
+    if(_currentIdx<0)return;
+    if(_playerPaused){
+      sendPlayerCommand('playVideo');
+      _playerPaused=false;
+    }else{
+      sendPlayerCommand('pauseVideo');
+      _playerPaused=true;
+    }
+    var control=document.getElementById('mpPlayerControl');
+    if(control)control.innerHTML=_playerPaused
+      ?'<svg viewBox="0 0 24 24"><polygon points="7 4 19 12 7 20"/></svg>'
+      :'<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
   };
 
   window.mpPlayItem=function(i){
@@ -39028,15 +38962,26 @@ async function doAdd(){
     });
     _currentIdx=i;
     var area=document.getElementById('mpPlayerArea');
-    var nowbar=document.getElementById('mpNowbar');
-    var nowbarText=document.getElementById('mpNowbarText');
+    var playerCard=document.getElementById('mpPlayerCard');
+    var playerArt=document.getElementById('mpPlayerArt');
+    var playerTitle=document.getElementById('mpPlayerTitle');
+    var playerArtist=document.getElementById('mpPlayerArtist');
     var panel=document.getElementById('musicPanel');
     if(!area)return;
-    var embedUrl='https://www.youtube.com/embed/'+r.id+'?autoplay=1&rel=0';
+    var embedUrl='https://www.youtube.com/embed/'+r.id+'?autoplay=1&rel=0&enablejsapi=1&origin='+encodeURIComponent(location.origin);
     area.innerHTML='<iframe src="'+esc(embedUrl)+'" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>';
     area.classList.add('show');
-    if(nowbarText)nowbarText.textContent=r.title+(r.artist?' — '+r.artist:'');
-    if(nowbar)nowbar.classList.add('show');
+    var frame=area.querySelector('iframe');
+    if(frame)frame.addEventListener('load',function(){
+      frame.contentWindow.postMessage(JSON.stringify({event:'listening',id:frame.id||'mp-youtube',channel:'widget'}),'https://www.youtube.com');
+      frame.contentWindow.postMessage(JSON.stringify({event:'command',func:'addEventListener',args:['onStateChange']}),'https://www.youtube.com');
+      frame.contentWindow.postMessage(JSON.stringify({event:'command',func:'addEventListener',args:['infoDelivery']}),'https://www.youtube.com');
+    });
+    _playerPaused=false;_duration=0;updateProgress(0,0);
+    if(playerArt){playerArt.src=r.thumb||'';playerArt.style.display=r.thumb?'block':'none';}
+    if(playerTitle)playerTitle.textContent=r.title||'Bilinmeyen şarkı';
+    if(playerArtist)playerArtist.textContent=r.artist||'YouTube';
+    if(playerCard)playerCard.classList.add('show');
     if(panel)panel.classList.add('playing');
   };
 
@@ -39066,6 +39011,24 @@ async function doAdd(){
     if(btn)btn.classList.toggle('on',panelOpen);
     if(panelOpen)setTimeout(function(){var inp=document.getElementById('mpSearchInput');if(inp)inp.focus();},360);
   };
+
+  window.addEventListener('message',function(e){
+    if(e.origin!=='https://www.youtube.com')return;
+    var data=e.data;
+    try{if(typeof data==='string')data=JSON.parse(data);}catch(_){return;}
+    if(!data||data.event!=='infoDelivery'||!data.info)return;
+    var info=data.info;
+    if(typeof info.currentTime==='number')updateProgress(info.currentTime,info.duration||_duration);
+  });
+
+  document.addEventListener('click',function(e){
+    var wrap=document.getElementById('mpProgressWrap');
+    if(!wrap||!wrap.contains(e.target)||_duration<=0)return;
+    var rect=wrap.getBoundingClientRect();
+    var pct=Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width));
+    sendPlayerCommand('seekTo',[pct*_duration,true]);
+    updateProgress(pct*_duration,_duration);
+  });
 
   document.addEventListener('DOMContentLoaded',function(){
     var inp=document.getElementById('mpSearchInput');
