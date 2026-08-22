@@ -613,7 +613,7 @@ body::before{
 .mp-player-area.show{display:block}
 .mp-player-area iframe{width:1px;height:1px;border:none;position:absolute;pointer-events:none;opacity:0}
  /* now playing media screen */
-.mp-player-card{display:none;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(220,38,38,.16),rgba(20,0,0,.42));border:1px solid rgba(220,38,38,.32);border-radius:14px;padding:10px;flex-shrink:0;min-width:0}
+ .mp-player-card{display:none;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(220,38,38,.16),rgba(20,0,0,.42));border:1px solid rgba(220,38,38,.32);border-radius:14px;padding:10px;min-width:0}
 .mp-player-card.show{display:flex}
 .mp-player-art{width:58px;height:58px;border-radius:10px;object-fit:cover;background:var(--card3);flex-shrink:0}
 .mp-player-main{min-width:0;flex:1}
@@ -626,6 +626,7 @@ body::before{
 .mp-time-row{display:flex;justify-content:space-between;color:var(--muted);font:9px 'Courier New',monospace}
 .mp-player-control,.mp-player-stop{border:1px solid var(--border2);display:grid;place-items:center;cursor:pointer;flex-shrink:0}
 .mp-player-control{width:32px;height:32px;border-radius:50%;background:var(--r0)}
+.mp-player-control:disabled{opacity:.45;cursor:default}
 .mp-player-control svg{width:12px;height:12px;fill:#fff;stroke:none}
 .mp-player-stop{align-self:flex-start;width:20px;height:20px;border-radius:6px;background:var(--card3);color:var(--muted);font-size:15px;line-height:1}
 /* loading */
@@ -768,22 +769,6 @@ body::before{
     </button>
   </div>
   <div class="mp-player-area" id="mpPlayerArea"></div>
-  <div class="mp-player-card" id="mpPlayerCard">
-    <img class="mp-player-art" id="mpPlayerArt" alt="" />
-    <div class="mp-player-main">
-      <div class="mp-player-label">ŞİMDİ ÇALIYOR</div>
-      <div class="mp-player-title" id="mpPlayerTitle">—</div>
-      <div class="mp-player-artist" id="mpPlayerArtist">—</div>
-      <div class="mp-progress-wrap" id="mpProgressWrap" title="Şarkıda ilerle">
-        <div class="mp-progress-track"><div class="mp-progress-fill" id="mpProgressFill"></div></div>
-      </div>
-      <div class="mp-time-row"><span id="mpCurrentTime">0:00</span><span id="mpDuration">0:00</span></div>
-    </div>
-    <button class="mp-player-control" id="mpPlayerControl" onclick="mpTogglePause()" title="Duraklat">
-      <svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-    </button>
-    <button class="mp-player-stop" onclick="mpStop()" title="Durdur">×</button>
-  </div>
   <div class="mp-loading" id="mpLoading"><span class="mp-spinner"></span>Aranıyor…</div>
   <div class="mp-results" id="mpResults">
     <div class="mp-empty">🎵 Şarkı veya sanatçı adı yaz, Enter'a bas</div>
@@ -859,6 +844,22 @@ body::before{
       </div>
       <div class="card-body">
         <div class="uptime-badge" id="uptimeBadge">00:00:00</div>
+        <div class="mp-player-card show" id="mpPlayerCard">
+          <img class="mp-player-art" id="mpPlayerArt" alt="" style="display:none" />
+          <div class="mp-player-main">
+            <div class="mp-player-label">MEDYA OYNATICI</div>
+            <div class="mp-player-title" id="mpPlayerTitle">Henüz şarkı çalmıyor</div>
+            <div class="mp-player-artist" id="mpPlayerArtist">Müzik panelinden bir şarkı seçin</div>
+            <div class="mp-progress-wrap" id="mpProgressWrap" title="Şarkıda ilerle">
+              <div class="mp-progress-track"><div class="mp-progress-fill" id="mpProgressFill"></div></div>
+            </div>
+            <div class="mp-time-row"><span id="mpCurrentTime">0:00</span><span id="mpDuration">0:00</span></div>
+          </div>
+          <button class="mp-player-control" id="mpPlayerControl" onclick="mpTogglePause()" title="Duraklat" disabled>
+            <svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          </button>
+          <button class="mp-player-stop" onclick="mpStop()" title="Durdur">×</button>
+        </div>
         <div class="info-grid" id="infoGrid">
           <div class="info-cell"><label>Ad</label><span style="color:var(--muted)">—</span></div>
           <div class="info-cell"><label>Kullanıcı Adı</label><span style="color:var(--muted)">—</span></div>
@@ -1968,6 +1969,8 @@ async function doAdd(){
     var panel=document.getElementById('musicPanel');
     if(area){area.innerHTML='';area.classList.remove('show');}
     if(playerCard)playerCard.classList.remove('show');
+    var control=document.getElementById('mpPlayerControl');
+    if(control)control.disabled=true;
     if(panel)panel.classList.remove('playing');
     document.querySelectorAll('.mp-item').forEach(function(el){el.classList.remove('active-track');});
     document.querySelectorAll('.mp-item-play').forEach(function(b){
@@ -2006,6 +2009,7 @@ async function doAdd(){
     _currentIdx=i;
     var area=document.getElementById('mpPlayerArea');
     var playerCard=document.getElementById('mpPlayerCard');
+    var playerControl=document.getElementById('mpPlayerControl');
     var playerArt=document.getElementById('mpPlayerArt');
     var playerTitle=document.getElementById('mpPlayerTitle');
     var playerArtist=document.getElementById('mpPlayerArtist');
@@ -2025,6 +2029,7 @@ async function doAdd(){
     if(playerTitle)playerTitle.textContent=r.title||'Bilinmeyen şarkı';
     if(playerArtist)playerArtist.textContent=r.artist||'YouTube';
     if(playerCard)playerCard.classList.add('show');
+    if(playerControl)playerControl.disabled=false;
     if(panel)panel.classList.add('playing');
   };
 
