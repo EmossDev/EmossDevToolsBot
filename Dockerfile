@@ -19,8 +19,11 @@ WORKDIR /app
 # Proje dosyalarını kopyala
 COPY . .
 
-# Bağımlılıkları derleme izniyle yükle
-RUN pnpm install --allow-build=* --frozen-lockfile || pnpm install --allow-build=*
+# pnpm build script izinlerini aktif et
+RUN echo 'only-built-dependencies=["*"]' >> .npmrc
+
+# Bağımlılıkları yükle ve TypeScript projesini derle
+RUN pnpm install --frozen-lockfile || pnpm install
 RUN pnpm build || npm run build || true
 
 # Başlatma betiğini ayarla
