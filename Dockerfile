@@ -19,8 +19,9 @@ WORKDIR /app
 # Proje dosyalarını kopyala
 COPY . .
 
-# Pnpm güvenlik kısıtlamasını aşmak için derleme iznini .npmrc dosyasına ekle
-RUN echo 'only-built-dependencies=["*"]' >> .npmrc
+# Pnpm güvenlik kısıtlamasını aşmak için doğru .npmrc kuralını yaz
+RUN echo 'only-built-dependencies[]="esbuild"' > .npmrc
+RUN echo 'only-built-dependencies[]="*"' >> .npmrc
 
 # Bağımlılıkları yükle ve TypeScript projesini derle
 RUN pnpm install --frozen-lockfile || pnpm install
